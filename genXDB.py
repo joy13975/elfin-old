@@ -59,6 +59,8 @@ def floatListStr(floats, precision):
     return ", ".join(fmt.format(f) for f in floats)
 
 def processPDB(xDB, file, import_opts):
+    print "Processing " + file
+
     #pair is a 1-based pose vector
     in_pose = pyros.pose_from_file(file)
 
@@ -69,7 +71,7 @@ def processPDB(xDB, file, import_opts):
 
     # Compute translation
     trans = com2 - com1;
-    code.interact(local=locals())
+    # code.interact(local=locals())
 
     # Load individual monomers for alignment
     _, filename = os.path.split(file)
@@ -77,12 +79,12 @@ def processPDB(xDB, file, import_opts):
     file1 = "res/single/" + names[0] + ".pdb"
     m1 = pyros.pose_from_file(file1)
     cto1,rot1,mto1 = getDockingRotation(pair[1], m1)
-    code.interact(local=locals())
+    # code.interact(local=locals())
 
     file2 = "res/single/" + names[1] + ".pdb"
     m2 = pyros.pose_from_file(file2)
     cto2,rot2,mto2 = getDockingRotation(pair[2], m2)
-    code.interact(local=locals())
+    # code.interact(local=locals())
 
     # xDB.write("".format())
 
@@ -103,7 +105,7 @@ def processPDB(xDB, file, import_opts):
     # code.interact(local=locals())
     xDB.write(outStr);
 
-libDirs = ["res/pairs/", "res/pairs2/"]
+libDirs = ["res/pair/"]
 import_opts=ros.core.import_pose.ImportPoseOptions();
 # import_opts.set_pack_missing_sidechains(False);
 
