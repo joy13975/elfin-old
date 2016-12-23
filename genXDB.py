@@ -1,117 +1,203 @@
+#!/usr/bin/env python
+
+import Bio.PDB
 import code
-import os
-from collections import namedtuple
-from numpy import mean
+import os, glob
+import numpy
+import codecs, json
+from collections import OrderedDict
 
-import pyrosetta as pyros
-from pyrosetta import rosetta as ros
-pyros.init()
+def interact(localsVars):
+    print "Intractive mode!"
+    print
+    code.interact(local=dict(globals(), **localsVars))
 
-def caCoords(pose, rosFormat = False):
-    if rosFormat:
-        coords = ros.utility.vector1_numeric_xyzVector_double_t()
-    else:
-        coords = [];
+def main():
+    pairDir     = "res/pair/"
+    singleDir   = "res/single/"
+    newLibDir   = "res/centered_pdb/"
+    outFile     = open("res/xDB.json", "w")
+    try:
+        XDBGenrator(pairDir, singleDir, newLibDir, outFile).run()
+    except Exception as e:
+        print(e)
+        interact(locals())
+        raise e
 
-    for pos in range(1, pose.size() + 1):
-        if rosFormat:
-            coords.append(pose.residue(pos).xyz("CA"))
-        else:
-            xyz = pose.residue(pos).xyz("CA")
-            coords.append(xyzVecToList(xyz))
+def mkdir(dir):
+    if not os.path.exists(dir):
+        os.makedirs(dir)
 
-    return coords;
+class XDBGenrator:
 
-def getCenterOfMass(pose):
-    caXYZs = caCoords(pose)
+    def __init__(self,
+                pairDir,
+                singleDir,
+                newLibDir,
+                outFile,
+                permissive=0):
+        self.parser     = Bio.PDB.PDBParser(permissive)
+        self.pairDir    = pairDir
+        self.singleDir  = singleDir
+        mkdir(newLibDir)
+        mkdir(newLibDir + "/pair/")
+        mkdir(newLibDir + "/single/")
+        self.newLibDir  = newLibDir
+        self.outFile    = outFile
+        self.io         = Bio.PDB.PDBIO()
+        self.si         = Bio.PDB.Superimposer()
+        self.data       = []
+        self.linkCount  = {}
 
-    return mean(caXYZs, axis=0)
+    def getCOM(self, struct):
+        CBpoints = []
 
-def xyzVecToList(xyz):
-    return [xyz.at(0), xyz.at(1), xyz.at(2)];
+        for a in struct.get_atoms():
+            if(a.name == "CB"):
+                CBpoints.append(a.get_coord().astype("float64"))
 
-def getDockingRotation(child, mother):
-    # Child moves and aligns to mother
-    mothercoords = caCoords(mother, True)
-    childCoords = caCoords(child, True)
+        return numpy.mean(CBpoints, axis=0)
 
-    R = ros.numeric.xyzMatrix_double_t();
-    motherToOrigin = ros.numeric.xyzVector_double_t();
-    childToOrigin = ros.numeric.xyzVector_double_t();
+    def moveToOrigin(self, struct, com=[]):
+        if(len(com) == 0):
+            com = self.getCOM(struct)
 
-    ros.protocols.toolbox.superposition_transform(mothercoords,
-        childCoords,
-        R,
-        motherToOrigin,
-        childToOrigin);
+        for a in struct.get_atoms():
+            a.coord = a.coord - com
 
-    rot = [R.xx(), R.yx(), R.zx(),
-    R.xy(), R.yy(), R.zy(),
-    R.xz(), R.yz(), R.zz()];
+    def savePDB(self, struct, filename):
+        self.io.set_structure(struct)
+        saveFile = self.newLibDir + "/" + filename
+        self.io.save(saveFile)
 
-    cto = xyzVecToList(childToOrigin);
-    mto = [x * -1 for x in xyzVecToList(motherToOrigin)];
+    def getPair(self, pStruct):
+        pSingles = []
+        for pSingle in pStruct.get_chains():
+            pSingles.append(pSingle)
 
-    return cto,rot,mto
+        nPs = len(pSingles)
+        if(nPs != 2):
+            errStr = "Pair contains not 2 pSingles but " + str(nPs)
+            raise ValueError(errStr)
 
-def floatListStr(floats, precision):
-    fmt = "{:." + str(precision) + "f}"
-    return ", ".join(fmt.format(f) for f in floats)
+        return pSingles
 
-def processPDB(xDB, file, import_opts):
-    print "Processing " + file
+    def alignOneSingle(self, pStruct, sStructs, which=0):
+        pSingles = self.getPair(pStruct)
 
-    #pair is a 1-based pose vector
-    in_pose = pyros.pose_from_file(file)
+        nSingles = len(pSingles)
+        nSStructs = len(sStructs)
+        if(nSingles != len(sStructs)):
+            raise ValueError("nSingles(" +
+                str(nSingles) + ") != nSStructs(" +
+                str(nSStructs) + ")")
 
-    pair = in_pose.split_by_chain()
+        if(which > nSingles - 1 or which < 0):
+            raise ValueError("Argument \"which\"=" +
+                str(which) + " is out of bound (0-" +
+                str(nSingles) + ")")
 
-    com1 = getCenterOfMass(pair[1])
-    com2 = getCenterOfMass(pair[2])
+        ma = []
+        for a in pSingles[which].get_atoms(): ma.append(a)
+        fa = []
+        for a in sStructs[which].get_atoms(): fa.append(a)
 
-    # Compute translation
-    trans = com2 - com1;
-    # code.interact(local=locals())
+        self.si.set_atoms(fa, ma)
+        rot, tran = self.si.rotran
+        pSingles[which].transform(rot, tran)
 
-    # Load individual monomers for alignment
-    _, filename = os.path.split(file)
-    names = filename[0:filename.find(".")].split("-")
-    file1 = "res/single/" + names[0] + ".pdb"
-    m1 = pyros.pose_from_file(file1)
-    cto1,rot1,mto1 = getDockingRotation(pair[1], m1)
-    # code.interact(local=locals())
+    def getRT(self, moving, fixed):
+        ma = []
+        for a in moving.get_atoms(): ma.append(a)
+        fa = []
+        for a in fixed.get_atoms(): fa.append(a)
 
-    file2 = "res/single/" + names[1] + ".pdb"
-    m2 = pyros.pose_from_file(file2)
-    cto2,rot2,mto2 = getDockingRotation(pair[2], m2)
-    # code.interact(local=locals())
+        self.si.set_atoms(fa, ma)
+        return self.si.rotran
 
-    # xDB.write("".format())
+    def processPDB(self, filename):
+        pairName = filename.split("/")[-1].split(".")[0]
+        singleNames = pairName.split("-")
+        pStruct = self.parser.get_structure(pairName, filename)
 
-    # pair_name, trans, single_name_1, com1, cto1, rot1, mto1, single_name_2, com2, cto2, rot2, mto2
-    pair_name = filename.replace(".pdb", "");
-    single_name_1 = names[0];
-    single_name_2 = names[1];
-    prec = 12;
+        # Step 1: Center the corresponding singles and save as new
+        psFilenames = [singleNames[0] + ".pdb", singleNames[1] + ".pdb"]
+        sStructs = [self.parser.get_structure(singleNames[0],
+                        self.singleDir + psFilenames[0]),
+                    self.parser.get_structure(singleNames[1],
+                        self.singleDir + psFilenames[1])]
+        self.moveToOrigin(sStructs[0])
+        self.moveToOrigin(sStructs[1])
+        self.savePDB(sStructs[0], "/single/" + psFilenames[0])
+        self.savePDB(sStructs[1], "/single/" + psFilenames[1])
 
-    strParts = [pair_name,
-    floatListStr(trans, prec),
-    single_name_1, floatListStr(com1, prec),
-    floatListStr(cto1, prec), floatListStr(rot1, prec), floatListStr(mto1, prec),
-    single_name_2, floatListStr(com2, prec),
-    floatListStr(cto2, prec), floatListStr(rot2, prec), floatListStr(mto2, prec)];
+        # Reload singles from saved PDBs (minimize error)
+        sStructs = [self.parser.get_structure(singleNames[0],
+                        self.newLibDir + "/single/" + psFilenames[0]),
+                    self.parser.get_structure(singleNames[1],
+                        self.newLibDir + "/single/" + psFilenames[1])]
 
-    outStr = ", ".join("{}".format(s) for s in strParts) + "\n";
-    # code.interact(local=locals())
-    xDB.write(outStr);
+        # Step 2: Move pair to align with first single and save as new
+        self.alignOneSingle(pStruct, sStructs)
+        self.savePDB(pStruct, "/pair/" + pairName + ".pdb")
 
-libDirs = ["res/pair/"]
-import_opts=ros.core.import_pose.ImportPoseOptions();
-# import_opts.set_pack_missing_sidechains(False);
+        # Reload pair from saved PDB
+        pStruct = self.parser.get_structure(pairName,
+                    self.newLibDir + "/pair/" + pairName + ".pdb")
+        pSingles = self.getPair(pStruct)
 
-xDB = open("res/xDB.csv", "w");
+        # Step 3: Get COM of the 2 singles inside the pair
+        pCOMs = [self.getCOM(pSingles[0]), self.getCOM(pSingles[1])]
 
-for libDir in libDirs:
-    for file in os.listdir(libDir):
-        if file.lower().endswith(".pdb"):
-            processPDB(xDB, libDir + file, import_opts)
+        # Step 4: Get transformation of pair to the second single
+        # Note: pair is already aligned to first single so
+        #       there is no need for the first transformation
+        #       You can check this is true by varifying that
+        #           self.getRT(pSingles[0], sStructs[0])
+        #       has identity rotation and zero translation. Also,
+        #       pCOMs[0] is almost at origin.
+        rot, tran = self.getRT(pSingles[1], sStructs[1])
+
+        data = OrderedDict([
+            ("pairName", pairName),
+            ("comA",     pCOMs[0].tolist()),
+            ("comB",     pCOMs[1].tolist()),
+            ("rot",      rot.tolist()),
+            ("tran",     tran.tolist())
+            ])
+
+        self.data.append(data)
+        self.linkCount[singleNames[0]] = self.linkCount.get(singleNames[0], 0) + 1;
+
+        # interact(locals())
+
+    def dumpJSON(self):
+        toDump = OrderedDict([
+            ("stat",            self.linkCount),
+            ("links",           len(self.linkCount)),
+            ("complexity",      self.complexity),
+            ("data",            self.data)
+            ])
+
+        json.dump(toDump,
+            self.outFile,
+            separators=(',', ':'),
+            indent=4)
+
+    def run(self):
+        files = glob.glob(self.pairDir + '/*.pdb')
+        nFiles = len(files)
+        for i in range(0, nFiles):
+            print "[XDBG] Processing file #{}/{}: {}".format(i+1, nFiles, files[i])
+            self.processPDB(files[i])
+
+        self.complexity = 1
+        for s in self.linkCount:
+            self.complexity = self.complexity * self.linkCount.get(s)
+
+        print "[XDBG] Complexity: {}".format(self.complexity)
+
+        self.dumpJSON()
+        self.outFile.close()
+
+if  __name__ =='__main__': main()
