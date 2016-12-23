@@ -1,32 +1,19 @@
 #!/usr/bin/env python
 
 import Bio.PDB
-import code
-import os, glob
+from utils import *
+import glob
 import numpy
 import codecs, json
 from collections import OrderedDict
-
-def interact(localsVars):
-    print "Intractive mode!"
-    print
-    code.interact(local=dict(globals(), **localsVars))
 
 def main():
     pairDir     = "res/pair/"
     singleDir   = "res/single/"
     newLibDir   = "res/centered_pdb/"
-    outFile     = open("res/xDB.json", "w")
-    try:
-        XDBGenrator(pairDir, singleDir, newLibDir, outFile).run()
-    except Exception as e:
-        print(e)
-        interact(locals())
-        raise e
-
-def mkdir(dir):
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    outFile     = "res/xDB.json"
+    xdbg = XDBGenrator(pairDir, singleDir, newLibDir, outFile)
+    safeExec(xdbg.run)
 
 class XDBGenrator:
 
@@ -46,7 +33,7 @@ class XDBGenrator:
         self.outFile    = outFile
         self.io         = Bio.PDB.PDBIO()
         self.si         = Bio.PDB.Superimposer()
-        self.data       = []
+        self.data       = {}
         self.linkCount  = {}
 
     def getCOM(self, struct):
@@ -62,8 +49,7 @@ class XDBGenrator:
         if(len(com) == 0):
             com = self.getCOM(struct)
 
-        for a in struct.get_atoms():
-            a.coord = a.coord - com
+        struct.transform([[1,0,0],[0,1,0],[0,0,1]], -com)
 
     def savePDB(self, struct, filename):
         self.io.set_structure(struct)
@@ -82,7 +68,7 @@ class XDBGenrator:
 
         return pSingles
 
-    def alignOneSingle(self, pStruct, sStructs, which=0):
+    def alignToSingle(self, pStruct, sStructs, which=0):
         pSingles = self.getPair(pStruct)
 
         nSingles = len(pSingles)
@@ -104,7 +90,7 @@ class XDBGenrator:
 
         self.si.set_atoms(fa, ma)
         rot, tran = self.si.rotran
-        pSingles[which].transform(rot, tran)
+        pStruct.transform(rot, tran)
 
     def getRT(self, moving, fixed):
         ma = []
@@ -138,7 +124,7 @@ class XDBGenrator:
                         self.newLibDir + "/single/" + psFilenames[1])]
 
         # Step 2: Move pair to align with first single and save as new
-        self.alignOneSingle(pStruct, sStructs)
+        self.alignToSingle(pStruct, sStructs)
         self.savePDB(pStruct, "/pair/" + pairName + ".pdb")
 
         # Reload pair from saved PDB
@@ -159,17 +145,21 @@ class XDBGenrator:
         rot, tran = self.getRT(pSingles[1], sStructs[1])
 
         data = OrderedDict([
-            ("pairName", pairName),
-            ("comA",     pCOMs[0].tolist()),
-            ("comB",     pCOMs[1].tolist()),
-            ("rot",      rot.tolist()),
-            ("tran",     tran.tolist())
+            ("comB",  pCOMs[1].tolist()),
+            ("rot",   rot.tolist()),
+            ("tran",  tran.tolist())
             ])
 
-        self.data.append(data)
+        entry = self.data.get(singleNames[0], None)
+        if(entry == None):
+            self.data[singleNames[0]] = {}
+            entry = self.data.get(singleNames[0], None)
+
+        entry[singleNames[1]] = data
+
         self.linkCount[singleNames[0]] = self.linkCount.get(singleNames[0], 0) + 1;
 
-        # interact(locals())
+        # interact(globals(), locals())
 
     def dumpJSON(self):
         toDump = OrderedDict([
@@ -180,8 +170,9 @@ class XDBGenrator:
             ])
 
         json.dump(toDump,
-            self.outFile,
+            open(self.outFile, "w"),
             separators=(',', ':'),
+            ensure_ascii=False,
             indent=4)
 
     def run(self):
@@ -198,6 +189,5 @@ class XDBGenrator:
         print "[XDBG] Complexity: {}".format(self.complexity)
 
         self.dumpJSON()
-        self.outFile.close()
 
-if  __name__ =='__main__': main()
+if __name__ =='__main__': main()
