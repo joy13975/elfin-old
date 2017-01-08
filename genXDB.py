@@ -8,10 +8,10 @@ import codecs, json
 from collections import OrderedDict
 
 def main():
-    pairDir     = "res/pair/"
-    singleDir   = "res/single/"
-    newLibDir   = "res/centered_pdb/"
-    outFile     = "res/xDB.json"
+    pairDir     = 'res/pair/'
+    singleDir   = 'res/single/'
+    newLibDir   = 'res/centered_pdb/'
+    outFile     = 'res/xDB.json'
     xdbg = XDBGenrator(pairDir, singleDir, newLibDir, outFile)
     safeExec(xdbg.run)
 
@@ -23,18 +23,18 @@ class XDBGenrator:
                 newLibDir,
                 outFile,
                 permissive=0):
-        self.parser     = Bio.PDB.PDBParser(permissive)
-        self.pairDir    = pairDir
-        self.singleDir  = singleDir
+        self.parser         = Bio.PDB.PDBParser(permissive)
+        self.pairDir        = pairDir
+        self.singleDir      = singleDir
         mkdir(newLibDir)
-        mkdir(newLibDir + "/pair/")
-        mkdir(newLibDir + "/single/")
-        self.newLibDir  = newLibDir
-        self.outFile    = outFile
-        self.io         = Bio.PDB.PDBIO()
-        self.si         = Bio.PDB.Superimposer()
-        self.data       = {}
-        self.linkCount  = {}
+        mkdir(newLibDir     + '/pair/')
+        mkdir(newLibDir     + '/single/')
+        self.newLibDir      = newLibDir
+        self.outFile        = outFile
+        self.io             = Bio.PDB.PDBIO()
+        self.si             = Bio.PDB.Superimposer()
+        self.pairsData      = {}
+        self.singlesData    = {}
 
     def getCOM(self, struct):
         CAs = [];
@@ -42,7 +42,7 @@ class XDBGenrator:
         for a in struct.get_atoms():
             if(a.name == 'CA'):
                 # I noticed some floating point error with float32, so use double
-                CAs.append(a.get_coord().astype("float64"))
+                CAs.append(a.get_coord().astype('float64'))
 
         return numpy.mean(CAs, axis=0)
 
@@ -55,7 +55,7 @@ class XDBGenrator:
 
     def savePDB(self, struct, filename):
         self.io.set_structure(struct)
-        saveFile = self.newLibDir + "/" + filename
+        saveFile = self.newLibDir + '/' + filename
         self.io.save(saveFile)
 
     def getSingles(self, pStruct):
@@ -65,7 +65,7 @@ class XDBGenrator:
 
         nPs = len(pSingles)
         if(nPs != 2):
-            errStr = "Pair contains not 2 pSingles but " + str(nPs)
+            errStr = 'Pair contains not 2 pSingles but ' + str(nPs)
             raise ValueError(errStr)
 
         return pSingles
@@ -76,14 +76,14 @@ class XDBGenrator:
         nSingles = len(pSingles)
         nSStructs = len(sStructs)
         if(nSingles != len(sStructs)):
-            raise ValueError("nSingles(" +
-                str(nSingles) + ") != nSStructs(" +
-                str(nSStructs) + ")")
+            raise ValueError('nSingles(' +
+                str(nSingles) + ') != nSStructs(' +
+                str(nSStructs) + ')')
 
         if(which > nSingles - 1 or which < 0):
-            raise ValueError("Argument \"which\"=" +
-                str(which) + " is out of bound (0-" +
-                str(nSingles) + ")")
+            raise ValueError('Argument \'which\'=' +
+                str(which) + ' is out of bound (0-' +
+                str(nSingles) + ')')
 
         ma = []
         for a in pSingles[which].get_atoms(): ma.append(a)
@@ -114,7 +114,7 @@ class XDBGenrator:
         maxHeavy = 0;
         for a in pose.get_atoms():
             dist = numpy.linalg.norm(
-                a.get_coord().astype("float64"));
+                a.get_coord().astype('float64'));
 
             rgSum += dist;
 
@@ -129,19 +129,19 @@ class XDBGenrator:
 
         rg = rgSum / natoms;
         return OrderedDict([
-            ("avgAll", rg),
-            ("maxCA", maxCA),
-            ("maxHeavy", maxHeavy)
+            ('avgAll', rg),
+            ('maxCA', maxCA),
+            ('maxHeavy', maxHeavy)
         ]);
 
     def processPDB(self, filename):
         # Step 0: Load pair and single structures
-        pairName = filename.split("/")[-1].split(".")[0]
+        pairName = filename.split('/')[-1].split('.')[0]
         pair = self.parser.get_structure(pairName, filename)
         singlesInPair = self.getSingles(pair)
 
-        singleNames = pairName.split("-")
-        psFilenames = [singleNames[0] + ".pdb", singleNames[1] + ".pdb"]
+        singleNames = pairName.split('-')
+        psFilenames = [singleNames[0] + '.pdb', singleNames[1] + '.pdb']
         singles = [self.parser.get_structure(singleNames[0],
                         self.singleDir + psFilenames[0]),
                     self.parser.get_structure(singleNames[1],
@@ -152,7 +152,7 @@ class XDBGenrator:
         self.moveToOrigin(singles[1])
 
         # Step 2: Move pair to align with first single
-        # Note: this aligns pair[0] to singles[0]
+        # Note: this aligns pair by superimposing pair[0] with singles[0]
         self.alignToSingle(pair, singles)
 
         # Step 3: Get COM of the 2 singles inside the pair
@@ -176,40 +176,51 @@ class XDBGenrator:
 
         # Step 6: Save the centred molecules once
         # Note: here the PDB format adds some slight floating point error
-        self.savePDB(singles[0], "/single/" + psFilenames[0])
-        self.savePDB(singles[1], "/single/" + psFilenames[1])
-        self.savePDB(pair, "/pair/" + pairName + ".pdb")
+        self.savePDB(singles[0], '/single/' + psFilenames[0])
+        self.savePDB(singles[1], '/single/' + psFilenames[1])
+        self.savePDB(pair, '/pair/' + pairName + '.pdb')
 
         # comA is aligned to centered singles[0] so should be at origin
         data = OrderedDict([
-            ("comB",  sComs[1].tolist()),
-            ("rot",   rot.tolist()),
-            ("tran",  tran.tolist()),
-            ("radiiA", sRads[0]),
-            ("radiiB", sRads[1]),
+            ('comB',  sComs[1].tolist()),
+            ('rot',   rot.tolist()),
+            ('tran',  tran.tolist())
             ])
 
-        entry = self.data.get(singleNames[0], None)
+        entry = self.pairsData.get(singleNames[0], None)
         if(entry == None):
-            self.data[singleNames[0]] = {}
-            entry = self.data.get(singleNames[0], None)
+            self.pairsData[singleNames[0]] = {}
+            entry = self.pairsData.get(singleNames[0], None)
 
         entry[singleNames[1]] = data
 
-        self.linkCount[singleNames[0]] = self.linkCount.get(singleNames[0], 0) + 1;
+        singleDataA = self.singlesData.get(singleNames[0],
+             OrderedDict([
+                ('linkCount', 0),
+                ('radii', sRads[0])
+                ]));
+        singleDataA['linkCount'] = singleDataA['linkCount'] + 1;
+        self.singlesData[singleNames[0]] = singleDataA;
+
+        if(singleNames[1] != singleNames[0]):
+            singleDataB = self.singlesData.get(singleNames[1],
+                 OrderedDict([
+                    ('linkCount', 0),
+                    ('radii', sRads[0])
+                    ]));
+            self.singlesData[singleNames[1]] = singleDataB;
 
         # interact(globals(), locals())
 
     def dumpJSON(self):
         toDump = OrderedDict([
-            ("links",           self.linkCount),
-            ("singles",         len(self.linkCount)),
-            ("complexity",      self.complexity),
-            ("data",            self.data)
+            ('singlesData',  self.singlesData),
+            ('complexity',  self.complexity),
+            ('pairsData',   self.pairsData)
             ])
 
         json.dump(toDump,
-            open(self.outFile, "w"),
+            open(self.outFile, 'w'),
             separators=(',', ':'),
             ensure_ascii=False,
             indent=4)
@@ -218,14 +229,14 @@ class XDBGenrator:
         files = glob.glob(self.pairDir + '/*.pdb')
         nFiles = len(files)
         for i in range(0, nFiles):
-            print "[XDBG] Processing file #{}/{}: {}".format(i+1, nFiles, files[i])
+            print '[XDBG] Processing file #{}/{}: {}'.format(i+1, nFiles, files[i])
             self.processPDB(files[i])
 
         self.complexity = 1
-        for s in self.linkCount:
-            self.complexity = self.complexity * self.linkCount.get(s)
+        for s in self.singlesData:
+            self.complexity = self.complexity * self.singlesData.get(s)['linkCount']
 
-        print "[XDBG] Complexity: {}".format(self.complexity)
+        print '[XDBG] Complexity: {}'.format(self.complexity)
 
         self.dumpJSON()
 
