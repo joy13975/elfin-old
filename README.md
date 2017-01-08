@@ -1,2 +1,2 @@
 # elfin
-A protein design tool based on repeat module construction (final year project).
+A computational protein assembly tool based on repeat module construction (final year project).
