@@ -87,6 +87,8 @@ class BenchmarkGenerator:
 
         cmd.hide("everything", "all")
         cmd.show("cartoon", "all")
+        cmd.reset()
+
         self.bmarks.append(shape)
 
     def run(self, nBmarks, bmarkLen):

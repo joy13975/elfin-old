@@ -37,18 +37,20 @@ class XDBGenrator:
         self.linkCount  = {}
 
     def getCOM(self, struct):
-        CBpoints = []
+        CAs = [];
 
         for a in struct.get_atoms():
-            if(a.name == "CB"):
-                CBpoints.append(a.get_coord().astype("float64"))
+            if(a.name == 'CA'):
+                # I noticed some floating point error with float32, so use double
+                CAs.append(a.get_coord().astype("float64"))
 
-        return numpy.mean(CBpoints, axis=0)
+        return numpy.mean(CAs, axis=0)
 
     def moveToOrigin(self, struct, com=[]):
         if(len(com) == 0):
             com = self.getCOM(struct)
 
+        # No rotation - just move to centre
         struct.transform([[1,0,0],[0,1,0],[0,0,1]], -com)
 
     def savePDB(self, struct, filename):
@@ -56,7 +58,7 @@ class XDBGenrator:
         saveFile = self.newLibDir + "/" + filename
         self.io.save(saveFile)
 
-    def getPair(self, pStruct):
+    def getSingles(self, pStruct):
         pSingles = []
         for pSingle in pStruct.get_chains():
             pSingles.append(pSingle)
@@ -69,7 +71,7 @@ class XDBGenrator:
         return pSingles
 
     def alignToSingle(self, pStruct, sStructs, which=0):
-        pSingles = self.getPair(pStruct)
+        pSingles = self.getSingles(pStruct)
 
         nSingles = len(pSingles)
         nSStructs = len(sStructs)
@@ -92,7 +94,7 @@ class XDBGenrator:
         rot, tran = self.si.rotran
         pStruct.transform(rot, tran)
 
-    def getRT(self, moving, fixed):
+    def getRotTrans(self, moving, fixed):
         ma = []
         for a in moving.get_atoms(): ma.append(a)
         fa = []
@@ -101,53 +103,90 @@ class XDBGenrator:
         self.si.set_atoms(fa, ma)
         return self.si.rotran
 
-    def processPDB(self, filename):
-        pairName = filename.split("/")[-1].split(".")[0]
-        singleNames = pairName.split("-")
-        pStruct = self.parser.get_structure(pairName, filename)
+    def getRadii(self, pose):
+        # Warning: this function assumes pose is centered!
 
-        # Step 1: Center the corresponding singles and save as new
+        natoms = 0;
+        rgSum = 0;
+        maxCA = 0;
+
+        nHeavy = 0;
+        maxHeavy = 0;
+        for a in pose.get_atoms():
+            dist = numpy.linalg.norm(
+                a.get_coord().astype("float64"));
+
+            rgSum += dist;
+
+            if(a.name =='CA'):
+                maxCA = max(maxCA, dist);
+
+            if(a.element != 'H'):
+                maxHeavy = max(maxHeavy, dist);
+                nHeavy = nHeavy + 1;
+
+            natoms = natoms + 1;
+
+        rg = rgSum / natoms;
+        return OrderedDict([
+            ("avgAll", rg),
+            ("maxCA", maxCA),
+            ("maxHeavy", maxHeavy)
+        ]);
+
+    def processPDB(self, filename):
+        # Step 0: Load pair and single structures
+        pairName = filename.split("/")[-1].split(".")[0]
+        pair = self.parser.get_structure(pairName, filename)
+        singlesInPair = self.getSingles(pair)
+
+        singleNames = pairName.split("-")
         psFilenames = [singleNames[0] + ".pdb", singleNames[1] + ".pdb"]
-        sStructs = [self.parser.get_structure(singleNames[0],
+        singles = [self.parser.get_structure(singleNames[0],
                         self.singleDir + psFilenames[0]),
                     self.parser.get_structure(singleNames[1],
                         self.singleDir + psFilenames[1])]
-        self.moveToOrigin(sStructs[0])
-        self.moveToOrigin(sStructs[1])
-        self.savePDB(sStructs[0], "/single/" + psFilenames[0])
-        self.savePDB(sStructs[1], "/single/" + psFilenames[1])
 
-        # Reload singles from saved PDBs (minimize error)
-        sStructs = [self.parser.get_structure(singleNames[0],
-                        self.newLibDir + "/single/" + psFilenames[0]),
-                    self.parser.get_structure(singleNames[1],
-                        self.newLibDir + "/single/" + psFilenames[1])]
+        # Step 1: Center the corresponding singles
+        self.moveToOrigin(singles[0])
+        self.moveToOrigin(singles[1])
 
-        # Step 2: Move pair to align with first single and save as new
-        self.alignToSingle(pStruct, sStructs)
-        self.savePDB(pStruct, "/pair/" + pairName + ".pdb")
-
-        # Reload pair from saved PDB
-        pStruct = self.parser.get_structure(pairName,
-                    self.newLibDir + "/pair/" + pairName + ".pdb")
-        pSingles = self.getPair(pStruct)
+        # Step 2: Move pair to align with first single
+        # Note: this aligns pair[0] to singles[0]
+        self.alignToSingle(pair, singles)
 
         # Step 3: Get COM of the 2 singles inside the pair
-        pCOMs = [self.getCOM(pSingles[0]), self.getCOM(pSingles[1])]
+        sComs = [self.getCOM(singlesInPair[0]), self.getCOM(singlesInPair[1])]
 
-        # Step 4: Get transformation of pair to the second single
+        # Step 4: Get measures for collision:
+        #           1. Avg dist to com (gyradius aka RG)
+        #           2. Max dist from CA to com
+        #           3. Max dist from any heavy stom (not H) to COM
+        sRads = [self.getRadii(singles[0]),
+                    self.getRadii(singles[1])]
+
+        # Step 5: Get transformation of pair to the second single
         # Note: pair is already aligned to first single so
         #       there is no need for the first transformation
         #       You can check this is true by varifying that
-        #           self.getRT(pSingles[0], sStructs[0])
+        #           self.getRotTrans(singlesInPair[0], singles[0])
         #       has identity rotation and zero translation. Also,
-        #       pCOMs[0] is almost at origin.
-        rot, tran = self.getRT(pSingles[1], sStructs[1])
+        #       sComs[0] should be at the origin.
+        rot, tran = self.getRotTrans(singlesInPair[1], singles[1])
 
+        # Step 6: Save the centred molecules once
+        # Note: here the PDB format adds some slight floating point error
+        self.savePDB(singles[0], "/single/" + psFilenames[0])
+        self.savePDB(singles[1], "/single/" + psFilenames[1])
+        self.savePDB(pair, "/pair/" + pairName + ".pdb")
+
+        # comA is aligned to centered singles[0] so should be at origin
         data = OrderedDict([
-            ("comB",  pCOMs[1].tolist()),
+            ("comB",  sComs[1].tolist()),
             ("rot",   rot.tolist()),
-            ("tran",  tran.tolist())
+            ("tran",  tran.tolist()),
+            ("radiiA", sRads[0]),
+            ("radiiB", sRads[1]),
             ])
 
         entry = self.data.get(singleNames[0], None)
@@ -163,8 +202,8 @@ class XDBGenrator:
 
     def dumpJSON(self):
         toDump = OrderedDict([
-            ("stat",            self.linkCount),
-            ("links",           len(self.linkCount)),
+            ("links",           self.linkCount),
+            ("singles",         len(self.linkCount)),
             ("complexity",      self.complexity),
             ("data",            self.data)
             ])
