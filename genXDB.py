@@ -23,7 +23,6 @@ class XDBGenrator:
                 newLibDir,
                 outFile,
                 permissive=0):
-        self.parser         = Bio.PDB.PDBParser(permissive)
         self.pairDir        = pairDir
         self.singleDir      = singleDir
         mkdir(newLibDir)
@@ -31,7 +30,6 @@ class XDBGenrator:
         mkdir(newLibDir     + '/single/')
         self.newLibDir      = newLibDir
         self.outFile        = outFile
-        self.io             = Bio.PDB.PDBIO()
         self.si             = Bio.PDB.Superimposer()
         self.pairsData      = {}
         self.singlesData    = {}
@@ -53,25 +51,8 @@ class XDBGenrator:
         # No rotation - just move to centre
         struct.transform([[1,0,0],[0,1,0],[0,0,1]], -com)
 
-    def savePDB(self, struct, filename):
-        self.io.set_structure(struct)
-        saveFile = self.newLibDir + '/' + filename
-        self.io.save(saveFile)
-
-    def getSingles(self, pStruct):
-        pSingles = []
-        for pSingle in pStruct.get_chains():
-            pSingles.append(pSingle)
-
-        nPs = len(pSingles)
-        if(nPs != 2):
-            errStr = 'Pair contains not 2 pSingles but ' + str(nPs)
-            raise ValueError(errStr)
-
-        return pSingles
-
     def alignToSingle(self, pStruct, sStructs, which=0):
-        pSingles = self.getSingles(pStruct)
+        pSingles = utils.getPdbSingles(pStruct)
 
         nSingles = len(pSingles)
         nSStructs = len(sStructs)
@@ -137,15 +118,13 @@ class XDBGenrator:
     def processPDB(self, filename):
         # Step 0: Load pair and single structures
         pairName = filename.split('/')[-1].split('.')[0]
-        pair = self.parser.get_structure(pairName, filename)
-        singlesInPair = self.getSingles(pair)
+        pair = utils.readPdb(pairName, filename)
+        singlesInPair = utils.getPdbSingles(pair)
 
         singleNames = pairName.split('-')
         psFilenames = [singleNames[0] + '.pdb', singleNames[1] + '.pdb']
-        singles = [self.parser.get_structure(singleNames[0],
-                        self.singleDir + psFilenames[0]),
-                    self.parser.get_structure(singleNames[1],
-                        self.singleDir + psFilenames[1])]
+        singles = [utils.readPdb(singleNames[0], self.singleDir + psFilenames[0]),
+                    utils.readPdb(singleNames[1], self.singleDir + psFilenames[1])]
 
         # Step 1: Center the corresponding singles
         self.moveToOrigin(singles[0])
@@ -176,9 +155,9 @@ class XDBGenrator:
 
         # Step 6: Save the centred molecules once
         # Note: here the PDB format adds some slight floating point error
-        self.savePDB(singles[0], '/single/' + psFilenames[0])
-        self.savePDB(singles[1], '/single/' + psFilenames[1])
-        self.savePDB(pair, '/pair/' + pairName + '.pdb')
+        utils.savePDB(singles[0], self.newLibDir + '/single/' + psFilenames[0])
+        utils.savePDB(singles[1], self.newLibDir + '/single/' + psFilenames[1])
+        utils.savePDB(pair, self.newLibDir + '/pair/' + pairName + '.pdb')
 
         # comA is aligned to centered singles[0] so should be at origin
         data = OrderedDict([
