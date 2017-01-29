@@ -1,0 +1,14 @@
+#/bin/bash
+
+for f in `ls *.pdb`
+do
+	if [ -f ./scores/${f/pdb/comp}.sc ]; then
+		echo "$f already scored - skipping"
+	else
+	    echo "Scoring $f"
+	    score.default.macosclangrelease \
+	        -s "minimised/${f/\.pdb/_0001.pdb}" \
+	        -in:file:native "$f" \
+	        -out:file:scorefile ./scores/${f/pdb/comp}.sc
+	fi
+done
