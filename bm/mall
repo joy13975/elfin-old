@@ -1,0 +1,14 @@
+#/bin/bash
+
+for f in `ls *.pdb`
+do
+	if [ -f ./minimised/${f/.pdb/_0001.pdb} ]; then
+		echo "$f already minimised - skipping"
+	else
+    	echo "Minimising $f"
+	    minimize.default.macosclangrelease -overwrite \
+	        -s "$f" \
+	        -out:path:score scores -out:file:scorefile ${f/pdb/min}.sc \
+	        -out:path:pdb minimised
+	fi
+done
