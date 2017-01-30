@@ -1,9 +1,12 @@
-#!/usr/bin/env python
-
 import traceback, sys, code
 import os
 import inspect
 import Bio.PDB
+import json
+
+def readJSON(filename):
+    with open(filename, 'r') as openFile:
+        return json.load(openFile)
 
 def readPdb(customName, inFile, permissive=0):
     parser = Bio.PDB.PDBParser(permissive)
@@ -38,19 +41,14 @@ def mkdir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
 
-def pauseCode(failFrame=None):
+def pauseCode(frame=None):
     print '---------pauseCode()---------'
-    type, value, tb = sys.exc_info()
-    last_frame = lambda tb=tb: last_frame(tb.tb_next) if tb.tb_next else tb
-    frame = last_frame().tb_frame
+    if frame is None:
+        # Use current frame (one above the exception wrapper)
+        frame = inspect.currentframe().f_back
+    
     ns = dict(frame.f_globals)
     ns.update(frame.f_locals)
-
-    if failFrame is None:
-        ns.update(inspect.currentframe().f_back.f_locals)
-    else:
-        ns.update(failFrame.f_locals)
-
     code.interact(local=ns)
 
 def safeExec(func, *args):
@@ -58,6 +56,10 @@ def safeExec(func, *args):
         func(*args)
     except Exception as e:
         print '---------safeExec() caught exception---------'
+
+        # Find last (failed) inner frame
         type, value, tb = sys.exc_info()
+        last_frame = lambda tb=tb: last_frame(tb.tb_next) if tb.tb_next else tb
+        frame = last_frame().tb_frame
         traceback.print_exc()
-        pauseCode(inspect.currentframe().f_back)
+        pauseCode(frame)

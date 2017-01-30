@@ -151,6 +151,9 @@ class XDBGenrator:
         #           self.getRotTrans(singlesInPair[0], singles[0])
         #       has identity rotation and zero translation. Also,
         #       sComs[0] should be at the origin.
+        # Note: singles are also centered, so effectively, this 
+        #       tries to get the transformation of pair if the
+        #       second chain were to be centered instead
         rot, tran = self.getRotTrans(singlesInPair[1], singles[1])
 
         # Step 6: Save the centred molecules once

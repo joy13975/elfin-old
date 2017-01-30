@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import glob
 
 files = glob.glob('scores/*.comp.sc')
