@@ -38,7 +38,11 @@ def main():
             makePdbFromNodes(xDB, 
                 nodes, 
                 'res/centered_pdb/pair', 
-                jsonFile.replace('.json', '_' + designerName + '_PCT.pdb'),
+                jsonFile.replace('.json', suffixPdb(
+                    designerName, 
+                    'PCT',
+                    1.0, 
+                    targetLen)),
                 fRot)
             
 if __name__ =='__main__': safeExec(main)
