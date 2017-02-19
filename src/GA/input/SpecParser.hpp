@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "../data/TypeDefs.hpp"
+
 namespace elfin
 {
 
@@ -14,7 +16,7 @@ public:
 	virtual ~SpecParser() {};
 
 	// Might add a parseStream in the future if ever needed
-	virtual std::vector<float> parseSpec(
+	virtual Points3f parseSpec(
 	    const std::string & filename) = 0;
 
 private:

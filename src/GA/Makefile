@@ -19,7 +19,7 @@ DEPS 			:= $(C_SRC:%.c=$(OBJ_DIR)/%.d) $(CPP_SRC:%.cpp=$(OBJ_DIR)/%.d)
 $(info Objects to be compiled: [${OBJS}])
 #:
 
-DEBUG=yes
+DEBUG=no
 # OMP=yes
 
 ifeq ($(DEBUG), yes)
@@ -37,7 +37,7 @@ endif
 INCS 			:= -I./jutil/src/
 
 OPT_FLAGS 		:= -O3
-CPPFLAGS 		:= -MMD -std=c++11 -fmax-errors=1\
+CPPFLAGS 		:= -fdiagnostics-color=always -MMD -std=c++11 -fmax-errors=1\
 					$(OPT_FLAGS) $(DEBUG_FLAG) $(GOMP_FLAG) $(DEFS) $(INCS)
 
 COMPILE 		:= $(CXX) $(CPPFLAGS)
@@ -56,6 +56,9 @@ $(foreach EXT,$(EXTS),$(eval $(call make_rule,$(EXT))))
 
 $(EXE): $(OBJS)
 	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
+test: $(EXE)
+	./$(EXE)
 
 .PHONY: all clean
 

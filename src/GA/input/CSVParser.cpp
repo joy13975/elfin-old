@@ -76,7 +76,7 @@ bool CSVIterator::operator!=(CSVIterator const& rhs) {return !((*this) == rhs);}
 namespace elfin
 {
 
-std::vector<float> CSVParser::parseSpec(const std::string & filename)
+Points3f CSVParser::parseSpec(const std::string & filename)
 {
 	std::ifstream inputStream(filename);
 
@@ -105,7 +105,12 @@ std::vector<float> CSVParser::parseSpec(const std::string & filename)
 		}
 	}
 
-	return data;
+	Points3f spec;
+
+	for (std::vector<float>::iterator i = data.begin(); i != data.end(); i += 3)
+		spec.emplace_back(i, i + 3);
+
+	return spec;
 }
 
 } // namespace Elfin

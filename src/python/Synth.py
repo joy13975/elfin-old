@@ -5,7 +5,7 @@ from utils import *
 
 def main():
     if len(sys.argv) < 2:
-        print './Synth.py <specFile.{json|pdb}> <optional: outFile>'
+        print './Synth.py <nodes.json> <optional: outFile>'
         exit()
 
     specFile = sys.argv[1]
@@ -14,16 +14,6 @@ def main():
     if specExt == '.json':
         spec = readJSON(specFile)
         targetLen = len(spec['nodes'])
-    elif specExt == '.csv':
-        with open(specFile, 'r') as file:
-            pts = [[float(n) for n in re.split(', *| *', l.strip())] for l in file.read().split('\n')]
-
-        spec = {'coms': pts}
-        npts = np.asarray(pts)
-
-        (avgD, minD, maxD) = getXDBStat()
-        # Use total length/avgD as heuristic. avgD is average xDB pair distance
-        targetLen = int(np.ceil(sum(np.linalg.norm(npts-np.roll(npts, 1, axis=0), axis=1)) / avgD))
     else:
         print 'Unknown spec file type: {}'.format(specExt)
         exit()

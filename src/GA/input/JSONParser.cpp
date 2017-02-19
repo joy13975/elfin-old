@@ -112,7 +112,7 @@ void JSONParser::parseDB(
 	}
 }
 
-std::vector<float> JSONParser::parseSpec(
+Points3f JSONParser::parseSpec(
     const std::string & filename)
 {
 	JSON j = this->parse(filename);
@@ -125,7 +125,12 @@ std::vector<float> JSONParser::parseSpec(
 	panicIf(data.size() % 3 != 0,
 	        "Input data not in the form of 3D tuple values!\n");
 
-	return data;
+	Points3f spec;
+
+	for (std::vector<float>::iterator i = data.begin(); i != data.end(); i += 3)
+		spec.emplace_back(i, i + 3);
+
+	return spec;
 }
 
 JSON JSONParser::parse(const std::string & filename)

@@ -77,7 +77,7 @@ public:
 	CSVParser() {};
 	virtual ~CSVParser() {};
 
-	std::vector<float> parseSpec(const std::string & filename);
+	Points3f parseSpec(const std::string & filename);
 
 private:
 };

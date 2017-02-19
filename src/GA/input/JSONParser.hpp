@@ -24,7 +24,7 @@ public:
 	    RelaMat & relMatOut,
 	    NameIdMap & nameMapOut);
 
-	std::vector<float> parseSpec(const std::string & filename);
+	Points3f parseSpec(const std::string & filename);
 
 	JSON parse(const std::string & filename);
 	void inspect(const std::string & filename);
