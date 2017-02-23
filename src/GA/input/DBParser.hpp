@@ -18,8 +18,9 @@ public:
 	// Might add a parseStream in the future if ever needed
 	virtual void parseDB(
 	    const std::string & filename,
+	    NameIdMap & nameMapOut,
 	    RelaMat & relMatOut,
-	    NameIdMap & nameMapOut) = 0;
+	    RadiiList & radiiListOut) = 0;
 
 private:
 };

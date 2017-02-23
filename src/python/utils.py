@@ -62,7 +62,7 @@ def checkCollision(xdb, collisionMeasure, nodes, newNode, shape):
 
     return False;
 
-def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None):    
+def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=False):    
     # Load first "mother" pdb to host all subsequent chains
     pairName = nodes[0] + '-' + nodes[1]
     pdbFile = pairsDir + '/' + pairName + '.pdb'
@@ -73,15 +73,19 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None):
 
     # Only for mother pdb, keep both chains
     motherChainB = motherPdb.child_list[0].child_dict['B']
-    motherPdb.child_list[0].detach_child('B')
-    nResi = len(motherChainB.child_list)
-    for j in xrange(0, nResi):
-        r = motherChainB.child_list[j]
-        r.id = (r.id[0], 
-                (baseRId + 1 + j),
-                r.id[2]) 
-        motherChain.add(r)
-    baseRId += nResi
+    motherModel = motherPdb.child_list[0]
+    motherModel.detach_child('B')
+    if movieMode:
+        movieChainID = 'B'
+    else:
+        nResi = len(motherChainB.child_list)
+        for j in xrange(0, nResi):
+            r = motherChainB.child_list[j]
+            r.id = (r.id[0], 
+                    (baseRId + 1 + j),
+                    r.id[2]) 
+            motherChain.add(r)
+        baseRId += nResi
 
     startingPoint = np.zeros(3)
 
@@ -99,18 +103,26 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None):
         
         childChain = pdbPair.child_list[0].child_dict['B']
         nResi = len(childChain.child_list)
-        for j in xrange(0, nResi):
-            r = childChain.child_list[j]
-            r.id = (r.id[0], 
-                    (baseRId + 1 + j),
-                    r.id[2]) 
-            motherChain.add(r)
+        if movieMode:
+            childChain.id = movieChainID
+            motherModel.add(childChain)
+
+            movieChainID = chr(ord(movieChainID) + 1)
+            # pauseCode()
+        else:
+            for j in xrange(0, nResi):
+                r = childChain.child_list[j]
+                r.id = (r.id[0], 
+                        (baseRId + 1 + j),
+                        r.id[2]) 
+                motherChain.add(r)
 
         baseRId += nResi
         motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
         startingPoint = np.dot(startingPoint, np.asarray(rel['rot'])) + rel['tran']
         print 'Pair[{}]:   {}---{}'.format(str(i).ljust(chainLenDigits),
             lastNode.ljust(16), currNode.rjust(16))
+
        
     if fRot is not None:
         motherPdb.transform(np.eye(3), -startingPoint)
@@ -121,10 +133,10 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None):
     else:
         savePdb(motherPdb, saveFile)
 
-def getXDBStat():
-    xdb = readJSON('res/xDB.json')
+def getXDBStat(xDB):
+    # xdb = readJSON('res/xDB.json')
 
-    pd = xdb['pairsData']
+    pd = xDB['pairsData']
     dists = []
     for s1 in pd.keys():
         for s2 in pd[s1].keys():

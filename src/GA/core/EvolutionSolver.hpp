@@ -2,25 +2,30 @@
 #define _EVOLUTIONSOLVER_HPP_
 
 #include "../data/TypeDefs.hpp"
-#include "../data/Gene.hpp"
+#include "../data/Chromosome.hpp"
 
 namespace elfin
 {
 
-typedef std::vector<Gene> Population;		// A population is a pool of genes
+typedef std::vector<Chromosome> Population;
 
 class EvolutionSolver
 {
 public:
-	EvolutionSolver(const RelaMat & rm, const Points3f & spec);
+	EvolutionSolver(const RelaMat & relaMat,
+	                const Points3f & spec,
+	                const RadiiList & radiiList,
+	                const float chromoLenDev,
+	                const float avgPairDist);
 	virtual ~EvolutionSolver() {};
 
 	void run(const ulong popSize, const ulong nIters);
-
 private:
-	const RelaMat myRelaMat;
-	const Points3f mySpec;
-	const float myGeneLenDev = 0.2f;
+	const RelaMat & myRelaMat;
+	const Points3f & mySpec;
+	const RadiiList & myRadiiList;
+	const float myChromoLenDev;
+	const uint myExpectedTargetLen;
 
 	double myStartTimeInUs = 0;
 	Population myPopulation;

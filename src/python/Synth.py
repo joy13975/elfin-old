@@ -20,16 +20,26 @@ def main():
 
     scale = 1.0
     outFile = (sys.argv[2] if len(sys.argv) > 2 else specFile)
-    outExt = outFile[outFile.rfind('.'):]
-    outFile = outFile.replace(outExt, suffixPdb(
-            'Synth', 
-            'Main',
-            scale, 
-            targetLen))
+
+    dotIndex = outFile.rfind('.')
+    if dotIndex == -1:
+    	outExt = ''
+    	outFile = outFile + suffixPdb(
+		            'Synth', 
+		            'Main',
+		            scale, 
+		            targetLen)
+    else:
+		outExt = outFile[dotIndex:]
+		outFile = outFile.replace(outExt, suffixPdb(
+		        'Synth', 
+		        'Main',
+		        scale, 
+		        targetLen))
 
     xDB = readJSON('res/xDB.json')
     makePdbFromNodes(xDB, spec['nodes'], 'res/centered_pdb/pair',
-        outFile)
+        outFile, movieMode=True)
             
 
 if __name__ == '__main__':

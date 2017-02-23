@@ -3,6 +3,8 @@ A computational protein design tool based on repeat module construction. This is
 
 The main idea is to use repeatable protein parts like rigid construction blocks and build a shape towards the user's defined shape, very much like Lego. However, there is a non-trivial interaction relationship between the repeat modules: not only are some not compatible with others, they also combine in different but rigid angles.
 
+![alt tag](res/gifs/6vjex8d.gif)
+
 ### Status
 
 10 Feb 2017: Stage 2/4 ongoing:

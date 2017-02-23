@@ -8,17 +8,18 @@ namespace elfin
 
 void JSONParser::parseDB(
     const std::string & filename,
-    RelaMat & relaMat,
-    NameIdMap & nameMap)
+    NameIdMap & nameMapOut,
+    RelaMat & relMatOut,
+    RadiiList & radiiListOut)
 {
 	JSON j = this->parse(filename);
-	if (relaMat.size() > 0)
-		wrn("JSONParser::parseDB(): argument relaMat is not empty!");
+	if (relMatOut.size() > 0)
+		wrn("JSONParser::parseDB(): argument relMatOut is not empty!");
 
-	relaMat.clear();
+	relMatOut.clear();
 	JSON pairsData = j["pairsData"];
 	const size_t dim = pairsData.size();
-	relaMat.resize(dim);
+	relMatOut.resize(dim);
 
 	// First we need the name-to-ID map
 	unsigned int id = 0;
@@ -29,13 +30,13 @@ void JSONParser::parseDB(
 		// JSON::iterator does not support offsetting,
 		// but we need the key() which is only available
 		// from JSON::iterator
-		nameMap[it.key()] = id;
-		RelaRow & row = relaMat.at(id);
+		nameMapOut[it.key()] = id;
+		RelaRow & row = relMatOut.at(id);
 		row.resize(dim, NULL);
-		id++;
 
-		dbg("Name-ID Pair: %s<->%d\n",
-		    it.key().c_str(), id);
+		dbg("Name-ID Pair: %s<->%d, neighbours: %d\n",
+		    it.key().c_str(), id, (*it).size());
+		id++;
 	}
 
 	// With the mame-to-ID map we can construct the
@@ -47,14 +48,14 @@ void JSONParser::parseDB(
 	for (JSON::iterator it = pairsData.begin();
 	        it != pairsData.end();
 	        ++it) {
-		id = nameMap[it.key()];
-		RelaRow & row = relaMat.at(id);
+		id = nameMapOut[it.key()];
+		RelaRow & row = relMatOut.at(id);
 
 		// Add neighbouring nodes
 		for (JSON::iterator innerIt = (*it).begin();
 		        innerIt != (*it).end();
 		        ++innerIt) {
-			const unsigned int innerId = nameMap[innerIt.key()];
+			const unsigned int innerId = nameMapOut[innerIt.key()];
 			prf("innerIt key: %s, id: %u, data: %s\n\n",
 			    innerIt.key().c_str(),
 			    innerId,
@@ -102,13 +103,25 @@ void JSONParser::parseDB(
 	{
 		for (int j = 0; j < dim; j++)
 		{
-			PairRelationship * pr = relaMat.at(i).at(j);
+			PairRelationship * pr = relMatOut.at(i).at(j);
 			if (pr != NULL)
 			{
-				prf("relaMat[%2d][%2d] is:\n%s\n",
+				prf("relMatOut[%2d][%2d] is:\n%s\n",
 				    i, j, pr->toString().c_str());
 			}
 		}
+	}
+
+	// Parse radii for collision checking
+	JSON singlesData = j["singlesData"];
+	for (JSON::iterator it = singlesData.begin();
+	        it != singlesData.end();
+	        ++it)
+	{
+		JSON & radii = (*it)["radii"];
+		radiiListOut.emplace_back(radii["avgAll"],
+		                          radii["maxCA"],
+		                          radii["maxHeavy"]);
 	}
 }
 

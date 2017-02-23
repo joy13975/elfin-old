@@ -60,11 +60,15 @@ $(EXE): $(OBJS)
 test: $(EXE)
 	./$(EXE)
 
+testMath: core/MathUtilsTests.cpp jutil/src/util.c
+	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o $@ -D_TEST_MATHUTILS
+	./$@
+
 .PHONY: all clean
 
 all: $(EXE)
 
 clean:
-	rm -rf $(EXE) $(OBJ_DIR)/* $(OBJ_DIR) *.dSYM .DS_Store *.dec *.bin
+	rm -rf $(EXE) testMath $(OBJ_DIR)/* $(OBJ_DIR) *.dSYM .DS_Store *.dec *.bin
 
 -include $(DEPS)
