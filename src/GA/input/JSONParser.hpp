@@ -21,8 +21,9 @@ public:
 
 	void parseDB(
 	    const std::string & filename,
+	    NameIdMap & nameMapOut,
 	    RelaMat & relMatOut,
-	    NameIdMap & nameMapOut);
+	    RadiiList & radiiListOut);
 
 	Points3f parseSpec(const std::string & filename);
 

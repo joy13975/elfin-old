@@ -9,19 +9,26 @@ namespace elfin
 
 // Constructors
 
-EvolutionSolver::EvolutionSolver(const RelaMat & _relaMat, const Points3f & _spec) :
-	myRelaMat(_relaMat), mySpec(_spec)
+EvolutionSolver::EvolutionSolver(const RelaMat & relaMat,
+                                 const Points3f & spec,
+                                 const RadiiList & radiiList,
+                                 const float chromoLenDev,
+                                 const float avgPairDist) :
+	myRelaMat(relaMat),
+	mySpec(spec),
+	myRadiiList(radiiList),
+	myChromoLenDev(chromoLenDev),
+	myExpectedTargetLen(Chromosome::calcExpectedLength(spec, avgPairDist))
 {
 }
 
 // Public methods
 
-void EvolutionSolver::run(const ulong popSize, const ulong nIters)
+void
+EvolutionSolver::run(const ulong popSize,
+                     const ulong nIters)
 {
 	this->printStartMsg(popSize, nIters);
-
-	for (auto & p : mySpec)
-		dbg("Spec Point: %s\n", p.toString().c_str());
 
 	this->startTimer();
 
@@ -41,7 +48,8 @@ void EvolutionSolver::run(const ulong popSize, const ulong nIters)
 
 // Private methods
 
-void EvolutionSolver::evolvePopulation()
+void
+EvolutionSolver::evolvePopulation()
 {
 	// Make new generation by discarding unfit
 	// genes and mutating/reproducing fit genes
@@ -49,57 +57,74 @@ void EvolutionSolver::evolvePopulation()
 	wrn("TODO: population evolution\n");
 }
 
-void EvolutionSolver::rankPopulation()
+void
+EvolutionSolver::rankPopulation()
 {
 	// Sort population according to fitness
 	// (low score = more fit)
 	wrn("TODO: population ranking\n");
 }
 
-void EvolutionSolver::scorePopulation()
+void
+EvolutionSolver::scorePopulation()
 {
-	for (auto & gene : myPopulation)
-		gene.score(mySpec);
+	for (auto & chromo : myPopulation)
+		chromo.score(mySpec);
 }
 
-void EvolutionSolver::initPopulation(const ulong popSize)
+void
+EvolutionSolver::initPopulation(const ulong popSize)
 {
-	const uint expLen = Gene::calcExpectedLength(mySpec);
+	const uint minLen = myExpectedTargetLen * (1 - myChromoLenDev);
+	const uint maxLen = myExpectedTargetLen * (1 + myChromoLenDev);
 
 	myPopulation = Population();
+	myPopulation.reserve(popSize);
 	for (int i = 0; i < popSize; i++)
 		myPopulation.emplace_back(
-		    Gene::randomChromosome(
-		        expLen,
-		        myGeneLenDev,
-		        myRelaMat)
+		    Chromosome::genRandomGenes(
+		        minLen,
+		        maxLen,
+		        myRelaMat,
+		        myRadiiList)
 		);
 }
 
-void EvolutionSolver::printStartMsg(const ulong popSize, const ulong nIters)
+void
+EvolutionSolver::printStartMsg(const ulong popSize,
+                               const ulong nIters)
 {
+	for (auto & p : mySpec)
+		dbg("Spec Point: %s\n", p.toString().c_str());
+
+	msg("Expecting length: %u\n", myExpectedTargetLen);
+	msg("Using deviation allowance: %.1f%%\n", myChromoLenDev * 100);
+
 	// Want auto significant figure detection with streams
 	std::ostringstream psStr;
 	psStr << (float) (popSize / 1000.0f) << "k";
 	std::ostringstream niStr;
 	niStr << (float) (nIters / 1000.0f) << "k";
 
-	msg("EvolutionSolver running with popSize %s, %s iterations\n",
+	msg("EvolutionSolver starting with popSize %s, %s iterations\n",
 	    psStr.str().c_str(), niStr.str().c_str());
 }
 
-void EvolutionSolver::printEndMsg()
+void
+EvolutionSolver::printEndMsg()
 {
 	msg("EvolutionSolver finished: ");
 	this->printTiming();
 }
 
-void EvolutionSolver::startTimer()
+void
+EvolutionSolver::startTimer()
 {
 	myStartTimeInUs = get_timestamp_us();
 }
 
-void EvolutionSolver::printTiming()
+void
+EvolutionSolver::printTiming()
 {
 	const double timeElapsedInUs = get_timestamp_us() - myStartTimeInUs;
 	const uint minutes = std::floor(timeElapsedInUs / 1e6 / 60.0f);

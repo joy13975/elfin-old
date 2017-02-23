@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import glob
-from Designer import *
 import Greedy
 from utils import *
 import time
@@ -22,11 +21,12 @@ def main():
 
     	for designer in designers:
             designerName = designer.__class__.__name__
+            inputName = jsonFile.replace('.json', '')
             print 'Benchmarking {} on {}, target length={}'.format(
-                designerName, jsonFile, targetLen)
+                designerName, inputName, targetLen)
 
             startTime = time.clock()
-            (nodes,shape,score,fRot) = designer.design(spec, targetLen)
+            (nodes,shape,score,fRot) = designer.design(inputName, spec, targetLen)
             print "{:.2f}s, score: {}".format(time.clock() - startTime, score)
 
             if nodes == spec['nodes']:

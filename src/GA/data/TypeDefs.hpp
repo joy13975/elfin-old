@@ -15,12 +15,24 @@ namespace elfin
 class PairRelationship;
 
 // Shorthands
+typedef std::map<std::string, uint> NameIdMap;
 typedef std::vector<PairRelationship *> RelaRow;
 typedef std::vector<RelaRow> RelaMat;
-typedef std::map<std::string, unsigned int> NameIdMap;
+
 typedef std::vector<float>::const_iterator FloatConstIterator;
 
 typedef std::vector<std::string> Solution;	// A solution is a series of node names
+
+struct Radii
+{
+	const float avgAll;
+	const float maxCA;
+	const float maxHeavy;
+	Radii(float aa, float mca, float mh) :
+		avgAll(aa), maxCA(mca), maxHeavy(mh)
+	{}
+};
+typedef std::vector<Radii> RadiiList;
 
 struct Vector3f
 {
@@ -28,6 +40,9 @@ struct Vector3f
 
 	Vector3f() :
 		x(0), y(0), z(0) {}
+
+	Vector3f(float _x, float _y, float _z) :
+		x(_x), y(_y), z(_z) {}
 
 	Vector3f(const std::vector<float> & v) :
 		Vector3f(v.begin(), v.end())
@@ -52,12 +67,37 @@ struct Vector3f
 		return ss.str();
 	}
 };
-
 typedef Vector3f Point3f;
+
+struct Gene
+{
+	uint nodeId;
+	Point3f com;
+	Gene(const uint _nodeId,
+	     const Point3f _com) :
+		nodeId(_nodeId),
+		com(_com)
+	{}
+	Gene(const uint _nodeId,
+	     const float x,
+	     const float y,
+	     const float z) :
+		nodeId(_nodeId),
+		com(x, y, z)
+	{}
+};
+typedef std::vector<Gene> Genes;
 
 struct Mat3x3
 {
 	Vector3f rows[3];
+
+	Mat3x3(Vector3f _rows[3])
+	{
+		rows[0] = _rows[0];
+		rows[1] = _rows[1];
+		rows[2] = _rows[2];
+	}
 
 	Mat3x3(const std::vector<float> & v) :
 		Mat3x3(v.begin(), v.end())

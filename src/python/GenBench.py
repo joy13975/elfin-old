@@ -14,9 +14,11 @@ try:
 except ImportError:
     print 'Could not import pymol cmd. Not running as pymol plugin...'
 
-elfinDir = '/Users/joy/src/elfin/'
+# Not sure how to just figure out where elfin is located
+# So we need to load our library this way
+elfinPyLibDir = '/Users/joy/src/elfin/src/python/'
 import imp
-utils = imp.load_source('utils', elfinDir + '/utils.py')
+utils = imp.load_source('utils', elfinPyLibDir + '/utils.py')
 
 def main():
     dbFile              = elfinDir + 'res/xDB.json'
