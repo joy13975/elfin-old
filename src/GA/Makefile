@@ -54,21 +54,31 @@ $(OBJ_DIR)/%.o: %.$1
 endef
 $(foreach EXT,$(EXTS),$(eval $(call make_rule,$(EXT))))
 
+FORCE:
+
 $(EXE): $(OBJS)
 	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 test: $(EXE)
 	./$(EXE)
 
-testMath: core/MathUtilsTests.cpp jutil/src/util.c
-	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o $@ -D_TEST_MATHUTILS
-	./$@
+compileMathTest: core/MathUtils.cpp jutil/src/util.c
+	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o mathTest -D_TEST_MATHUTILS
+
+testMath: compileMathTest FORCE
+	./mathTest
+
+compileKabschTest: core/Kabsch.cpp jutil/src/util.c
+	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o kabschTest -D_TEST_KABSCH
+
+testKabsch: compileKabschTest FORCE
+	./kabschTest
 
 .PHONY: all clean
 
 all: $(EXE)
 
-clean:
+clean: FORCE
 	rm -rf $(EXE) testMath $(OBJ_DIR)/* $(OBJ_DIR) *.dSYM .DS_Store *.dec *.bin
 
 -include $(DEPS)
