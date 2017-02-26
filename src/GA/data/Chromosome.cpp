@@ -95,7 +95,6 @@ Genes Chromosome::genRandomGenes(
 
 			// Compute whether each neighbour is colliding
 			const RelaRow & rr = relaMat.at(currGene.nodeId);
-			prf("\nWheel for node=%d: \n", currGene.nodeId);
 			for (int i = 0; i < dim; i++)
 			{
 				const PairRelationship * prPtr = rr.at(i);
@@ -121,7 +120,6 @@ Genes Chromosome::genRandomGenes(
 			// Pick a random valid neighbour
 			const uint nextNodeId = rouletteWheel.at(std::rand() %
 			                        rouletteWheel.size());
-			prf("Pick node: %d\n", nextNodeId);
 
 			const PairRelationship * nextNodePR = rr.at(nextNodeId);
 

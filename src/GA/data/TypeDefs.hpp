@@ -18,10 +18,11 @@ class PairRelationship;
 typedef std::map<std::string, uint> NameIdMap;
 typedef std::vector<PairRelationship *> RelaRow;
 typedef std::vector<RelaRow> RelaMat;
-
 typedef std::vector<float>::const_iterator FloatConstIterator;
-
 typedef std::vector<std::string> Solution;	// A solution is a series of node names
+
+template <typename T>
+using Matrix = std::vector<std::vector<T>>;
 
 struct Radii
 {
@@ -66,8 +67,35 @@ struct Vector3f
 		ss << "v3f[" << x << ", " << y << ", " << z << ']';
 		return ss.str();
 	}
+
+	bool approximates(const Vector3f & ref, double tolerance = 1e-5)
+	{
+		if (this->x != ref.x ||
+		        this->y != ref.y ||
+		        this->z != ref.z)
+		{
+			const float dx = this->x - ref.x;
+			const float dy = this->y - ref.y;
+			const float dz = this->z - ref.z;
+			wrn("Point3f diffs: %.8f, %.8f, %.8f\n",
+			    dx, dy, dz);
+
+			if (std::abs(dx) > tolerance ||
+			        std::abs(dy) > tolerance ||
+			        std::abs(dz) > tolerance)
+			{
+				err("Difference exceeds tolerance (=%.10f)!\n",
+				    tolerance);
+
+				return false;
+			}
+		}
+
+		return true;
+	}
 };
 typedef Vector3f Point3f;
+typedef std::vector<Point3f> Points3f;
 
 struct Gene
 {
@@ -130,8 +158,6 @@ struct Mat3x3
 		return ss.str();
 	}
 };
-
-typedef std::vector<Point3f> Points3f;
 
 } // namespace elfin
 
