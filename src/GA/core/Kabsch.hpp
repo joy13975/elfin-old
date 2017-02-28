@@ -7,12 +7,20 @@
 
 namespace elfin
 {
+
+float
+kabschScore(
+    const Genes & genes,
+    Points3f ref);
+
+// A Wrapper to call the a bit more complicated Rosetta version
 bool Kabsch(
     Points3f const & mobile,
     Points3f const & ref,
     Matrix<double> & rot,
     Vector3f & tran,
-    double & rms);
+    double & rms,
+    int mode = 1);
 
 bool RosettaKabsch(
     std::vector < std::vector < double > > const & x,
