@@ -54,13 +54,13 @@ $(OBJ_DIR)/%.o: %.$1
 endef
 $(foreach EXT,$(EXTS),$(eval $(call make_rule,$(EXT))))
 
-FORCE:
-
 $(EXE): $(OBJS)
 	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 test: $(EXE)
 	./$(EXE)
+
+FORCE:
 
 compileMathTest: core/MathUtils.cpp data/Geometry.cpp jutil/src/util.c
 	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o mathTest -D_TEST_MATHUTILS

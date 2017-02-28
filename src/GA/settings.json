@@ -2,7 +2,13 @@
 	"inputFile": "../../bm/l10/6vjex8d.json",
 	"xDBFile": "../../res/xDB.json",
 	"outputFile": "./test.json",
-	"popSize": 1,
-	"nIters": 1,
-	"chromoLenDev": 0.2
+
+	"chromoLenDev": 0.2,
+	"randSeed": "0xbaad1337",
+
+	"gaPopSize": 10000,
+	"gaIters": 100,
+	"gaSurviveRate": 0.1,
+	"gaCrossRate": 0.7,
+	"gaMutateRate": 0.2
 }

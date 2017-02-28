@@ -9,6 +9,7 @@ namespace elfin
 void JSONParser::parseDB(
     const std::string & filename,
     NameIdMap & nameMapOut,
+    IdNameMap & inmOut,
     RelaMat & relMatOut,
     RadiiList & radiiListOut)
 {
@@ -31,6 +32,8 @@ void JSONParser::parseDB(
 		// but we need the key() which is only available
 		// from JSON::iterator
 		nameMapOut[it.key()] = id;
+		inmOut[id] = it.key();
+
 		RelaRow & row = relMatOut.at(id);
 		row.resize(dim, NULL);
 
@@ -61,7 +64,7 @@ void JSONParser::parseDB(
 			    innerId,
 			    innerIt->dump().c_str());
 
-			panicIf(
+			panic_if(
 			    row.at(innerId) != NULL,
 			    "Initial PairRelationship must be NULL - implementation error?\n");
 
@@ -135,8 +138,8 @@ Points3f JSONParser::parseSpec(
 		for (auto & part3d : point3d)
 			data.push_back(part3d.get<float>());
 
-	panicIf(data.size() % 3 != 0,
-	        "Input data not in the form of 3D tuple values!\n");
+	panic_if(data.size() % 3 != 0,
+	         "Input data not in the form of 3D tuple values!\n");
 
 	Points3f spec;
 
@@ -150,8 +153,8 @@ JSON JSONParser::parse(const std::string & filename)
 {
 	std::ifstream inputStream(filename);
 
-	panicIf(!inputStream.is_open(),
-	        "Could not open file: \"%s\"\n", filename.c_str());
+	panic_if(!inputStream.is_open(),
+	         "Could not open file: \"%s\"\n", filename.c_str());
 
 	JSON j;
 	inputStream >> j;

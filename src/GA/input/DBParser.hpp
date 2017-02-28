@@ -19,6 +19,7 @@ public:
 	virtual void parseDB(
 	    const std::string & filename,
 	    NameIdMap & nameMapOut,
+	    IdNameMap & inmOut,
 	    RelaMat & relMatOut,
 	    RadiiList & radiiListOut) = 0;
 

@@ -15,27 +15,31 @@ public:
 	EvolutionSolver(const RelaMat & relaMat,
 	                const Points3f & spec,
 	                const RadiiList & radiiList,
-	                const float chromoLenDev,
-	                const float avgPairDist);
+	                const OptionPack & options);
 	virtual ~EvolutionSolver() {};
 
-	void run(const ulong popSize, const ulong nIters);
+	void run();
 private:
 	const RelaMat & myRelaMat;
 	const Points3f & mySpec;
 	const RadiiList & myRadiiList;
-	const float myChromoLenDev;
-	const uint myExpectedTargetLen;
+	const OptionPack & myOptions;
+
+	uint myExpectedTargetLen;
+	ulong mySruviverCutoff;
+	ulong myCrossCutoff;
+	ulong myMutateCutoff;
 
 	double myStartTimeInUs = 0;
 	Population myPopulation;
 
+	void pruneColliders();
 	void evolvePopulation();
 	void rankPopulation();
 	void scorePopulation();
-	void initPopulation(const ulong popSize);
+	void initPopulation();
 
-	void printStartMsg(const ulong popSize, const ulong nIters);
+	void printStartMsg();
 	void printEndMsg();
 	void startTimer();
 	void printTiming();
