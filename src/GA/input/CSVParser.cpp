@@ -80,14 +80,14 @@ Points3f CSVParser::parseSpec(const std::string & filename)
 {
 	std::ifstream inputStream(filename);
 
-	panicIf(!inputStream.is_open(),
+	panic_if(!inputStream.is_open(),
 	        "Could not open file: \"%s\"\n", filename.c_str());
 
 	std::vector<float> data;
 	for (LokiAstari::CSVIterator loop(' ', inputStream); loop != LokiAstari::CSVIterator(); ++loop)
 	{
 		const LokiAstari::CSVRow & row = (*loop);
-		panicIf(
+		panic_if(
 		    row.getNumParts() != 3, /* 3D points must be 3 values */
 		    "Invalid row in spec file: \"%s\" - must have 3 components\n",
 		    row.getLine().c_str());

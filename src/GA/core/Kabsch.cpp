@@ -35,95 +35,94 @@ points3fToVectors(Points3f const & pts)
 	return out;
 }
 
+void
+upsample(
+    Points3f & pts1,
+    Points3f & pts2)
+{
+	// Upsample the shape with fewer points
+	const bool pts1IsLonger = pts1.size() > pts2.size();
+	const size_t N = pts1IsLonger ? pts1.size() : pts2.size();
+
+	// Use a proportion based algorithm because
+	// we want to assume both shapes are roughly
+	// the same length, but not exactly
+	const Points3f & morePoints = pts1IsLonger ? pts1 : pts2;
+	const Points3f & fewerPoints = pts1IsLonger ? pts2 : pts1;
+
+	// N === morePoints.size()
+
+	// Compute longer shape total length
+	float mpTotalLength = 0.0f;
+	for (int i = 1; i < N; i++)
+		mpTotalLength += morePoints.at(i).distTo(morePoints.at(i - 1));
+
+	float fpTotalLength = 0.0f;
+	for (int i = 1; i < fewerPoints.size(); i++)
+		fpTotalLength += fewerPoints.at(i).distTo(fewerPoints.at(i - 1));
+
+	// Upsample fewerPoints
+	Points3f upsampled;
+
+	// First and last points are the same
+	upsampled.push_back(fewerPoints.at(0));
+
+	float mpProportion = 0.0f, fpProportion = 0.0f;
+	int mpi = 1;
+	for (int i = 1; i < fewerPoints.size(); i++)
+	{
+		const Point3f & baseFpPoint = fewerPoints.at(i - 1);
+		const Point3f & nextFpPoint = fewerPoints.at(i);
+		const float baseFpProportion = fpProportion;
+		const float fpSegment = nextFpPoint.distTo(baseFpPoint)
+		                        / fpTotalLength;
+		const Vector3f vec = nextFpPoint - baseFpPoint;
+
+		fpProportion += fpSegment;
+		while (mpProportion <= fpProportion && mpi < N)
+		{
+			const float mpSegment =
+			    morePoints.at(mpi).distTo(morePoints.at(mpi - 1))
+			    / mpTotalLength;
+
+			if (mpProportion + mpSegment > fpProportion)
+				break;
+			mpProportion += mpSegment;
+
+			const float s = (mpProportion - baseFpProportion)
+			                / fpSegment;
+			upsampled.push_back(baseFpPoint + (vec * s));
+			
+			mpi++;
+		}
+	}
+
+	// Sometimes the last node is automatically added
+	if (upsampled.size() < N)
+		upsampled.push_back(fewerPoints.back());
+
+	pts1IsLonger ? (pts2 = upsampled) : (pts1 = upsampled);
+}
+
 float
 kabschScore(
     const Genes & genes,
     Points3f ref)
 {
-	const size_t gN = genes.size();
-	const size_t rN = ref.size();
-
 	// First make a copy of genes into points
 	Points3f mobile;
-	mobile.resize(gN);
-	for (int i = 0; i < gN; i++)
-		mobile.at(i) = genes.at(i).com;
+	mobile.resize(genes.size());
+	for (int i = 0; i < genes.size(); i++)
+		mobile.at(i) = genes.at(i).com();
 
-	if (gN != rN)
-	{
-		// Upsample the shape with fewer points
-		const bool refIsLonger = rN > gN;
-		const size_t N = refIsLonger ? rN : gN;
-
-		// Use a proportion based algorithm because
-		// we want to assume both shapes are roughly
-		// the same length, but not exactly
-		const Points3f & morePoints = refIsLonger ? ref : mobile;
-		const Points3f & fewerPoints = refIsLonger ? mobile : ref;
-
-		// N === morePoints.size()
-
-		// Compute longer shape total length
-		float mpTotalLength = 0.0f;
-		for (int i = 1; i < N; i++)
-			mpTotalLength += morePoints.at(i).distTo(morePoints.at(i - 1));
-
-		float fpTotalLength = 0.0f;
-		for (int i = 1; i < fewerPoints.size(); i++)
-			fpTotalLength += fewerPoints.at(i).distTo(fewerPoints.at(i - 1));
-
-		msg("Longer N: %d, shorter N: %d\n", morePoints.size(), fewerPoints.size());
-		// Upsample fewerPoints
-		Points3f upsampled;
-
-		// First and last points are the same
-		upsampled.push_back(fewerPoints.at(0));
-
-		float mpProportion = 0.0f, fpProportion = 0.0f;
-		int mpi = 1;
-		for (int i = 1; i < fewerPoints.size(); i++)
-		{
-			const Point3f & baseFpPoint = fewerPoints.at(i - 1);
-			const Point3f & nextFpPoint = fewerPoints.at(i);
-			const float baseFpProportion = fpProportion;
-			const float fpSegment = nextFpPoint.distTo(baseFpPoint)
-			                        / fpTotalLength;
-			const Vector3f vec = nextFpPoint - baseFpPoint;
-
-			fpProportion += fpSegment;
-			while (mpProportion <= fpProportion && mpi < N)
-			{
-				const float mpSegment =
-				    morePoints.at(mpi).distTo(morePoints.at(mpi - 1))
-				    / mpTotalLength;
-
-				if (mpProportion + mpSegment > fpProportion)
-					break;
-
-				mpProportion += mpSegment;
-				const float s = (mpProportion - baseFpProportion)
-				                / fpSegment;
-				upsampled.push_back(baseFpPoint + (vec * s));
-				mpi++;
-			}
-		}
-
-		upsampled.push_back(fewerPoints.back());
-
-		if (refIsLonger)
-		{
-			mobile = upsampled;
-		}
-		else
-		{
-			ref = upsampled;
-		}
-	}
+	if (genes.size() != ref.size())
+		upsample(ref, mobile);
 
 	// Run Kabsch to get RMS
 	Matrix<double> rot;
 	Vector3f tran;
 	double rms;
+
 	const bool retVal = Kabsch(mobile, ref, rot, tran, rms, 0);
 
 	panic_if(!retVal, "Kabsch failed!\n");
@@ -531,6 +530,22 @@ int main(int argc, const char ** argv)
 	if (!tran.approximates(actualTran))
 		failCount++;
 
+	// Test upsampling
+	Points3f Afewer = A;
+	Afewer.erase(A.begin() + (A.size() / 2),
+	             A.begin() + (A.size() / 2) + 1);
+
+	if (Afewer.size() == B.size())
+		die("Afewer and B sizes have not been made different!\n");
+	msg("Afewer size: %d, B size: %d\n", Afewer.size(), B.size());
+
+	upsample(Afewer, B);
+	if (Afewer.size() != B.size())
+	{
+		failCount++;
+		wrn("Upsampling failed! Lengths: Afewer=%d B=%d\n",
+		    Afewer.size(), B.size());
+	}
 
 	// Test Kabsch scoring
 	Genes G;

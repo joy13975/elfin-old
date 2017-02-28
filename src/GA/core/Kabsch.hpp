@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "../data/TypeDefs.hpp"
+#include "../data/Gene.hpp"
 
 namespace elfin
 {

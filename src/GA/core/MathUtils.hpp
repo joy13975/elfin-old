@@ -5,6 +5,7 @@
 #include <cstdlib>
 
 #include "../data/TypeDefs.hpp"
+#include "../data/Gene.hpp"
 
 // COLLISION_MEASURE is one of {avgAll, maxHeavy, maxCA}
 #define COLLISION_MEASURE maxHeavy
@@ -22,7 +23,7 @@ collides(const uint newId,
 	const int lim = genes.size() - 2;
 	for (int i = 0; i < lim; i++)
 	{
-		const float comDist = genes.at(i).com.distTo(newCOM);
+		const float comDist = genes.at(i).com().distTo(newCOM);
 		const float requiredComDist = radiiList.at(i).COLLISION_MEASURE +
 		                              radiiList.at(newId).COLLISION_MEASURE;
 		if (comDist < requiredComDist)

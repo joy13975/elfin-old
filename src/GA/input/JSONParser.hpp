@@ -22,6 +22,7 @@ public:
 	void parseDB(
 	    const std::string & filename,
 	    NameIdMap & nameMapOut,
+	    IdNameMap & inmOut,
 	    RelaMat & relMatOut,
 	    RadiiList & radiiListOut);
 
