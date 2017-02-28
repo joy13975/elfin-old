@@ -22,14 +22,15 @@ Chromosome::Chromosome(const Genes & geneRef) :
 
 void Chromosome::score(const Points3f & ref)
 {
+	myScore = kabschScore(myGenes, ref);
 	// Use Kabsch to move genes
-	superimpose(ref);
+	// superimpose(ref);
 
 	// Use sum of distances - not different effect from RMSD
-	myScore = 0.0f;
+	// myScore = 0.0f;
 
-	for (auto & g : myGenes)
-		myScore += minDistFromLine(g.com, ref);
+	// for (auto & g : myGenes)
+	// 	myScore += minDistFromLine(g.com, ref);
 }
 
 /*

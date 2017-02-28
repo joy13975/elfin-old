@@ -5,6 +5,7 @@
 
 #include "Kabsch.hpp"
 #include "util.h"
+#include "MathUtils.hpp"
 
 namespace elfin
 {
@@ -34,13 +35,110 @@ points3fToVectors(Points3f const & pts)
 	return out;
 }
 
+float
+kabschScore(
+    const Genes & genes,
+    Points3f ref)
+{
+	const size_t gN = genes.size();
+	const size_t rN = ref.size();
+
+	// First make a copy of genes into points
+	Points3f mobile;
+	mobile.resize(gN);
+	for (int i = 0; i < gN; i++)
+		mobile.at(i) = genes.at(i).com;
+
+	if (gN != rN)
+	{
+		// Upsample the shape with fewer points
+		const bool refIsLonger = rN > gN;
+		const size_t N = refIsLonger ? rN : gN;
+
+		// Use a proportion based algorithm because
+		// we want to assume both shapes are roughly
+		// the same length, but not exactly
+		const Points3f & morePoints = refIsLonger ? ref : mobile;
+		const Points3f & fewerPoints = refIsLonger ? mobile : ref;
+
+		// N === morePoints.size()
+
+		// Compute longer shape total length
+		float mpTotalLength = 0.0f;
+		for (int i = 1; i < N; i++)
+			mpTotalLength += morePoints.at(i).distTo(morePoints.at(i - 1));
+
+		float fpTotalLength = 0.0f;
+		for (int i = 1; i < fewerPoints.size(); i++)
+			fpTotalLength += fewerPoints.at(i).distTo(fewerPoints.at(i - 1));
+
+		msg("Longer N: %d, shorter N: %d\n", morePoints.size(), fewerPoints.size());
+		// Upsample fewerPoints
+		Points3f upsampled;
+
+		// First and last points are the same
+		upsampled.push_back(fewerPoints.at(0));
+
+		float mpProportion = 0.0f, fpProportion = 0.0f;
+		int mpi = 1;
+		for (int i = 1; i < fewerPoints.size(); i++)
+		{
+			const Point3f & baseFpPoint = fewerPoints.at(i - 1);
+			const Point3f & nextFpPoint = fewerPoints.at(i);
+			const float baseFpProportion = fpProportion;
+			const float fpSegment = nextFpPoint.distTo(baseFpPoint)
+			                        / fpTotalLength;
+			const Vector3f vec = nextFpPoint - baseFpPoint;
+
+			fpProportion += fpSegment;
+			while (mpProportion <= fpProportion && mpi < N)
+			{
+				const float mpSegment =
+				    morePoints.at(mpi).distTo(morePoints.at(mpi - 1))
+				    / mpTotalLength;
+
+				if (mpProportion + mpSegment > fpProportion)
+					break;
+
+				mpProportion += mpSegment;
+				const float s = (mpProportion - baseFpProportion)
+				                / fpSegment;
+				upsampled.push_back(baseFpPoint + (vec * s));
+				mpi++;
+			}
+		}
+
+		upsampled.push_back(fewerPoints.back());
+
+		if (refIsLonger)
+		{
+			mobile = upsampled;
+		}
+		else
+		{
+			ref = upsampled;
+		}
+	}
+
+	// Run Kabsch to get RMS
+	Matrix<double> rot;
+	Vector3f tran;
+	double rms;
+	const bool retVal = Kabsch(mobile, ref, rot, tran, rms, 0);
+
+	panic_if(!retVal, "Kabsch failed!\n");
+
+	return rms;
+}
+
 // A Wrapper to call the a bit more complicated Rosetta version
 bool Kabsch(
-    Points3f const & mobile,
-    Points3f const & ref,
+    const Points3f & mobile,
+    const Points3f & ref,
     Matrix<double> & rot,
     Vector3f & tran,
-    double & rms)
+    double & rms,
+    int mode)
 {
 	Matrix<double> xx = points3fToVectors(mobile);
 	Matrix<double> yy = points3fToVectors(ref);
@@ -54,96 +152,12 @@ bool Kabsch(
 			row.resize(3);
 
 	const size_t n = mobile.size();
-	const int mode = 1; // want rot and tran, not just rms
 
-	const bool retval = RosettaKabsch(xx, yy, n, mode, &rms, tt, rot);
+	const bool retVal = RosettaKabsch(xx, yy, n, mode, &rms, tt, rot);
 	tran = Vector3f(std::vector<float>(tt.begin(), tt.end()));
 
-	return retval;
+	return retVal;
 }
-
-// void
-// convert_xyz_to_vector(
-//     numeric::xyzVector <core::Real> const & x,
-//     std::vector <core::Real> & xx) {
-// 	xx.resize(3);
-// 	xx[0] = x.x();
-// 	xx[1] = x.y();
-// 	xx[2] = x.z();
-// }
-
-// void
-// convert_xyz_to_matrix(
-//     numeric::xyzMatrix <core::Real> const & x,
-//     std::vector <std::vector <core::Real>>& xx) {
-// 	xx.resize(3);
-// 	for ( Size i = 0; i < 3; ++i ) {
-// 		xx[i].resize(3);
-// 		for ( Size j = 0; j < 3; ++j ) {
-// 			xx[i][j] = x(i + 1, j + 1);
-// 		}
-// 	}
-// }
-
-
-// void
-// convert_vector_to_xyz(
-//     std::vector <core::Real> const & x,
-//     numeric::xyzVector <core::Real> & xx) {
-// 	xx.x() = x[0];
-// 	xx.y() = x[1];
-// 	xx.z() = x[2];
-// }
-// void
-// convert_matrix_to_xyz(
-//     std::vector <std::vector <core::Real>>const & x,
-//     numeric::xyzMatrix <core::Real> & xx) {
-// 	for ( Size i = 0; i < 3; ++i ) {
-// 		for ( Size j = 0; j < 3; ++j ) {
-// 			xx(i + 1, j + 1) = x[i][j];
-// 		}
-// 	}
-// }
-
-// void
-// convert_xyz_v_to_vectors(
-//     std::vector<numeric::xyzVector <core::Real>>const & x,
-//     std::vector<std::vector<double>> & xx) {
-// 	xx.resize(x.size());
-// 	for ( Size i = 0; i < xx.size(); ++i ) {
-// 		convert_xyz_to_vector(x[i], xx[i]);
-// 	}
-// }
-
-
-// // wrapper is a temp fix -yfsong
-// bool
-// YFSongKabsch(
-//     std::vector<numeric::xyzVector <core::Real>>const & x,
-//     std::vector<numeric::xyzVector <core::Real>>const & y,
-//     int const n,
-//     int const mode,
-//     double *rms,
-//     numeric::xyzVector <core::Real> & t,
-//     numeric::xyzMatrix <core::Real> & u ) {
-// 	std::vector<std::vector<double>> xx;
-// 	convert_xyz_v_to_vectors(x, xx);
-
-// 	std::vector<std::vector<double>> yy;
-// 	convert_xyz_v_to_vectors(y, yy);
-
-// 	std::vector<double>tt;
-// 	convert_xyz_to_vector(t, tt);
-
-// 	std::vector<std::vector<double>> uu;
-// 	convert_xyz_to_matrix(u, uu);
-
-// 	bool retval = RosettaKabsch(xx, yy, n, mode, rms, tt, uu);
-// 	convert_vector_to_xyz(tt, t);
-// 	convert_matrix_to_xyz(uu, u);
-
-// 	return retval;
-// }
 
 // Implemetation of Kabsch algoritm for finding the best rotation matrix
 // ---------------------------------------------------------------------------
@@ -479,27 +493,28 @@ int main(int argc, const char ** argv)
 		Point3f(-6.43013158961009, -9.12801538874479, 0.785828466111815),
 	};
 
-	Points3f A(arrA, arrA + sizeof(arrA) / sizeof(arrA[0]));
-	Points3f B(arrB, arrB + sizeof(arrB) / sizeof(arrB[0]));
-	Matrix<double> rot;
-	Vector3f tran;
-	double rms;
-
-	const bool ok = Kabsch(A, B, rot, tran, rms);
-
-	msg("Result: %s\n", ok ? "ok" : "Kabsch failed");
-
-	unsigned int failCount = 0;
-
 	const Point3f actualR[] =
 	{
 		Point3f( 0.523673403299203, -0.276948392922051, -0.805646171923458),
 		Point3f(-0.793788382691122, -0.501965361762521, -0.343410511043611),
 		Point3f(-0.309299482996081, 0.819347522879342, -0.482704326238996),
 	};
+
 	const Vector3f actualTran(-1.08234396236629,
 	                          5.08395199432057,
 	                          -13.0170407784248);
+
+	Points3f A(arrA, arrA + sizeof(arrA) / sizeof(arrA[0]));
+	Points3f B(arrB, arrB + sizeof(arrB) / sizeof(arrB[0]));
+	Matrix<double> rot;
+	Vector3f tran;
+	double rms;
+
+	unsigned int failCount = 0;
+
+	// Test Kabsch rotation and translation
+	const bool retVal = Kabsch(A, B, rot, tran, rms);
+	msg("Kabsch call retVal: %s\n", retVal ? "ok" : "failed");
 
 	msg("Rot:\n");
 	for (int i = 0; i < rot.size(); i++)
@@ -516,10 +531,69 @@ int main(int argc, const char ** argv)
 	if (!tran.approximates(actualTran))
 		failCount++;
 
+
+	// Test Kabsch scoring
+	Genes G;
+	for (int i = 0; i < A.size(); i++)
+		G.push_back(Gene(i, A.at(i)));
+
+	Point3f B0Copy = B.at(0);
+	msg("Ref(B[0]) before scoring: %s\n",
+	    B0Copy.toString().c_str());
+
+	float score = kabschScore(G, B);
+	msg("A-B Score: %.10f\n", score);
+	if (!float_approximates(score, 19195.6699218750))
+		failCount++;
+
+	msg("Ref(B[0]) after scoring: %s\n",
+	    B.at(0).toString().c_str());
+	if (!B.at(0).approximates(B0Copy))
+		failCount++;
+
+
+	// Test scoring identical shapes
+	G.clear();
+	for (int i = 0; i < B.size(); i++)
+		G.push_back(Gene(i, B.at(i)));
+
+	score = kabschScore(G, B);
+
+	msg("B-B Score: %.10f\n", score);
+	if (!float_approximates(score, 0.0))
+		failCount++;
+
+
+	// Test scoring different sized (sub)shapes
+	G.clear();
+	for (int i = 0; i < B.size(); i++)
+	{
+		if (i == B.size() / 2)
+			continue;
+		G.push_back(Gene(i, B.at(i)));
+	}
+
+	score = kabschScore(G, B);
+
+	msg("B[1:]-B score: %.10f\n", score);
+
+	if (score >= 4362.3974609375)
+	{
+		wrn("Upsampling not working - score worse than no upsampling\n");
+		failCount++;
+	}
+	else if (!float_approximates(score, 3070.5651855469))
+	{
+		wrn("Upsampled score differs\n");
+		failCount++;
+	}
+
+	// Test verdict
 	if (failCount == 0)
 		msg("Passed!\n");
 	else
 		err("Failed! failCount=%d\n", failCount);
+
 	return 0;
 }
 

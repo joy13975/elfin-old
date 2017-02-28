@@ -62,13 +62,13 @@ $(EXE): $(OBJS)
 test: $(EXE)
 	./$(EXE)
 
-compileMathTest: core/MathUtils.cpp jutil/src/util.c
+compileMathTest: core/MathUtils.cpp data/Geometry.cpp jutil/src/util.c
 	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o mathTest -D_TEST_MATHUTILS
 
 testMath: compileMathTest FORCE
 	./mathTest
 
-compileKabschTest: core/Kabsch.cpp jutil/src/util.c
+compileKabschTest: core/Kabsch.cpp data/Geometry.cpp jutil/src/util.c
 	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o kabschTest -D_TEST_KABSCH
 
 testKabsch: compileKabschTest FORCE
