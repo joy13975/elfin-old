@@ -27,9 +27,10 @@ EvolutionSolver::EvolutionSolver(const RelaMat & relaMat,
 
 	const ulong nNonSurvivers = (options.gaPopSize - mySruviverCutoff);
 	myCrossCutoff = mySruviverCutoff + std::round(options.gaCrossRate * nNonSurvivers);
-	myMutateCutoff = std::min(
-	                     (ulong) std::round(myCrossCutoff + options.gaMutateRate * nNonSurvivers),
-	                     nNonSurvivers);
+	myPointMutateCutoff = myCrossCutoff + std::round(options.gaPointMutateRate * nNonSurvivers);
+	myLimbMutateCutoff = std::min(
+	                         (ulong) (myPointMutateCutoff + std::round(options.gaLimbMutateRate * nNonSurvivers)),
+	                         (ulong) options.gaPopSize);
 
 	myExpectedTargetLen = Chromosome::calcExpectedLength(spec, options.avgPairDist);
 	const float minTargetLen = myExpectedTargetLen * (1 - myOptions.chromoLenDev);
@@ -52,7 +53,7 @@ EvolutionSolver::run()
 	const int genDispDigits = std::ceil(std::log(myOptions.gaIters) / std::log(10));
 	char * genMsgFmt;
 	asprintf(&genMsgFmt,
-	         "Generation #%%%dd: fittest=%%.2f\n", genDispDigits);
+	         "Generation #%%%dd: best=%%.2f    worst=%%.2f\n", genDispDigits);
 	for (int i = 0; i < myOptions.gaIters; i++)
 	{
 		scorePopulation();
@@ -61,25 +62,15 @@ EvolutionSolver::run()
 
 		evolvePopulation();
 
-		pruneColliders();
-
-		msg(genMsgFmt, i, myPopulation.front().getScore());
+		msg(genMsgFmt, i,
+		    myPopulation.front().getScore(),
+		    myPopulation.back().getScore());
 	}
 
 	this->printEndMsg();
 }
 
 // Private methods
-
-void
-EvolutionSolver::pruneColliders()
-{
-	// Instead of enforcing collision-free mutation,
-	// it is simpler to mutate without checking and
-	// just assign a bad fitness to shapes that end
-	// up in self collision
-	wrn("TODO: invalidate chromosomes that have collision\n");
-}
 
 void
 EvolutionSolver::evolvePopulation()
@@ -90,10 +81,15 @@ EvolutionSolver::evolvePopulation()
 
 	wrn("TODO: cross population\n");
 
-	for (int i = myCrossCutoff; i < myMutateCutoff; i++)
-		myPopulation.at(i).mutate();
+	for (int i = myCrossCutoff; i < myPointMutateCutoff; i++)
+		if (!myPopulation.at(i).pointMutate())
+			myPopulation.at(i).randomise();
 
-	for (int i = myMutateCutoff; i < myOptions.gaPopSize; i++)
+	for (int i = myPointMutateCutoff; i < myLimbMutateCutoff; i++)
+		if (!myPopulation.at(i).limbMutate())
+			myPopulation.at(i).randomise();
+
+	for (int i = myLimbMutateCutoff; i < myOptions.gaPopSize; i++)
 		myPopulation.at(i).randomise();
 }
 
@@ -151,18 +147,20 @@ EvolutionSolver::printStartMsg()
 
 
 	msg("EvolutionSolver starting with following settings:\n"
-	    "Population size:      %s\n"
-	    "Iterations:           %s\n"
-	    "Survive cutoff:       %u\n"
-	    "Cross cutoff:         %u\n"
-	    "Mutate cutoff:        %u\n"
-	    "New species:          %u\n",
+	    "Population size:            %s\n"
+	    "Iterations:                 %s\n"
+	    "Survive cutoff:             %u\n"
+	    "Cross cutoff:               %u\n"
+	    "Point Mutate cutoff:        %u\n"
+	    "Limb Mutate cutoff:         %u\n"
+	    "New species:                %u\n",
 	    psStr.str().c_str(),
 	    niStr.str().c_str(),
 	    mySruviverCutoff,
 	    myCrossCutoff,
-	    myMutateCutoff,
-	    myOptions.gaPopSize - myMutateCutoff);
+	    myPointMutateCutoff,
+	    myLimbMutateCutoff,
+	    myOptions.gaPopSize - myLimbMutateCutoff);
 }
 
 void

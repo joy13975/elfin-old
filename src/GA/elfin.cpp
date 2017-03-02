@@ -28,7 +28,8 @@ DECL_ARG_CALLBACK(setGaPopSize) { options.gaPopSize = parse_long(arg_in); }
 DECL_ARG_CALLBACK(setGaIters) { options.gaIters = parse_long(arg_in); }
 DECL_ARG_CALLBACK(setGaSurviveRate) { options.gaSurviveRate = parse_float(arg_in); }
 DECL_ARG_CALLBACK(setGaCrossRate) { options.gaCrossRate = parse_float(arg_in); }
-DECL_ARG_CALLBACK(setGaMutateRate) { options.gaMutateRate = parse_float(arg_in); }
+DECL_ARG_CALLBACK(setGaPointMutateRate) { options.gaPointMutateRate = parse_float(arg_in); }
+DECL_ARG_CALLBACK(setGaLimbMutateRate) { options.gaLimbMutateRate = parse_float(arg_in); }
 
 DECL_ARG_CALLBACK(setLogLevel) { set_log_level((Log_Level) parse_long(arg_in)); }
 
@@ -45,7 +46,8 @@ const argument_bundle argb[] = {
     {"-git", "--gaIters", "Set GA iterations (default 1000)", true, setGaIters},
     {"-gsr", "--gaSurviveRate", "Set GA survival rate (default 0.1)", true, setGaSurviveRate},
     {"-gcr", "--gaCrossRate", "Set GA surviver cross rate (default 0.60)", true, setGaCrossRate},
-    {"-gmr", "--gaMutateRate", "Set GA surviver mutation rate (default 0.3)", true, setGaMutateRate},
+    {"-gmr", "--gaPointMutateRate", "Set GA surviver point mutation rate (default 0.3)", true, setGaPointMutateRate},
+    {"-gmr", "--gaLimbMutateRate", "Set GA surviver limb mutation rate (default 0.3)", true, setGaLimbMutateRate},
     {"-lg", "--logLevel", "Set log level", true, setLogLevel}
 };
 #define ARG_BUND_SIZE (sizeof(argb) / sizeof(argb[0]))
@@ -107,8 +109,11 @@ void parseSettings()
     if (j["gaCrossRate"] != NULL)
         options.gaCrossRate = j["gaCrossRate"].get<float>();
 
-    if (j["gaMutateRate"] != NULL)
-        options.gaMutateRate = j["gaMutateRate"].get<float>();
+    if (j["gaPointMutateRate"] != NULL)
+        options.gaPointMutateRate = j["gaPointMutateRate"].get<float>();
+
+    if (j["gaLimbMutateRate"] != NULL)
+        options.gaLimbMutateRate = j["gaLimbMutateRate"].get<float>();
 
 
     if (j["avgPairDist"] != NULL)
@@ -165,13 +170,17 @@ void checkOptions()
     panic_if(options.gaCrossRate < 0.0 ||
              options.gaCrossRate > 1.0,
              "GA cross rate must be between 0 and 1 inclusive\n");
-    panic_if(options.gaMutateRate < 0.0 ||
-             options.gaMutateRate > 1.0,
-             "GA mutate rate must be between 0 and 1 inclusive\n");
+    panic_if(options.gaPointMutateRate < 0.0 ||
+             options.gaPointMutateRate > 1.0,
+             "GA point mutate rate must be between 0 and 1 inclusive\n");
+    panic_if(options.gaLimbMutateRate < 0.0 ||
+             options.gaLimbMutateRate > 1.0,
+             "GA limb mutate rate must be between 0 and 1 inclusive\n");
 
     panic_if(options.gaCrossRate +
-             options.gaMutateRate > 1.0,
-             "Sum of GA cross rate + mutate rate must be <= 1\n");
+             options.gaPointMutateRate +
+             options.gaLimbMutateRate > 1.0,
+             "Sum of GA cross + point mutate + limb mutate rates must be <= 1\n");
 
     panic_if(options.avgPairDist < 0, "Average CoM distance must be > 0\n");
 
@@ -204,6 +213,8 @@ Points3f parseInput()
  *      A vector of module (node) names suitable for
  *      use by Synth.py to produce full PDB
  */
+#ifndef _NO_ELFIN_MAIN
+
 int main(int argc, const char ** argv)
 {
     using namespace elfin;
@@ -235,3 +246,5 @@ int main(int argc, const char ** argv)
 
     return 0;
 }
+
+#endif //ifndef _NO_ELFIN_MAIN

@@ -16,15 +16,15 @@ namespace elfin
 inline bool
 collides(const uint newId,
          const Point3f & newCOM,
-         const Genes & genes,
+         ConstGeneIterator beginGene,
+         ConstGeneIterator endGene,
          const RadiiList & radiiList)
 {
 	// Check collision with all nodes up to previous PAIR
-	const int lim = genes.size() - 2;
-	for (int i = 0; i < lim; i++)
+	for (ConstGeneIterator itr = beginGene; itr < endGene; itr++)
 	{
-		const float comDist = genes.at(i).com().distTo(newCOM);
-		const float requiredComDist = radiiList.at(i).COLLISION_MEASURE +
+		const float comDist = itr->com().distTo(newCOM);
+		const float requiredComDist = radiiList.at(itr->nodeId()).COLLISION_MEASURE +
 		                              radiiList.at(newId).COLLISION_MEASURE;
 		if (comDist < requiredComDist)
 			return true;

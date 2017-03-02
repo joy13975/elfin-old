@@ -354,6 +354,7 @@ class GreedyDesigner():
 
             totalScore += bestNextScore
 
+        # utils.pauseCode()
         matchLen = min(len(candidate), len(target))
         kR = Kabsch.kabsch(candidate[:matchLen]-candidate[0], target[:matchLen])
         candidate = np.dot(candidate, kR)

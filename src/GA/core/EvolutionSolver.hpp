@@ -28,12 +28,12 @@ private:
 	uint myExpectedTargetLen;
 	ulong mySruviverCutoff;
 	ulong myCrossCutoff;
-	ulong myMutateCutoff;
+	ulong myPointMutateCutoff;
+	ulong myLimbMutateCutoff;
 
 	double myStartTimeInUs = 0;
 	Population myPopulation;
 
-	void pruneColliders();
 	void evolvePopulation();
 	void rankPopulation();
 	void scorePopulation();
