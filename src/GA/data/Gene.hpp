@@ -27,14 +27,19 @@ public:
 
 	static void setup(const IdNameMap * _inm);
 
+	static const IdNameMap * inm;
 private:
 	static bool setupDone;
-	static const IdNameMap * inm;
 
 	uint myNodeId;
 	Point3f myCom;
 };
+
 typedef std::vector<Gene> Genes;
+typedef std::vector<Gene>::const_iterator ConstGeneIterator;
+
+std::string
+genesToString(const Genes & genes);
 
 } // namespace elfin
 

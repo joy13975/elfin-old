@@ -21,6 +21,7 @@ typedef std::map<uint, std::string> IdNameMap;
 typedef std::vector<PairRelationship *> RelaRow;
 typedef std::vector<RelaRow> RelaMat;
 typedef std::vector<std::string> Solution;	// A solution is a series of node names
+typedef std::vector<uint> IdRoulette;
 
 template <typename T>
 using Matrix = std::vector<std::vector<T>>;
@@ -56,8 +57,9 @@ struct OptionPack
 	long gaPopSize = 10000;
 	long gaIters = 1000;
 	float gaSurviveRate = 0.1;
-	float gaCrossRate = 0.6;
-	float gaMutateRate = 0.3;
+	float gaCrossRate = 0.5;
+	float gaPointMutateRate = 0.5;
+	float gaLimbMutateRate = 0.5;
 
 };
 

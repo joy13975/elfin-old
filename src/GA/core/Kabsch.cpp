@@ -6,6 +6,7 @@
 #include "Kabsch.hpp"
 #include "util.h"
 #include "MathUtils.hpp"
+#include "input/JSONParser.hpp"
 
 namespace elfin
 {
@@ -546,6 +547,15 @@ int main(int argc, const char ** argv)
 		wrn("Upsampling failed! Lengths: Afewer=%d B=%d\n",
 		    Afewer.size(), B.size());
 	}
+
+	// Load necessary data to setup Gene
+    RelaMat relaMat;
+    NameIdMap nameIdMap;
+    IdNameMap idNameMap;
+    RadiiList radiiList;
+    JSONParser().parseDB("../../res/xDB.json", nameIdMap, idNameMap, relaMat, radiiList);
+
+    Gene::setup(&idNameMap);
 
 	// Test Kabsch scoring
 	Genes G;

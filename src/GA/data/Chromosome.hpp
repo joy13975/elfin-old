@@ -23,8 +23,12 @@ public:
 	bool operator<(const Chromosome & rhs) const;
 	float getScore() const;
 	std::string toString() const;
+	void autoMutate();
 	void randomise();
-	void mutate();
+	bool pointMutate();
+	bool limbMutate();
+	void setGenes(const Genes & genes);
+	Genes & getGenes();
 
 	static void setup(const uint minLen,
 	                  const uint maxLen,
@@ -32,6 +36,8 @@ public:
 	                  const RadiiList & radiiList);
 	static uint calcExpectedLength(const Points3f & lenRef,
 	                               const float avgPairDist);
+	static bool synthesiseReverse(Genes & genes);
+	static bool synthesise(Genes & genes);
 private:
 	Genes myGenes;
 	static bool setupDone;
@@ -39,12 +45,17 @@ private:
 	static uint myMaxLen;
 	static const RelaMat * myRelaMat;
 	static const RadiiList * myRadiiList;
+	static std::vector<std::tuple<uint, uint>> myNeighbourCounts;
+	static IdRoulette myGlobalRoulette;
 
 	float myScore = NAN;
 
-	bool pointMutate();
-	void limbMutate();
-	void syntehsise();
+	Genes genRandomGenesReverse(
+	    const uint genMaxLen = myMaxLen,
+	    Genes genes = Genes());
+	Genes genRandomGenes(
+	    const uint genMaxLen = myMaxLen,
+	    Genes genes = Genes());
 };
 
 } // namespace elfin

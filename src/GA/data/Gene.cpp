@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "Gene.hpp"
 
 namespace elfin
@@ -68,4 +70,20 @@ Gene::setup(const IdNameMap * _inm)
 	inm = _inm;
 	setupDone = true;
 }
+
+std::string
+genesToString(const Genes & genes)
+{
+	std::stringstream ss;
+
+	const int N = genes.size();
+	for (int i = 0; i < N; i++)
+	{
+		ss << "Node #" << i << " / " << N << ": "
+		   << genes.at(i).toString() << std::endl;
+	}
+
+	return ss.str();
+}
+
 } // namespace elfin

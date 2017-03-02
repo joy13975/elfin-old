@@ -34,8 +34,9 @@ public:
 	Vector3f operator-(const Vector3f & rhs) const;
 	Vector3f operator*(const float f) const;
 	Vector3f & operator+=(const Vector3f & rhs);
+	Vector3f & operator-=(const Vector3f & rhs);
 	float dot(const Vector3f & rhs) const;
-	Vector3f & rotate(const Mat3x3 & rotMat);
+	Vector3f dot(const Mat3x3 & rotMat) const;
 	float distTo(const Vector3f & rhs) const;
 
 	bool approximates(const Vector3f & ref, double tolerance = 1e-5);
@@ -56,6 +57,10 @@ public:
 
 	Mat3x3(FloatConstIterator begin,
 	       FloatConstIterator end);
+
+	Vector3f dot(const Vector3f & rotMat) const;
+	Mat3x3 dot(const Mat3x3 & rotMat) const;
+	Mat3x3 transpose() const;
 
 	std::string toString() const;
 };

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import Bio.PDB
-from utils import *
+import utils
 import glob
-import numpy
+import numpy as np
 import codecs, json
 from collections import OrderedDict
 
@@ -13,7 +13,7 @@ def main():
     newLibDir   = 'res/centered_pdb/'
     outFile     = 'res/xDB.json'
     xdbg = XDBGenrator(pairDir, singleDir, newLibDir, outFile)
-    safeExec(xdbg.run)
+    utils.safeExec(xdbg.run)
 
 class XDBGenrator:
 
@@ -25,9 +25,9 @@ class XDBGenrator:
                 permissive=0):
         self.pairDir        = pairDir
         self.singleDir      = singleDir
-        mkdir(newLibDir)
-        mkdir(newLibDir     + '/pair/')
-        mkdir(newLibDir     + '/single/')
+        utils.mkdir(newLibDir)
+        utils.mkdir(newLibDir     + '/pair/')
+        utils.mkdir(newLibDir     + '/single/')
         self.newLibDir      = newLibDir
         self.outFile        = outFile
         self.si             = Bio.PDB.Superimposer()
@@ -42,7 +42,7 @@ class XDBGenrator:
                 # I noticed some floating point error with float32, so use double
                 CAs.append(a.get_coord().astype('float64'))
 
-        return numpy.mean(CAs, axis=0)
+        return np.mean(CAs, axis=0)
 
     def moveToOrigin(self, struct, com=[]):
         if(len(com) == 0):
@@ -82,6 +82,16 @@ class XDBGenrator:
         for a in fixed.get_atoms(): fa.append(a)
 
         self.si.set_atoms(fa, ma)
+
+        # Import note:
+        # The rotation from BioPython seems to be one
+        # that is meant as the second dot operand.
+        #
+        # This means instead of R*v + T, the actual
+        # transform is done with v'*R + T
+        #
+        # This has important influence on the C++ algorithm
+        # maths!
         return self.si.rotran
 
     def getRadii(self, pose):
@@ -94,7 +104,7 @@ class XDBGenrator:
         nHeavy = 0;
         maxHeavy = 0;
         for a in pose.get_atoms():
-            dist = numpy.linalg.norm(
+            dist = np.linalg.norm(
                 a.get_coord().astype('float64'));
 
             rgSum += dist;
@@ -158,9 +168,9 @@ class XDBGenrator:
 
         # Step 6: Save the centred molecules once
         # Note: here the PDB format adds some slight floating point error
-        utils.savePDB(singles[0], self.newLibDir + '/single/' + psFilenames[0])
-        utils.savePDB(singles[1], self.newLibDir + '/single/' + psFilenames[1])
-        utils.savePDB(pair, self.newLibDir + '/pair/' + pairName + '.pdb')
+        utils.savePdb(singles[0], self.newLibDir + '/single/' + psFilenames[0])
+        utils.savePdb(singles[1], self.newLibDir + '/single/' + psFilenames[1])
+        utils.savePdb(pair, self.newLibDir + '/pair/' + pairName + '.pdb')
 
         # comA is aligned to centered singles[0] so should be at origin
         data = OrderedDict([

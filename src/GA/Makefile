@@ -8,6 +8,7 @@ JUTIL_DIR 		:= ./jutil/src/
 OBJ_DIR 		:= .obj
 SRC_TREE 		:= $(shell find . -type d | grep -v './.obj\|\.dSYM\|^.$$')
 OBJ_TREE 		:= $(addprefix $(OBJ_DIR)/, $(SRC_TREE))
+BIN_DIR 		:= ./bin/
 $(shell mkdir -p $(OBJ_TREE))
 
 C_SRC 			:= $(shell find . -name '*.c')
@@ -42,6 +43,22 @@ CPPFLAGS 		:= -fdiagnostics-color=always -MMD -std=c++11 -fmax-errors=1\
 
 COMPILE 		:= $(CXX) $(CPPFLAGS)
 
+objToDelete	+= $(OBJ_DIR)/elfin.o
+objToDelete	+= $(OBJ_DIR)/core/Kabsch.o
+objToDelete	+= $(OBJ_DIR)/core/MathUtils.o
+objToDelete	+= $(OBJ_DIR)/data/Chromosome.o
+
+ifeq ($(TEST), kabsch)
+	DEFS		+= -D_TEST_KABSCH -D_NO_ELFIN_MAIN
+	EXE 		:= kabschTest
+else ifeq ($(TEST), math)
+	DEFS 		+= -D_TEST_MATHUTILS -D_NO_ELFIN_MAIN
+	EXE 		:= mathTest
+else ifeq ($(TEST), chromo)
+	DEFS 		+= -D_TEST_CHROMO -D_NO_ELFIN_MAIN
+	EXE 		:= chromoTest
+endif
+
 
 #
 # start of rules
@@ -50,35 +67,25 @@ COMPILE 		:= $(CXX) $(CPPFLAGS)
 EXTS=c cpp
 define make_rule
 $(OBJ_DIR)/%.o: %.$1
-	$$(COMPILE) -o $$@ -c $$<
+	$$(COMPILE) $(DEFS) -o $$@ -c $$<
 endef
 $(foreach EXT,$(EXTS),$(eval $(call make_rule,$(EXT))))
 
-$(EXE): $(OBJS)
-	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o $@
+deleteTestObjs:
+	rm -rf $(objToDelete)
+
+$(EXE): deleteTestObjs $(OBJS)
+	$(COMPILE) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $(BIN_DIR)/$@
 
 test: $(EXE)
-	./$(EXE)
+	./$(BIN_DIR)/$(EXE)
 
 FORCE:
-
-compileMathTest: core/MathUtils.cpp data/Geometry.cpp jutil/src/util.c
-	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o mathTest -D_TEST_MATHUTILS
-
-testMath: compileMathTest FORCE
-	./mathTest
-
-compileKabschTest: core/Kabsch.cpp data/Geometry.cpp jutil/src/util.c
-	$(COMPILE) $(LDFLAGS) $^ $(LDLIBS) -o kabschTest -D_TEST_KABSCH
-
-testKabsch: compileKabschTest FORCE
-	./kabschTest
-
 .PHONY: all clean
 
 all: $(EXE)
 
 clean: FORCE
-	rm -rf $(EXE) testMath $(OBJ_DIR)/* $(OBJ_DIR) *.dSYM .DS_Store *.dec *.bin
+	rm -rf $(BIN_DIR)/* $(OBJ_DIR)/* *.dSYM .DS_Store *.dec *.bin
 
 -include $(DEPS)

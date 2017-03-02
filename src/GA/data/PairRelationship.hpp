@@ -19,6 +19,7 @@ public:
 	    const std::vector<float> & tranv) :
 		comB(Point3f(comBv)),
 		rot(Mat3x3(rotv)),
+		rotInv(rot.transpose()),
 		tran(Vector3f(tranv))
 	{};
 
@@ -26,6 +27,7 @@ public:
 
 	const Point3f comB;
 	const Mat3x3 rot;
+	const Mat3x3 rotInv;
 	const Vector3f tran;
 
 	std::string toString()
@@ -35,6 +37,7 @@ public:
 		ss << "pr[" << std::endl;
 		ss << "    comB:" << comB.toString() << std::endl;
 		ss << "    rot:" << rot.toString() << std::endl;
+		ss << "    rotInv:" << rotInv.toString() << std::endl;
 		ss << "    tran:" << tran.toString() << std::endl;
 		ss << "]" << std::endl;
 
