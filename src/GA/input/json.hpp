@@ -6408,6 +6408,17 @@ class basic_json
         return parser(i, cb).parse();
     }
 
+    template<class I>
+    static bool is_contiguous(I first, I last)
+    { 
+        bool test = true;
+        auto const n = std::distance(first, last);
+        for (int i = 0; i < n && test; ++i) {
+            test &= *(std::next(first, i)) == *(std::next(std::addressof(*first), i));
+        }        
+        return test;        
+    }
+
     /*!
     @brief deserialize from an iterator range with contiguous storage
 
@@ -6458,12 +6469,14 @@ class basic_json
     {
         // assertion to check that the iterator range is indeed contiguous,
         // see http://stackoverflow.com/a/35008842/266378 for more discussion
-        assert(std::accumulate(first, last, std::pair<bool, int>(true, 0),
-                               [&first](std::pair<bool, int> res, decltype(*first) val)
-        {
-            res.first &= (val == *(std::next(std::addressof(*first), res.second++)));
-            return res;
-        }).first);
+        // assert(std::accumulate(first, last, std::pair<bool, int>(true, 0),
+        //                        [&first](std::pair<bool, int> res, decltype(*first) val)
+        // {
+        //     res.first &= (val == *(std::next(std::addressof(*first), res.second++)));
+        //     return res;
+        // }).first);
+
+        assert(is_contiguous(first, last));
 
         // assertion to check that each element is 1 byte long
         static_assert(sizeof(typename std::iterator_traits<IteratorType>::value_type) == 1,

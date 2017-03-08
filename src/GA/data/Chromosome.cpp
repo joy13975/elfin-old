@@ -18,13 +18,25 @@ uint Chromosome::myMinLen = 0;
 uint Chromosome::myMaxLen = 0;
 const RelaMat * Chromosome::myRelaMat = NULL;
 const RadiiList * Chromosome::myRadiiList = NULL;
-std::vector<std::tuple<uint, uint>> Chromosome::myNeighbourCounts;
+IdPairs Chromosome::myNeighbourCounts;
 IdRoulette Chromosome::myGlobalRoulette;
 
 // Constructors
 Chromosome::Chromosome()
 {
 	panic_if(!setupDone, "Chromosome::setup() not called!\n");
+}
+
+Chromosome::Chromosome(const Chromosome & rhs)
+{
+	myGenes = rhs.myGenes;
+	myScore = rhs.myScore;
+}
+
+
+Chromosome::Chromosome(const Genes & genes)
+{
+	myGenes = genes;
 }
 
 void
@@ -101,6 +113,45 @@ Chromosome::getScore() const
 	return myScore;
 }
 
+bool
+Chromosome::cross(const Chromosome & father,
+                  const Chromosome & mother,
+                  const IdPairs & crossingIds)
+{
+	// cross can fail - if resultant genes collide during synth
+	const uint maxTries = 10;
+	for (int i = 0; i < maxTries; i++)
+	{
+		// Pick random crossing point
+		const IdPair & crossPoint = crossingIds.at(std::rand() % crossingIds.size());
+		const uint fatherGeneId = std::get<0>(crossPoint);
+		const uint motherGeneId = std::get<1>(crossPoint);
+
+		const Genes & fatherG = father.getGenes();
+		const Genes & motherG = mother.getGenes();
+
+		Genes newGenes;
+		newGenes.insert(newGenes.end(), fatherG.begin(), fatherG.begin() + fatherGeneId);
+		newGenes.insert(newGenes.end(), motherG.begin() + motherGeneId, motherG.end());
+
+		prf("Crossing at father[%d] and mother[%d]\n", fatherGeneId, motherGeneId);
+		prf("Father: \n%s\nMother: %s\n", father.toCString(), mother.toCString());
+		prf("New Genes: \n%s\n", genesToString(newGenes).c_str());
+
+		if (synthesise(newGenes))
+			return true;
+	}
+
+	return false;
+}
+
+void
+Chromosome::inheritMutate(const Chromosome & parent)
+{
+	*this = Chromosome(parent);
+	autoMutate();
+}
+
 void
 Chromosome::autoMutate()
 {
@@ -109,10 +160,10 @@ Chromosome::autoMutate()
 
 	if (!pointMutate())
 	{
-		wrn("pointMutate failed\n");
+		prf("\npointMutate failed\n");
 		if (!limbMutate())
 		{
-			wrn("limbMutate failed\n");
+			prf("\nlimbMutate failed\n");
 			randomise();
 		}
 	}
@@ -141,6 +192,105 @@ Chromosome::getGenes()
 	return myGenes;
 }
 
+const Genes &
+Chromosome::getGenes() const
+{
+	return myGenes;
+}
+
+std::vector<std::string>
+Chromosome::getNodeNames() const
+{
+	std::vector<std::string> out;
+
+	for (const auto & gene : myGenes)
+		out.push_back(Gene::inm->at(gene.nodeId()));
+
+	return out;
+}
+
+IdPairs
+Chromosome::findCompatibleCrossings(const Chromosome & other) const
+{
+	IdPairs crossingIds;
+
+	const Genes & otherG = other.getGenes();
+	const uint otGeneLen = otherG.size();
+	const uint myGeneLen = myGenes.size();
+
+	// In below comments gene1 = this, gene2 = other
+	for (int i = 0; i < myGeneLen; i++)
+	{
+		// Using i as gene1 left limb cutoff
+		{
+			const uint leftLimbLen = i + 1; // This includes the cutoff point
+			const uint maxJ = std::min(
+			                      std::max(
+			                          otGeneLen - (myMinLen - leftLimbLen) - 1, // -1 to account for the duplicate cross point node
+			                          (uint) 0),
+			                      (uint) otGeneLen - 1);
+			const uint minJ = std::min(
+			                      std::max(
+			                          otGeneLen - (myMaxLen - leftLimbLen) - 1, // -1 to account for the duplicate cross point node
+			                          (uint) 0),
+			                      (uint) otGeneLen - 1);
+			for (int j = minJ; j < maxJ; j++)
+			{
+				if (myGenes.at(i).nodeId() == otherG.at(j).nodeId())
+				{
+					// Test 0-i=(left limb), j-end=(right limb)
+					const uint childLen = leftLimbLen + (otGeneLen - j - 1);
+
+#ifdef _TEST_CHROMO
+					if (childLen < myMinLen || childLen > myMaxLen)
+					{
+						die("Fatal: length invalid (i=leftLimb) childLen=%d, myMinLen=%d, myMaxLen=%d\n",
+						    childLen, myMinLen, myMaxLen);
+					}
+#endif
+
+					crossingIds.push_back(std::make_tuple(i, j));
+				}
+			}
+		}
+
+		// Using i as gene1 right limb cutoff
+		{
+			const uint rightLimbLen = myGeneLen - i; // This includes the cutoff point
+			const uint minJ = std::min(
+			                      std::max(
+			                          (myMinLen - rightLimbLen),
+			                          (uint) 0),
+			                      (uint) otGeneLen - 1);
+			const uint maxJ = std::min(
+			                      std::max(
+			                          (myMaxLen - rightLimbLen),
+			                          (uint) 0),
+			                      (uint) otGeneLen - 1);
+			for (int j = minJ; j < maxJ; j++)
+			{
+				if (myGenes.at(i).nodeId() == otherG.at(j).nodeId())
+				{
+					// Test 0-j=(left limb), i-myGenLen=(right limb)
+					const uint childLen = j + rightLimbLen;
+
+#ifdef _TEST_CHROMO
+					if (childLen < myMinLen || childLen > myMaxLen)
+					{
+						die("Fatal: length invalid (i=rightLimb) childLen=%d, myMinLen=%d, myMaxLen=%d\n",
+						    childLen, myMinLen, myMaxLen);
+					}
+#endif
+
+					crossingIds.push_back(std::make_tuple(i, j));
+				}
+			}
+		}
+	}
+
+	return crossingIds;
+}
+
 /*
  * Calculate expected length as total point
  * displacements over avg pair module distance
@@ -163,16 +313,6 @@ Chromosome::calcExpectedLength(const Points3f & lenRef,
 	return (uint) round(sumDist / avgPairDist);
 }
 
-/*
- * Build a random list of genes that is valid
- * i.e. non colliding and conforms to relaMat
- *
- * The final length is random - accept as long
- * as it is within [minLen, maxLen]
- *
- * Note: for performance, might need to strip
- * collision checking from this function
- */
 void
 Chromosome::randomise()
 {
@@ -193,7 +333,7 @@ Chromosome::pointMutate()
 	// Find nodes that can be swapped
 	// First uint is index from myGenes
 	// Second uint is nodeId to swap to
-	std::vector<std::tuple<uint, uint>> swappableIds;
+	IdPairs swappableIds;
 
 	for (int i = 1; i < myGenes.size() - 1; i++)
 	{
@@ -290,7 +430,7 @@ Chromosome::limbMutate()
 		return false;
 
 	myGenes = newGenes;
-	
+
 	return true;
 }
 
@@ -474,8 +614,20 @@ Chromosome::synthesiseReverse(Genes & genes)
 		const PairRelationship * newNodePr =
 		    myRelaMat->at(lhsGene.nodeId()).at(rhsGene.nodeId());
 
-		panic_if(newNodePr == NULL,
-		         "Synthesise(): impossible pair!\n");
+		if (newNodePr == NULL)
+		{
+			// Fatal failure; diagnose!
+			err("Synthesise(): impossible pair! %d(%s) <-x-> %d(%s)\n",
+			    lhsGene.nodeId(),
+			    Gene::inm->at(lhsGene.nodeId()).c_str(),
+			    rhsGene.nodeId(),
+			    Gene::inm->at(rhsGene.nodeId()).c_str());
+
+			err("Erroneous genes:\n%s\n", genesToString(genes).c_str());
+
+
+			die("Fatal error in synthesiseReverse(): should never use impossible pair\n");
+		}
 
 		const Point3f checkpoint = newNodePr->tran;
 
@@ -519,8 +671,19 @@ Chromosome::synthesise(Genes & genes)
 		const PairRelationship * newNodePr =
 		    myRelaMat->at(lhsGene.nodeId()).at(rhsGene.nodeId());
 
-		panic_if(newNodePr == NULL,
-		         "Synthesise(): impossible pair!\n");
+		if (newNodePr == NULL)
+		{
+			// Fatal failure; diagnose!
+			err("Synthesise(): impossible pair! %d(%s) <-x-> %d(%s)\n",
+			    lhsGene.nodeId(),
+			    Gene::inm->at(lhsGene.nodeId()).c_str(),
+			    rhsGene.nodeId(),
+			    Gene::inm->at(rhsGene.nodeId()).c_str());
+
+			err("Erroneous genes:\n%s\n", genesToString(genes).c_str());
+
+			die("Fatal error in synthesise(): should never use impossible pair\n");
+		}
 
 		if (collides(rhsGene.nodeId(),
 		             newNodePr->comB,

@@ -93,7 +93,7 @@ upsample(
 			const float s = (mpProportion - baseFpProportion)
 			                / fpSegment;
 			upsampled.push_back(baseFpPoint + (vec * s));
-			
+
 			mpi++;
 		}
 	}
@@ -176,7 +176,8 @@ bool RosettaKabsch(
     int const mode,
     double *rms,
     std::vector<double>& t,
-    std::vector<std::vector<double>> & u ) {
+    std::vector<std::vector<double>> & u )
+{
 	int i, j, m, m1, l, k;
 	double e0, rms1, d, h, g;
 	double cth, sth, sqrth, p, det, sigma;
@@ -506,6 +507,9 @@ int main(int argc, const char ** argv)
 
 	Points3f A(arrA, arrA + sizeof(arrA) / sizeof(arrA[0]));
 	Points3f B(arrB, arrB + sizeof(arrB) / sizeof(arrB[0]));
+	wrn("A %s\n", pointsToString(A).c_str());
+	wrn("B %s\n", pointsToString(B).c_str());
+
 	Matrix<double> rot;
 	Vector3f tran;
 	double rms;
@@ -527,20 +531,20 @@ int main(int argc, const char ** argv)
 			failCount++;
 	}
 
-	raw("Tran: %s\n", tran.toString().c_str());
+	msg("Tran: %s\n", tran.toString().c_str());
 	if (!tran.approximates(actualTran))
 		failCount++;
 
 	// Test upsampling
 	Points3f Afewer = A;
-	Afewer.erase(A.begin() + (A.size() / 2),
-	             A.begin() + (A.size() / 2) + 1);
+	Afewer.erase(Afewer.begin() + (Afewer.size() / 2),
+	             Afewer.begin() + (Afewer.size() / 2) + 1);
 
 	if (Afewer.size() == B.size())
 		die("Afewer and B sizes have not been made different!\n");
-	msg("Afewer size: %d, B size: %d\n", Afewer.size(), B.size());
 
 	upsample(Afewer, B);
+
 	if (Afewer.size() != B.size())
 	{
 		failCount++;
@@ -549,13 +553,13 @@ int main(int argc, const char ** argv)
 	}
 
 	// Load necessary data to setup Gene
-    RelaMat relaMat;
-    NameIdMap nameIdMap;
-    IdNameMap idNameMap;
-    RadiiList radiiList;
-    JSONParser().parseDB("../../res/xDB.json", nameIdMap, idNameMap, relaMat, radiiList);
+	RelaMat relaMat;
+	NameIdMap nameIdMap;
+	IdNameMap idNameMap;
+	RadiiList radiiList;
+	JSONParser().parseDB("../../res/xDB.json", nameIdMap, idNameMap, relaMat, radiiList);
 
-    Gene::setup(&idNameMap);
+	Gene::setup(&idNameMap);
 
 	// Test Kabsch scoring
 	Genes G;

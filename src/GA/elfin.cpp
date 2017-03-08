@@ -1,6 +1,7 @@
 #include <string>
 #include <regex>
 #include <sstream>
+#include <csignal>
 
 #include "data/TypeDefs.hpp"
 #include "util.h"
@@ -18,7 +19,7 @@ DECL_ARG_CALLBACK(helpAndExit); // defined later due to need of bundle size
 DECL_ARG_CALLBACK(setSettingsFile) { options.settingsFile = arg_in; }
 DECL_ARG_CALLBACK(setInputFile) { options.inputFile = arg_in; }
 DECL_ARG_CALLBACK(setXDB) { options.xDBFile = arg_in; }
-DECL_ARG_CALLBACK(setOutput) { options.outputFile = arg_in; }
+DECL_ARG_CALLBACK(setOutputDir) { options.outputDir = arg_in; }
 
 DECL_ARG_CALLBACK(setChromoLenDev) { options.chromoLenDev = parse_float(arg_in); }
 DECL_ARG_CALLBACK(setAvgPairDist) { options.avgPairDist = parse_float(arg_in); }
@@ -38,7 +39,7 @@ const argument_bundle argb[] = {
     {"-s", "--settingsFile", "Set settings file (default ./settings.json)", true, setSettingsFile},
     {"-i", "--inputFile", "Set input file", true, setInputFile},
     {"-x", "--xDBFile", "Set xDB file (default ./xDB.json)", true, setXDB},
-    {"-o", "--outputFile", "Set output file (default ./output.json)", true, setOutput},
+    {"-o", "--outputDir", "Set output directory (default ./out/)", true, setOutputDir},
     {"-d", "--chromoLenDev", "Set chromosome length deviation allowance (default 0.20)", true, setChromoLenDev},
     {"-a", "--avgPairDist", "Overwrite default average distance between pairs of CoMs (default 38.0)", true, setAvgPairDist},
     {"-rs", "--randSeed", "Set RNG seed (default 0x1337cafe; setting to 0 uses time as seed)", true, setRandSeed},
@@ -82,8 +83,8 @@ void parseSettings()
     if (j["xDBFile"] != NULL)
         options.xDBFile = j["xDBFile"].get<std::string>();
 
-    if (j["outputFile"] != NULL)
-        options.outputFile = j["inputFile"].get<std::string>();
+    if (j["outputDir"] != NULL)
+        options.outputDir = j["outputDir"].get<std::string>();
 
     // Parse as signed primitives for validation
     if (j["chromoLenDev"] != NULL)
@@ -95,6 +96,8 @@ void parseSettings()
         ss << std::hex << j["randSeed"].get<std::string>();
         ss >> options.randSeed;
     }
+
+    wrn("Record what seed is being used\n");
 
     // GA params
     if (j["gaPopSize"] != NULL)
@@ -128,11 +131,26 @@ void checkOptions()
     panic_if(options.xDBFile == "",
              "No xDB file given. Check your settings.json\n");
 
+    panic_if(!file_exists(options.xDBFile.c_str()),
+             "xDB file could not be found\n");
+
     panic_if(options.inputFile == "",
              "No input spec file given. Check help using -h\n");
 
+    panic_if(!file_exists(options.inputFile.c_str()),
+             "Input file could not be found\n");
+
     panic_if(options.settingsFile == "",
              "No settings file file given. Check help using -h\n");
+
+    panic_if(!file_exists(options.settingsFile.c_str()),
+             "Settings file could not be found\n");
+
+    panic_if(options.outputDir == "",
+             "No output directory given. Check help using -h\n");
+
+    panic_if(!file_exists(options.outputDir.c_str()),
+             "Output directory could not be found\n");
 
     // Extensions
     if (std::regex_match(
@@ -215,8 +233,55 @@ Points3f parseInput()
  */
 #ifndef _NO_ELFIN_MAIN
 
+#include <iostream>
+#include <fstream>
+
+elfin::EvolutionSolver * es;
+bool esStarted = false;
+
+void interruptHandler(int signal)
+{
+    raw("\n\n");
+    wrn("Caught interrupt signal\n");
+
+    // Save latest results
+    if (esStarted)
+    {
+        wrn("Saving latest best solutions and exiting!\n");
+        using namespace elfin;
+
+        const Population & p = es->getPopulation();
+
+        // Output best N solutions
+        const uint outputN = 3;
+        for (int i = 0; i < outputN; i++)
+        {
+            std::vector<std::string> nodeNames = p.at(i).getNodeNames();
+            JSON nn = nodeNames;
+            JSON j;
+            j["nodes"] = nn;
+            j["score"] = p.at(i).getScore();
+
+            std::ostringstream ss;
+            ss << options.outputDir << "/" << &p.at(i) << ".json";
+            const char * data = j.dump().c_str();
+            const size_t len = j.dump().size();
+            write_binary(ss.str().c_str(), data, len);
+        }
+
+        delete es;
+    }
+    else
+    {
+        wrn("GA did not get to start\n");
+    }
+
+    exit(1);
+}
+
 int main(int argc, const char ** argv)
 {
+    std::signal(SIGINT, interruptHandler);
     using namespace elfin;
 
     // Get values from settings json first
@@ -237,12 +302,34 @@ int main(int argc, const char ** argv)
 
     Points3f spec = parseInput();
 
-    EvolutionSolver(relaMat,
-                    spec,
-                    radiiList,
-                    options).run();
+    es = new EvolutionSolver(relaMat,
+                             spec,
+                             radiiList,
+                             options);
+    esStarted = true;
 
-    wrn("TODO: Output a json containing \"nodes\" solution data, and score\n");
+    es->run();
+
+    const Population & p = es->getPopulation();
+
+    // Output best N solutions
+    const uint outputN = 3;
+    for (int i = 0; i < outputN; i++)
+    {
+        std::vector<std::string> nodeNames = p.at(i).getNodeNames();
+        JSON nn = nodeNames;
+        JSON j;
+        j["nodes"] = nn;
+        j["score"] = p.at(i).getScore();
+
+        std::ostringstream ss;
+        ss << options.outputDir << "/" << &p.at(i) << ".json";
+        const char * data = j.dump().c_str();
+        const size_t len = j.dump().size();
+        write_binary(ss.str().c_str(), data, len);
+    }
+
+    delete es;
 
     return 0;
 }

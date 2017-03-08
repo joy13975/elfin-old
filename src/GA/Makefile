@@ -9,7 +9,7 @@ OBJ_DIR 		:= .obj
 SRC_TREE 		:= $(shell find . -type d | grep -v './.obj\|\.dSYM\|^.$$')
 OBJ_TREE 		:= $(addprefix $(OBJ_DIR)/, $(SRC_TREE))
 BIN_DIR 		:= ./bin/
-$(shell mkdir -p $(OBJ_TREE))
+$(shell mkdir -p $(OBJ_TREE) $(BIN_DIR))
 
 C_SRC 			:= $(shell find . -name '*.c')
 CPP_SRC 		:= $(shell find . -name '*.cpp')
@@ -21,7 +21,7 @@ $(info Objects to be compiled: [${OBJS}])
 #:
 
 DEBUG=no
-# OMP=yes
+OMP=yes
 
 ifeq ($(DEBUG), yes)
 	DEBUG_FLAG=-ggdb3
@@ -29,17 +29,17 @@ else
 	DEBUG_FLAG=
 endif
 
-ifeq ($(GOMP), yes)
-	GOMP_FLAG=-fopenmp
+ifeq ($(OMP), yes)
+	OMP_FLAG=-fopenmp -D_GLIBCXX_PARALLEL
 else
-	GOMP_FLAG=
+	OMP_FLAG=-D_NO_OMP
 endif
 
 INCS 			:= -I./jutil/src/
 
 OPT_FLAGS 		:= -O3
 CPPFLAGS 		:= -fdiagnostics-color=always -MMD -std=c++11 -fmax-errors=1\
-					$(OPT_FLAGS) $(DEBUG_FLAG) $(GOMP_FLAG) $(DEFS) $(INCS)
+					$(OPT_FLAGS) $(DEBUG_FLAG) $(OMP_FLAG) $(DEFS) $(INCS)
 
 COMPILE 		:= $(CXX) $(CPPFLAGS)
 
@@ -71,11 +71,12 @@ $(OBJ_DIR)/%.o: %.$1
 endef
 $(foreach EXT,$(EXTS),$(eval $(call make_rule,$(EXT))))
 
+$(EXE): deleteTestObjs $(OBJS)
+	$(COMPILE) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $(BIN_DIR)/$@
+
 deleteTestObjs:
 	rm -rf $(objToDelete)
 
-$(EXE): deleteTestObjs $(OBJS)
-	$(COMPILE) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $(BIN_DIR)/$@
 
 test: $(EXE)
 	./$(BIN_DIR)/$(EXE)
