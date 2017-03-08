@@ -3,13 +3,16 @@
 	"xDBFile": "../../res/xDB.json",
 	"outputFile": "./test.json",
 
-	"chromoLenDev": 0.2,
 	"randSeed": "0xbaad1337",
 
-	"gaPopSize": 10000,
-	"gaIters": 100,
-	"gaSurviveRate": 0.05,
-	"gaCrossRate": 0.5,
-	"gaPointMutateRate": 0.3,
-	"gaLimbMutateRate": 0.15
+	"chromoLenDev": 0.2,
+
+	"gaPopSize": 100000,
+	"gaIters": 1000,
+
+	"gaSurviveRate": 0.01,
+	
+	"gaCrossRate": 0.7,
+	"gaPointMutateRate": 0.2,
+	"gaLimbMutateRate": 0.1
 }

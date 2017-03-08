@@ -14,7 +14,8 @@ class Chromosome
 {
 public:
 	Chromosome();
-	// Chromosome(const Chromosome & rhs);
+	Chromosome(const Chromosome & rhs);
+	Chromosome(const Genes & genes);
 	// Chromosome & operator=(const Chromosome & rhs);
 	virtual ~Chromosome() {};
 
@@ -23,12 +24,21 @@ public:
 	bool operator<(const Chromosome & rhs) const;
 	float getScore() const;
 	std::string toString() const;
+
+	bool cross(const Chromosome & father,
+	           const Chromosome & mother,
+	           const IdPairs & crossingIds);
+	void inheritMutate(const Chromosome & parent);
 	void autoMutate();
 	void randomise();
 	bool pointMutate();
 	bool limbMutate();
+
 	void setGenes(const Genes & genes);
 	Genes & getGenes();
+	const Genes & getGenes() const;
+	std::vector<std::string> getNodeNames() const;
+	IdPairs findCompatibleCrossings(const Chromosome & other) const;
 
 	static void setup(const uint minLen,
 	                  const uint maxLen,
@@ -40,15 +50,15 @@ public:
 	static bool synthesise(Genes & genes);
 private:
 	Genes myGenes;
+	float myScore = NAN;
+
 	static bool setupDone;
 	static uint myMinLen;
 	static uint myMaxLen;
 	static const RelaMat * myRelaMat;
 	static const RadiiList * myRadiiList;
-	static std::vector<std::tuple<uint, uint>> myNeighbourCounts;
+	static IdPairs myNeighbourCounts;
 	static IdRoulette myGlobalRoulette;
-
-	float myScore = NAN;
 
 	Genes genRandomGenesReverse(
 	    const uint genMaxLen = myMaxLen,

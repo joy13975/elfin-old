@@ -9,6 +9,22 @@
 namespace elfin
 {
 
+Vector3f::Vector3f(const Vector3f & rhs) :
+	x(rhs.x), y(rhs.y), z(rhs.z)
+{}
+
+Vector3f::Vector3f() :
+	x(0), y(0), z(0)
+{}
+
+Vector3f::Vector3f(float _x, float _y, float _z) :
+	x(_x), y(_y), z(_z)
+{}
+
+Vector3f::Vector3f(const std::vector<float> & v) :
+	Vector3f(v.begin(), v.end())
+{}
+
 
 Vector3f::Vector3f(FloatConstIterator begin,
                    FloatConstIterator end)
@@ -138,6 +154,20 @@ Vector3f::approximates(const Vector3f & ref, double tolerance)
 	}
 
 	return true;
+}
+
+
+std::string
+pointsToString(const Points3f & points)
+{
+	std::ostringstream ss;
+
+	ss << "Points3f: " << &points << std::endl;
+
+	for (int i = 0; i < points.size(); i++)
+		ss << "[" << i << "]: " << points.at(i).toString() << std::endl;
+
+	return ss.str();
 }
 
 Mat3x3::Mat3x3(Vector3f _rows[3])

@@ -2,7 +2,7 @@ To compile:
 	make
 
 To run:
-	./elfin <arguments>
+	./elfin <arguments to override settings.json>
 
 To edit settings:
 	<your editor> settings.json

@@ -5,10 +5,13 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <tuple>
 
 #include "util.h"
 #include "PrimitiveShorthands.hpp"
 #include "Geometry.hpp"
+
+#define toCString toString().c_str
 
 namespace elfin
 {
@@ -22,6 +25,8 @@ typedef std::vector<PairRelationship *> RelaRow;
 typedef std::vector<RelaRow> RelaMat;
 typedef std::vector<std::string> Solution;	// A solution is a series of node names
 typedef std::vector<uint> IdRoulette;
+typedef std::tuple<uint, uint> IdPair;
+typedef std::vector<IdPair> IdPairs;
 
 template <typename T>
 using Matrix = std::vector<std::vector<T>>;
@@ -46,7 +51,7 @@ struct OptionPack
 	enum InputType { Unknown, CSV, JSON };
 	InputType inputType = Unknown;
 	std::string settingsFile = "./settings.json";
-	std::string outputFile = "./output.json";
+	std::string outputDir = "./out/";
 
 	float chromoLenDev = 0.2;
 	// Average CoM distance found by xDBStat.py as of 28/Feb/2017

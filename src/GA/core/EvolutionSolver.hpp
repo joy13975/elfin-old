@@ -18,6 +18,8 @@ public:
 	                const OptionPack & options);
 	virtual ~EvolutionSolver() {};
 
+	const Population & getPopulation() const;
+
 	void run();
 private:
 	const RelaMat & myRelaMat;
@@ -26,6 +28,7 @@ private:
 	const OptionPack & myOptions;
 
 	uint myExpectedTargetLen;
+	ulong myNonSurviverCount;
 	ulong mySruviverCutoff;
 	ulong myCrossCutoff;
 	ulong myPointMutateCutoff;

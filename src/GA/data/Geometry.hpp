@@ -15,15 +15,13 @@ class Vector3f
 public:
 	float x, y, z;
 
-	Vector3f() :
-		x(0), y(0), z(0) {}
+	Vector3f(const Vector3f & rhs);
 
-	Vector3f(float _x, float _y, float _z) :
-		x(_x), y(_y), z(_z) {}
+	Vector3f();
 
-	Vector3f(const std::vector<float> & v) :
-		Vector3f(v.begin(), v.end())
-	{}
+	Vector3f(float _x, float _y, float _z);
+
+	Vector3f(const std::vector<float> & v);
 
 	Vector3f(FloatConstIterator begin,
 	         FloatConstIterator end);
@@ -43,6 +41,8 @@ public:
 };
 typedef Vector3f Point3f;
 typedef std::vector<Point3f> Points3f;
+
+std::string pointsToString(const Points3f & points);
 
 class Mat3x3
 {
