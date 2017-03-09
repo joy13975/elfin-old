@@ -10,9 +10,7 @@ inline int omp_get_num_threads() { return 1; }
 
 #include "EvolutionSolver.hpp"
 #include "util.h"
-
-#define OMP_PARA _Pragma("omp parallel")
-#define OMP_FOR _Pragma("omp parallel for schedule(dynamic)")
+#include "Parallel.hpp"
 
 namespace elfin
 {
@@ -95,6 +93,11 @@ EvolutionSolver::run()
 void
 EvolutionSolver::evolvePopulation()
 {
+
+#ifdef _DO_TIMING // For crossing pair section
+	const double startTime1 = get_timestamp_us();
+#endif
+
 	// Make new generation by discarding unfit
 	// genes and mutating/reproducing fit genes
 	// to fill up discarded slots
@@ -102,12 +105,17 @@ EvolutionSolver::evolvePopulation()
 	// First compute possible crossing parents
 	msg("Computing cross-able parents: 0%% Done");
 
-	std::vector<std::tuple<IdPair, IdPairs>> parentIds;
+	using ParentIdVector = std::vector<std::tuple<IdPair, IdPairs>>;
+	ParentIdVector parentIds;
 
 	const uint nPossibleCrossings = (mySruviverCutoff * (mySruviverCutoff + 1)) / 2;
 	const uint gaCrossBlock = nPossibleCrossings / 10;
 
-	OMP_FOR
+	// Credit to Stack Overflow response by Z boson at
+	// http://stackoverflow.com/questions/18669296/c-openmp-parallel-for-loop-alternatives-to-stdvector
+	#pragma omp declare reduction (merge : ParentIdVector : omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end()))
+
+	#pragma omp parallel for reduction(merge: parentIds)
 	for (int i = 0; i < mySruviverCutoff; i++)
 	{
 		for (int j = i + 1; j < mySruviverCutoff; j++)
@@ -118,18 +126,16 @@ EvolutionSolver::evolvePopulation()
 			const Chromosome & mother =  myPopulation.at(j);
 
 			IdPairs crossingIds = father.findCompatibleCrossings(mother);
-			#pragma omp critical
-			{
-				if (crossingIds.size() > 0)
-					parentIds.push_back(
-					    std::make_tuple(
-					        std::make_tuple(i, j),
-					        crossingIds));
-			}
+			if (crossingIds.size() > 0)
+				parentIds.push_back(
+				    std::make_tuple(
+				        std::make_tuple(i, j),
+				        crossingIds));
 
 			const uint cid = nPossibleCrossings -
 			                 ((mySruviverCutoff - i) * (mySruviverCutoff - i + 1)) / 2
 			                 + (j - i);
+
 			if (cid % gaCrossBlock == 0)
 			{
 				ERASE_LINE();
@@ -141,13 +147,21 @@ EvolutionSolver::evolvePopulation()
 	ERASE_LINE();
 	msg("Computing cross-able parents: 100%% Done\n");
 
+#ifdef _DO_TIMING
+	msg("Section time: %dms\n", (long) ((get_timestamp_us() - startTime1) / 1e3));
+#endif
+
+#ifdef _DO_TIMING // For reproduction section
+	const double startTime2 = get_timestamp_us();
+#endif
+
 	// Probabilistic generation evolution
 	msg("Evolution: %.2f%% Done", (float) 0.0f);
 
 	ulong crossCount = 0, pmCount = 0, lmCount = 0, randCount = 0;
 	const uint gaPopBlock = myOptions.gaPopSize / 10;
 
-	OMP_FOR
+	OMP_PAR_FOR
 	for (int i = mySruviverCutoff; i < myOptions.gaPopSize; i++)
 	{
 		const ulong dice = (ulong) mySruviverCutoff +
@@ -220,6 +234,10 @@ EvolutionSolver::evolvePopulation()
 	    (float) lmCount / myNonSurviverCount,
 	    (float) randCount / myNonSurviverCount,
 	    mySruviverCutoff);
+
+#ifdef _DO_TIMING
+	msg("Section time: %dms\n", (long) ((get_timestamp_us() - startTime2) / 1e3));
+#endif
 }
 
 void
@@ -238,7 +256,7 @@ EvolutionSolver::scorePopulation()
 	msg("Scoring: 0%% Done");
 	const uint scoreBlock = myPopulation.size() / 10;
 
-	OMP_FOR
+	OMP_PAR_FOR
 	for (int i = 0; i < myPopulation.size(); i++)
 	{
 		myPopulation.at(i).score(mySpec);
@@ -263,7 +281,7 @@ EvolutionSolver::initPopulation()
 
 	msg("Initialising population: %.2f%% Done", 0.0f);
 
-	OMP_FOR
+	OMP_PAR_FOR
 	for (int i = 0; i < myOptions.gaPopSize; i++)
 	{
 		myPopulation.at(i).randomise();
@@ -317,7 +335,7 @@ EvolutionSolver::printStartMsg()
 	    myLimbMutateCutoff,
 	    myOptions.gaPopSize - myLimbMutateCutoff);
 
-	OMP_PARA
+	OMP_PAR
 	{
 		if (omp_get_thread_num() == 0)
 			msg("Running with %d threads\n", omp_get_num_threads());

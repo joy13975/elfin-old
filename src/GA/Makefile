@@ -22,6 +22,7 @@ $(info Objects to be compiled: [${OBJS}])
 
 DEBUG=no
 OMP=yes
+TIMING=yes
 
 ifeq ($(DEBUG), yes)
 	DEBUG_FLAG=-ggdb3
@@ -35,11 +36,17 @@ else
 	OMP_FLAG=-D_NO_OMP
 endif
 
+ifeq ($(TIMING), yes)
+	TIMING_FLAG=-D_DO_TIMING
+else
+	TIMING_FLAG=
+endif
+
 INCS 			:= -I./jutil/src/
 
 OPT_FLAGS 		:= -O3
 CPPFLAGS 		:= -fdiagnostics-color=always -MMD -std=c++11 -fmax-errors=1\
-					$(OPT_FLAGS) $(DEBUG_FLAG) $(OMP_FLAG) $(DEFS) $(INCS)
+					$(OPT_FLAGS) $(DEBUG_FLAG) $(OMP_FLAG) $(TIMING_FLAG) $(DEFS) $(INCS)
 
 COMPILE 		:= $(CXX) $(CPPFLAGS)
 
