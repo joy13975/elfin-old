@@ -22,9 +22,14 @@ public:
 	void score(const Points3f & ref);
 	bool operator>(const Chromosome & rhs) const;
 	bool operator<(const Chromosome & rhs) const;
-	float getScore() const;
-	std::string toString() const;
 
+	// Getter & setters
+	float getScore() const;
+	Genes & genes();
+	const Genes & getGenes() const;
+	std::vector<std::string> getNodeNames() const;
+
+	std::string toString() const;
 	bool cross(const Chromosome & father,
 	           const Chromosome & mother,
 	           const IdPairs & crossingIds);
@@ -34,10 +39,6 @@ public:
 	bool pointMutate();
 	bool limbMutate();
 
-	void setGenes(const Genes & genes);
-	Genes & getGenes();
-	const Genes & getGenes() const;
-	std::vector<std::string> getNodeNames() const;
 	IdPairs findCompatibleCrossings(const Chromosome & other) const;
 
 	static void setup(const uint minLen,

@@ -5,8 +5,38 @@
 namespace elfin
 {
 
+// Static vars
 bool Gene::setupDone = false;
 const IdNameMap * Gene::inm = NULL;
+
+// Constructors
+Gene::Gene(const uint _nodeId) :
+	myNodeId(_nodeId),
+	myCom(Point3f(0, 0, 0))
+{
+	panic_if(!setupDone,
+	         "Gene::setup() must be callsed first!\n");
+}
+
+Gene::Gene(const uint _nodeId,
+           const Point3f _com) :
+	myNodeId(_nodeId),
+	myCom(_com)
+{
+	panic_if(!setupDone,
+	         "Gene::setup() must be callsed first!\n");
+}
+
+Gene::Gene(const uint _nodeId,
+           const float x,
+           const float y,
+           const float z) :
+	myNodeId(_nodeId),
+	myCom(x, y, z)
+{
+	panic_if(!setupDone,
+	         "Gene::setup() must be callsed first!\n");
+}
 
 uint &
 Gene::nodeId()
@@ -30,27 +60,6 @@ const Point3f &
 Gene::com() const
 {
 	return myCom;
-}
-
-
-Gene::Gene(const uint _nodeId,
-           const Point3f _com) :
-	myNodeId(_nodeId),
-	myCom(_com)
-{
-	panic_if(!setupDone,
-	         "Gene::setup() must be callsed first!\n");
-}
-
-Gene::Gene(const uint _nodeId,
-           const float x,
-           const float y,
-           const float z) :
-	myNodeId(_nodeId),
-	myCom(x, y, z)
-{
-	panic_if(!setupDone,
-	         "Gene::setup() must be callsed first!\n");
 }
 
 std::string
