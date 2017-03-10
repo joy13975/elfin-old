@@ -6,6 +6,7 @@
 
 #include "TypeDefs.hpp"
 #include "Gene.hpp"
+#include "../core/Checksum.hpp"
 
 namespace elfin
 {
@@ -27,6 +28,7 @@ public:
 	float getScore() const;
 	Genes & genes();
 	const Genes & getGenes() const;
+	Crc32 checksum() const;
 	std::vector<std::string> getNodeNames() const;
 
 	std::string toString() const;
@@ -52,6 +54,7 @@ public:
 private:
 	Genes myGenes;
 	float myScore = NAN;
+	Crc32 myChecksum = 0;
 
 	static bool setupDone;
 	static uint myMinLen;

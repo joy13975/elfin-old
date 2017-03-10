@@ -34,6 +34,7 @@ Chromosome::Chromosome(const Chromosome & rhs)
 {
 	myGenes = rhs.myGenes;
 	myScore = rhs.myScore;
+	myChecksum = rhs.myChecksum;
 }
 
 
@@ -87,7 +88,7 @@ Chromosome::setup(const uint minLen,
 void
 Chromosome::score(const Points3f & ref)
 {
-	myScore = kabschScore(myGenes, ref);
+	myScore = kabschScore(myGenes, ref, myChecksum);
 	// Use Kabsch to move genes
 	// superimpose(ref);
 
@@ -126,6 +127,12 @@ const Genes &
 Chromosome::getGenes() const
 {
 	return myGenes;
+}
+
+Crc32
+Chromosome::checksum() const
+{
+	return myChecksum;
 }
 
 std::vector<std::string>

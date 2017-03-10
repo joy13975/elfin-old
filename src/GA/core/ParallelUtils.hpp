@@ -16,7 +16,6 @@
 #define OMP_FOR _Pragma("omp for schedule(dynamic)")
 #define OMP_PAR_FOR _Pragma("omp parallel for schedule(dynamic)")
 
-
 #ifdef _DO_TIMING
 
 #include "util.h"

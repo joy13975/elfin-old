@@ -37,10 +37,11 @@ private:
 	double myStartTimeInUs = 0;
 	Population myPopulation;
 
+	void initPopulation();
+	void selectParents();
 	void evolvePopulation();
 	void rankPopulation();
 	void scorePopulation();
-	void initPopulation();
 
 	void printStartMsg();
 	void printEndMsg();

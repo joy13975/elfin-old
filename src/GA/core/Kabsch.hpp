@@ -5,6 +5,7 @@
 
 #include "../data/TypeDefs.hpp"
 #include "../data/Gene.hpp"
+#include "../core/Checksum.hpp"
 
 namespace elfin
 {
@@ -12,7 +13,8 @@ namespace elfin
 float
 kabschScore(
     const Genes & genes,
-    Points3f ref);
+    Points3f ref,
+    Crc32 & checksum);
 
 // A Wrapper to call the a bit more complicated Rosetta version
 bool Kabsch(
