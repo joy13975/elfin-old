@@ -9,6 +9,7 @@
 #include "input/CSVParser.hpp"
 #include "input/JSONParser.hpp"
 #include "core/EvolutionSolver.hpp"
+#include "core/ParallelUtils.hpp"
 
 namespace elfin
 {
@@ -299,6 +300,7 @@ int main(int argc, const char ** argv)
     JSONParser().parseDB(options.xDBFile, nameIdMap, idNameMap, relaMat, radiiList);
 
     Gene::setup(&idNameMap);
+    setupParaUtils(options.randSeed);
 
     Points3f spec = parseInput();
 

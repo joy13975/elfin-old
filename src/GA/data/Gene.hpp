@@ -11,6 +11,8 @@ namespace elfin
 class Gene
 {
 public:
+	Gene(const uint _nodeId);
+
 	Gene(const uint _nodeId,
 	     const Point3f _com);
 

@@ -2,6 +2,7 @@
 #include <sstream>
 #include <algorithm>
 #include <omp.h>
+#include <stdlib.h>
 
 #ifdef _NO_OMP
 inline int omp_get_thread_num() { return 0; }
@@ -10,7 +11,7 @@ inline int omp_get_num_threads() { return 1; }
 
 #include "EvolutionSolver.hpp"
 #include "util.h"
-#include "Parallel.hpp"
+#include "ParallelUtils.hpp"
 
 namespace elfin
 {
@@ -26,9 +27,6 @@ EvolutionSolver::EvolutionSolver(const RelaMat & relaMat,
 	myRadiiList(radiiList),
 	myOptions(options)
 {
-	double timeSeed = get_timestamp_us();
-	std::srand(options.randSeed == 0 ? timeSeed : options.randSeed);
-
 	mySruviverCutoff = std::round(options.gaSurviveRate * options.gaPopSize);
 
 	myNonSurviverCount = (options.gaPopSize - mySruviverCutoff);
@@ -50,6 +48,7 @@ EvolutionSolver::getPopulation() const
 {
 	return myPopulation;
 }
+
 // Public methods
 
 void
@@ -68,11 +67,12 @@ EvolutionSolver::run()
 	for (int i = 0; i < myOptions.gaIters; i++)
 	{
 		const double genStartTime = get_timestamp_us();
+
+		evolvePopulation();
+
 		scorePopulation();
 
 		rankPopulation();
-
-		evolvePopulation();
 
 		msg(genMsgFmt, i,
 		    myPopulation.front().getScore(),
@@ -93,10 +93,7 @@ EvolutionSolver::run()
 void
 EvolutionSolver::evolvePopulation()
 {
-
-#ifdef _DO_TIMING // For crossing pair section
-	const double startTime1 = get_timestamp_us();
-#endif
+	TIMING_START(startTimeCrossingPairs);
 
 	// Make new generation by discarding unfit
 	// genes and mutating/reproducing fit genes
@@ -147,13 +144,12 @@ EvolutionSolver::evolvePopulation()
 	ERASE_LINE();
 	msg("Computing cross-able parents: 100%% Done\n");
 
-#ifdef _DO_TIMING
-	msg("Section time: %dms\n", (long) ((get_timestamp_us() - startTime1) / 1e3));
-#endif
+	TIMING_END("crossing-pairs", startTimeCrossingPairs);
 
-#ifdef _DO_TIMING // For reproduction section
-	const double startTime2 = get_timestamp_us();
-#endif
+
+
+
+	TIMING_START(startTimeMutation);
 
 	// Probabilistic generation evolution
 	msg("Evolution: %.2f%% Done", (float) 0.0f);
@@ -164,58 +160,62 @@ EvolutionSolver::evolvePopulation()
 	OMP_PAR_FOR
 	for (int i = mySruviverCutoff; i < myOptions.gaPopSize; i++)
 	{
-		const ulong dice = (ulong) mySruviverCutoff +
-		                   std::round(
-		                       ((float) std::rand() / RAND_MAX) * myNonSurviverCount);
-
-		// Replicate a high ranking parent
-		myPopulation.at(i) = Chromosome(
-		                         myPopulation.at(
-		                             ((float) std::rand() / RAND_MAX) * mySruviverCutoff
-		                         )
-		                     );
+		const ulong dice = mySruviverCutoff +
+		                   getDice(myNonSurviverCount);
 
 		if (dice < myCrossCutoff)
 		{
 			// Pick random parent pair and cross
 			if (parentIds.size() > 0)
 			{
-				const uint randId = std::rand() % parentIds.size();
+				const uint randId = getDice(parentIds.size());
 
+				// Can't use std::tie() because we want references not values
 				const IdPair & parentTuple = std::get<0>(parentIds.at(randId));
 				const IdPairs & crossingIds = std::get<1>(parentIds.at(randId));
 
-				uint fatherId, motherId;
-				std::tie(fatherId, motherId) = parentTuple;
-				const Chromosome & father =  myPopulation.at(fatherId);
-				const Chromosome & mother =  myPopulation.at(motherId);
+				const Chromosome & father = myPopulation.at(std::get<0>(parentTuple));
+				const Chromosome & mother = myPopulation.at(std::get<1>(parentTuple));
 
 				if (!myPopulation.at(i).cross(father, mother, crossingIds))
-					myPopulation.at(i).inheritMutate((std::rand() % 2) ?
+					myPopulation.at(i).inheritMutate(getDice(2) == 0 ?
 					                                 father : mother);
 			}
 			else
 			{
-				myPopulation.at(i).inheritMutate(myPopulation.at((std::rand() % myCrossCutoff)));
+				// Pick a random parent to inherit from and then mutate
+				myPopulation.at(i).inheritMutate(
+				    myPopulation.at(getDice(myCrossCutoff))
+				);
 			}
 			crossCount++;
 		}
-		else if (dice < myPointMutateCutoff)
-		{
-			if (!myPopulation.at(i).pointMutate())
-				myPopulation.at(i).randomise();
-			pmCount++;
-		}
-		else if (dice < myLimbMutateCutoff)
-		{
-			if (!myPopulation.at(i).limbMutate())
-				myPopulation.at(i).randomise();
-			lmCount++;
-		}
 		else
 		{
-			myPopulation.at(i).randomise();
-			randCount++;
+			// Replicate a high ranking parent
+			myPopulation.at(i) = Chromosome(
+			                         myPopulation.at(getDice(mySruviverCutoff))
+			                     );
+
+			if (dice < myPointMutateCutoff)
+			{
+				if (!myPopulation.at(i).pointMutate())
+					myPopulation.at(i).randomise();
+				pmCount++;
+			}
+			else if (dice < myLimbMutateCutoff)
+			{
+				if (!myPopulation.at(i).limbMutate())
+					myPopulation.at(i).randomise();
+				lmCount++;
+			}
+			else
+			{
+				// Individuals not covered by specified mutation
+				// rates undergo random destructive mutation
+				myPopulation.at(i).randomise();
+				randCount++;
+			}
 		}
 
 		if (i % gaPopBlock == 0)
@@ -228,16 +228,16 @@ EvolutionSolver::evolvePopulation()
 	ERASE_LINE();
 	msg("Evolution: 100%% Done\n");
 
-	dbg("Mutation rates: cross %.2f, pm %.2f, lm %.2f, rand %.2f, mySruviverCutoff: %d\n",
+	// Keep some actual counts to make sure the RNG is working
+	// correctly
+	dbg("Mutation rates: cross %.2f, pm %.2f, lm %.2f, rand %.2f, survivalCount: %d\n",
 	    (float) crossCount / myNonSurviverCount,
 	    (float) pmCount / myNonSurviverCount,
 	    (float) lmCount / myNonSurviverCount,
 	    (float) randCount / myNonSurviverCount,
 	    mySruviverCutoff);
 
-#ifdef _DO_TIMING
-	msg("Section time: %dms\n", (long) ((get_timestamp_us() - startTime2) / 1e3));
-#endif
+	TIMING_END("mutation", startTimeMutation);
 }
 
 void
@@ -245,14 +245,19 @@ EvolutionSolver::rankPopulation()
 {
 	// Sort population according to fitness
 	// (low score = more fit)
+	TIMING_START(startTimeRanking);
 
 	std::sort(myPopulation.begin(),
 	          myPopulation.end());
+
+	TIMING_END("ranking", startTimeRanking);
 }
 
 void
 EvolutionSolver::scorePopulation()
 {
+	TIMING_START(startTimeScoring);
+
 	msg("Scoring: 0%% Done");
 	const uint scoreBlock = myPopulation.size() / 10;
 
@@ -270,11 +275,15 @@ EvolutionSolver::scorePopulation()
 	}
 	ERASE_LINE();
 	msg("Scoring: 100%% Done\n");
+
+	TIMING_END("scoring", startTimeScoring);
 }
 
 void
 EvolutionSolver::initPopulation()
 {
+	TIMING_START(startTimeInit);
+
 	myPopulation = Population(myOptions.gaPopSize);
 
 	const uint block = myOptions.gaPopSize / 10;
@@ -294,6 +303,8 @@ EvolutionSolver::initPopulation()
 
 	ERASE_LINE();
 	msg("Initialising population: 100%% done\n");
+
+	TIMING_END("init", startTimeInit);
 }
 
 void

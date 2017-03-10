@@ -9,9 +9,12 @@
 #include "../core/Kabsch.hpp"
 #include "../data/PairRelationship.hpp"
 #include "../input/JSONParser.hpp"
+#include "../core/ParallelUtils.hpp"
 
 namespace elfin
 {
+
+// Static variables
 
 bool Chromosome::setupDone = false;
 uint Chromosome::myMinLen = 0;
@@ -113,6 +116,30 @@ Chromosome::getScore() const
 	return myScore;
 }
 
+Genes &
+Chromosome::genes()
+{
+	return myGenes;
+}
+
+const Genes &
+Chromosome::getGenes() const
+{
+	return myGenes;
+}
+
+std::vector<std::string>
+Chromosome::getNodeNames() const
+{
+	std::vector<std::string> out;
+
+	for (const auto & gene : myGenes)
+		out.push_back(Gene::inm->at(gene.nodeId()));
+
+	return out;
+}
+
+
 bool
 Chromosome::cross(const Chromosome & father,
                   const Chromosome & mother,
@@ -123,7 +150,7 @@ Chromosome::cross(const Chromosome & father,
 	for (int i = 0; i < maxTries; i++)
 	{
 		// Pick random crossing point
-		const IdPair & crossPoint = crossingIds.at(std::rand() % crossingIds.size());
+		const IdPair & crossPoint = crossingIds.at(getDice(crossingIds.size()));
 		const uint fatherGeneId = std::get<0>(crossPoint);
 		const uint motherGeneId = std::get<1>(crossPoint);
 
@@ -134,12 +161,15 @@ Chromosome::cross(const Chromosome & father,
 		newGenes.insert(newGenes.end(), fatherG.begin(), fatherG.begin() + fatherGeneId);
 		newGenes.insert(newGenes.end(), motherG.begin() + motherGeneId, motherG.end());
 
-		prf("Crossing at father[%d] and mother[%d]\n", fatherGeneId, motherGeneId);
-		prf("Father: \n%s\nMother: %s\n", father.toCString(), mother.toCString());
-		prf("New Genes: \n%s\n", genesToString(newGenes).c_str());
+		// dbg("Crossing at father[%d] and mother[%d]\n", fatherGeneId, motherGeneId);
+		// dbg("Father: \n%s\nMother: %s\n", father.toCString(), mother.toCString());
+		// dbg("New Genes: \n%s\n", genesToString(newGenes).c_str());
 
 		if (synthesise(newGenes))
+		{
+			myGenes = newGenes;
 			return true;
+		}
 	}
 
 	return false;
@@ -178,35 +208,6 @@ Chromosome::toString() const
 	ss << genesToString(myGenes);
 
 	return ss.str();
-}
-
-void
-Chromosome::setGenes(const Genes & genes)
-{
-	myGenes = genes;
-}
-
-Genes &
-Chromosome::getGenes()
-{
-	return myGenes;
-}
-
-const Genes &
-Chromosome::getGenes() const
-{
-	return myGenes;
-}
-
-std::vector<std::string>
-Chromosome::getNodeNames() const
-{
-	std::vector<std::string> out;
-
-	for (const auto & gene : myGenes)
-		out.push_back(Gene::inm->at(gene.nodeId()));
-
-	return out;
 }
 
 IdPairs
@@ -325,49 +326,187 @@ Chromosome::randomise()
 
 // Private methods
 
+enum PointMutateMode {
+	SwapMode,
+	InsertMode,
+	DeleteMode,
+	EnumSize
+};
+
+const PointMutateMode pmModeArr[] =
+{
+	PointMutateMode::SwapMode,
+	PointMutateMode::InsertMode,
+	PointMutateMode::DeleteMode
+};
+
 bool
 Chromosome::pointMutate()
 {
+	// There are 3 ways for point mutate:
+	// 1. Swap with another node
+	// 2. Insert a node
+	// 3. Delete the node
+	// As of now it uses equal probability.
+	// Could be opened up as a setting.
 	const size_t dim = myRelaMat->size();
+	const size_t myGeneSize = myGenes.size();
+	std::vector<PointMutateMode> modes(pmModeArr,
+	                                   pmModeArr + sizeof(pmModeArr) / sizeof(pmModeArr[0]));
 
-	// Find nodes that can be swapped
-	// First uint is index from myGenes
-	// Second uint is nodeId to swap to
-	IdPairs swappableIds;
-
-	for (int i = 1; i < myGenes.size() - 1; i++)
+	while (modes.size() > 0)
 	{
-		// For all neighbours of previous node
-		// find those that has nodes[i+1] as
-		// one of their RHS neighbours
-		for (int j = 0; j < dim; j++)
-			if (j != myGenes.at(i).nodeId() && // Make sure it's not the original one
-			        myRelaMat->at(myGenes.at(i - 1).nodeId()).at(j) != NULL &&
-			        myRelaMat->at(j).at(myGenes.at(i + 1).nodeId()) != NULL)
+		// Draw a random mode without replacement
+		const int modeIndex = getDice(modes.size());
+		const PointMutateMode pmMode = modes.at(modeIndex);
+		modes.erase(modes.begin() + modeIndex);
+
+		// Try to perform the pointMutate in the chosen mode
+		switch (pmMode)
+		{
+		case PointMutateMode::SwapMode: // Swap mode
+		{
+			// First int is index from myGenes
+			// Second int is nodeId to swap to
+			IdPairs swappableIds;
+			for (int i = 0; i < myGeneSize; i++)
 			{
-				// Finally make sure resultant shape won't collide with itself
-				Genes testGenes(myGenes);
-				testGenes.at(i).nodeId() = j;
+				// For all neighbours of previous node
+				// find those that has nodes[i+1] as
+				// one of their RHS neighbours
+				for (int j = 0; j < dim; j++)
+				{
+					// Make sure it's not the original one
+					if (j != myGenes.at(i).nodeId())
+					{
+						// Check whether i can be exchanged for j
+						if (
+						    (i < myGeneSize) // i can be myGeneSize, which is used for insertion check
+						    &&
+						    (i == 0 || // Pass if i is the left end
+						     myRelaMat->at(myGenes.at(i - 1).nodeId()).at(j) != NULL)
+						    &&
+						    (i == myGeneSize - 1 || // Pass if i is the right end
+						     myRelaMat->at(j).at(myGenes.at(i + 1).nodeId()) != NULL)
+						)
+						{
+							// Make sure resultant shape won't collide with itself
+							Genes testGenes(myGenes);
+							testGenes.at(i).nodeId() = j;
 
-				if (synthesise(testGenes))
-					swappableIds.push_back(std::make_tuple(i, j));
+							// dbg("checking swap at %d/%d of %s\n",
+							//     i, myGeneSize, toString().c_str());
+							if (synthesise(testGenes))
+								swappableIds.push_back(std::make_tuple(i, j));
+						}
+					}
+				}
 			}
+
+			// Pick a random one, or report impossible
+			if (swappableIds.size() > 0)
+			{
+				uint swapIndex, swapToNodeId;
+				std::tie(swapIndex, swapToNodeId) = swappableIds.at(getDice(swappableIds.size()));
+				myGenes.at(swapIndex).nodeId() = swapToNodeId;
+
+				synthesise(myGenes); // This is guaranteed to succeed
+				return true;
+			}
+		}
+
+		case PointMutateMode::InsertMode: // Insert mode
+		{
+			IdPairs insertableIds;
+			if (myGeneSize < myMaxLen)
+			{
+				for (int i = 0; i < myGeneSize; i++)
+				{
+					for (int j = 0; j < dim; j++)
+					{
+						// Check whether j can be inserted before i
+						if (
+						    (i == 0 || // Pass if inserting at the left end
+						     myRelaMat->at(myGenes.at(i - 1).nodeId()).at(j) != NULL)
+						    &&
+						    (i == myGeneSize || // Pass if appending at the right end
+						     myRelaMat->at(j).at(myGenes.at(i).nodeId()) != NULL)
+						)
+						{
+							// Make sure resultant shape won't collide with itself
+							Genes testGenes(myGenes);
+							testGenes.insert(testGenes.begin() + i, //This is insertion before i
+							                 Gene(j));
+
+							// dbg("checking insertion at %d/%d of %s\n",
+							//     i, myGeneSize, toString().c_str());
+							if (synthesise(testGenes))
+								insertableIds.push_back(std::make_tuple(i, j));
+						}
+					}
+				}
+
+				// Pick a random one, or report impossible
+				if (insertableIds.size() > 0)
+				{
+					uint insertAt, insertNodeId;
+					std::tie(insertAt, insertNodeId) = insertableIds.at(getDice(insertableIds.size()));
+					myGenes.insert(myGenes.begin() + insertAt, //This is insertion before i
+					               Gene(insertNodeId));
+
+					synthesise(myGenes); // This is guaranteed to succeed
+					return true;
+				}
+			}
+		}
+
+		case PointMutateMode::DeleteMode: // Delete mode
+		{
+			Ids deletableIds;
+			if (myGeneSize > myMinLen)
+			{
+				for (int i = 0; i < myGeneSize; i++)
+				{
+					// Check whether i can be deleted
+					if (
+					    (i < myGeneSize) // i can be myGeneSize, which is used for insertion check
+					    &&
+					    (i == 0 || i == myGeneSize - 1 || // Pass if i is at either end
+					     myRelaMat->at(myGenes.at(i - 1).nodeId()).at(myGenes.at(i + 1).nodeId()) != NULL)
+					)
+					{
+						// Make sure resultant shape won't collide with itself
+						Genes testGenes(myGenes);
+						testGenes.erase(testGenes.begin() + i);
+
+						// dbg("checking deletion at %d/%d of %s\n",
+						//     i, myGeneSize, toString().c_str());
+						if (synthesise(testGenes)) deletableIds.push_back(i);
+					}
+				}
+
+				// Pick a random one, or report impossible
+				if (deletableIds.size() > 0)
+				{
+					myGenes.erase(myGenes.begin() + deletableIds.at(getDice(deletableIds.size())));
+
+					synthesise(myGenes); // This is guaranteed to succeed
+					return true;
+				}
+			}
+		}
+
+		default:
+		{
+			// Fell through all cases without mutating
+			// Do nothing unless pmMode is strange
+			panic_if(pmMode < 0 || pmMode >= PointMutateMode::EnumSize,
+			         "Invalid pmMode in Chromosome::pointMutate()\n");
+		}
+		}
 	}
 
-	// Pick a random one, or report impossible
-	if (swappableIds.size() > 0)
-	{
-		uint swapIndex, swapToNodeId;
-		std::tie(swapIndex, swapToNodeId) = swappableIds.at(std::rand() % swappableIds.size());
-		myGenes.at(swapIndex).nodeId() = swapToNodeId;
-
-		synthesise(myGenes); // This is guaranteed to succeed
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return false;
 }
 
 bool
@@ -383,7 +522,7 @@ Chromosome::limbMutate()
 	const int maxTries = 10;
 	for (int i = 0; i < maxTries; i++)
 	{
-		const uint geneId = (std::rand() % (N - 1)) + 1;
+		const uint geneId = getDice(N - 1) + 1;
 		const uint nodeId = myGenes.at(geneId).nodeId();
 
 		uint lhs, rhs;
@@ -397,7 +536,7 @@ Chromosome::limbMutate()
 		else if (rhs == 1)
 			mutateLeftLimb = true;
 		else
-			mutateLeftLimb = std::rand() % 2;
+			mutateLeftLimb = getDice(2);
 
 		severId = geneId;
 		break;
@@ -444,8 +583,7 @@ Chromosome::genRandomGenesReverse(
 	if (genes.size() == 0)
 	{
 		// Pick random starting node
-		const uint firstNodeId = myGlobalRoulette.at(
-		                             std::rand() % myGlobalRoulette.size());
+		const uint firstNodeId = myGlobalRoulette.at(getDice(myGlobalRoulette.size()));
 		genes.emplace_back(firstNodeId, 0, 0, 0);
 	}
 	else
@@ -488,8 +626,7 @@ Chromosome::genRandomGenesReverse(
 			break;
 
 		// Pick a random valid neighbour
-		const uint nextNodeId = rouletteWheel.at(std::rand() %
-		                        rouletteWheel.size());
+		const uint nextNodeId = rouletteWheel.at(getDice(rouletteWheel.size()));
 
 		const PairRelationship * nextNodePR = myRelaMat->at(nextNodeId).at(currGene.nodeId());
 
@@ -538,8 +675,7 @@ Chromosome::genRandomGenes(
 	if (genes.size() == 0)
 	{
 		// Pick random starting node
-		const uint firstNodeId = myGlobalRoulette.at(
-		                             std::rand() % myGlobalRoulette.size());
+		const uint firstNodeId = myGlobalRoulette.at(getDice(myGlobalRoulette.size()));
 		genes.emplace_back(firstNodeId, 0, 0, 0);
 	}
 	else
@@ -575,8 +711,7 @@ Chromosome::genRandomGenes(
 			break;
 
 		// Pick a random valid neighbour
-		const uint nextNodeId = rouletteWheel.at(std::rand() %
-		                        rouletteWheel.size());
+		const uint nextNodeId = rouletteWheel.at(getDice(rouletteWheel.size()));
 
 		const PairRelationship * nextNodePR = rr.at(nextNodeId);
 
@@ -780,8 +915,7 @@ int main(int argc, const char ** argv)
 	for (const auto & name : l10Test1NameArr)
 		genes.emplace_back(nameIdMap.at(name), 0, 0, 0);
 
-	Chromosome chromo;
-	chromo.setGenes(genes);
+	Chromosome chromo(genes);
 
 	// Test synthesis
 	uint failCount = 0;
