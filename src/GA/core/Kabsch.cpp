@@ -108,13 +108,21 @@ upsample(
 float
 kabschScore(
     const Genes & genes,
-    Points3f ref)
+    Points3f ref,
+    Crc32 & checksum)
 {
 	// First make a copy of genes into points
 	Points3f mobile;
 	mobile.resize(genes.size());
+
+	// Also compute crc
+	checksum = 0xffff;
 	for (int i = 0; i < genes.size(); i++)
-		mobile.at(i) = genes.at(i).com();
+	{
+		const Point3f & pt = genes.at(i).com();
+		checksumCascade(&checksum, &pt, sizeof(pt));
+		mobile.at(i) = pt;
+	}
 
 	if (genes.size() != ref.size())
 		upsample(ref, mobile);

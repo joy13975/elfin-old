@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <omp.h>
 #include <stdlib.h>
+#include <unordered_map>
 
 #ifdef _NO_OMP
 inline int omp_get_thread_num() { return 0; }
@@ -74,6 +75,8 @@ EvolutionSolver::run()
 
 		rankPopulation();
 
+		selectParents();
+
 		msg(genMsgFmt, i,
 		    myPopulation.front().getScore(),
 		    myPopulation.back().getScore(),
@@ -91,152 +94,195 @@ EvolutionSolver::run()
 // Private methods
 
 void
+EvolutionSolver::selectParents()
+{
+	TIMING_START(startTimeSelectParents);
+	{
+		// Ensure variety within survivors using hashmap
+		// and crc as key
+		using CrcMap = std::unordered_map<Crc32, Chromosome>;
+		CrcMap crcMap;
+		ulong uniqueCount = 0;
+
+		// We don't want parallelism here because
+		// the loop must priotise low indexes
+		for (int i = 0; i < myPopulation.size(); i++)
+		{
+			const Crc32 crc = myPopulation.at(i).checksum();
+			if (crcMap.find(crc) == crcMap.end())
+			{
+				// This individual is a new one - record
+				crcMap[crc] = Chromosome(myPopulation.at(i));
+				uniqueCount++;
+
+				if (uniqueCount >= mySruviverCutoff)
+					break;
+			}
+		}
+
+		// Insert map-value-indexed individual back into population
+		ulong popIndex = 0;
+		for (CrcMap::iterator it = crcMap.begin(); it != crcMap.end(); ++it)
+		{
+			myPopulation.at(popIndex++) = Chromosome(it->second);
+		}
+
+		// Sort survivors
+		std::sort(myPopulation.begin(),
+		          myPopulation.begin() + uniqueCount);
+	}
+	TIMING_END("selecting", startTimeSelectParents);
+}
+
+void
 EvolutionSolver::evolvePopulation()
 {
-	TIMING_START(startTimeCrossingPairs);
-
-	// Make new generation by discarding unfit
-	// genes and mutating/reproducing fit genes
-	// to fill up discarded slots
-
-	// First compute possible crossing parents
-	msg("Computing cross-able parents: 0%% Done");
-
 	using ParentIdVector = std::vector<std::tuple<IdPair, IdPairs>>;
 	ParentIdVector parentIds;
 
-	const uint nPossibleCrossings = (mySruviverCutoff * (mySruviverCutoff + 1)) / 2;
-	const uint gaCrossBlock = nPossibleCrossings / 10;
-
-	// Credit to Stack Overflow response by Z boson at
-	// http://stackoverflow.com/questions/18669296/c-openmp-parallel-for-loop-alternatives-to-stdvector
-	#pragma omp declare reduction (merge : ParentIdVector : omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end()))
-
-	#pragma omp parallel for reduction(merge: parentIds)
-	for (int i = 0; i < mySruviverCutoff; i++)
+	TIMING_START(startTimeCrossingPairs);
 	{
-		for (int j = i + 1; j < mySruviverCutoff; j++)
+		// Make new generation by discarding unfit
+		// genes and mutating/reproducing fit genes
+		// to fill up discarded slots
+
+		// First compute possible crossing parents
+		msg("Computing cross-able parents: 0%% Done");
+
+		const ulong nPossibleCrossings = (mySruviverCutoff * (mySruviverCutoff + 1)) / 2;
+		const ulong gaCrossBlock = nPossibleCrossings / 10;
+
+		// Credit to Stack Overflow response by Z boson at
+		// http://stackoverflow.com/questions/18669296/c-openmp-parallel-for-loop-alternatives-to-stdvector
+		#pragma omp declare reduction 										\
+		(																	\
+		        mergeParentIds : ParentIdVector : 							\
+		        omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end())	\
+		)
+
+		#pragma omp parallel for reduction(mergeParentIds: parentIds)
+		for (int i = 0; i < mySruviverCutoff; i++)
 		{
-			// If two chromosomes have at least one identical
-			// gene and the length sum is legal
-			const Chromosome & father =  myPopulation.at(i);
-			const Chromosome & mother =  myPopulation.at(j);
-
-			IdPairs crossingIds = father.findCompatibleCrossings(mother);
-			if (crossingIds.size() > 0)
-				parentIds.push_back(
-				    std::make_tuple(
-				        std::make_tuple(i, j),
-				        crossingIds));
-
-			const uint cid = nPossibleCrossings -
-			                 ((mySruviverCutoff - i) * (mySruviverCutoff - i + 1)) / 2
-			                 + (j - i);
-
-			if (cid % gaCrossBlock == 0)
+			for (int j = i; j < mySruviverCutoff; j++)
 			{
-				ERASE_LINE();
-				msg("Computing cross-able parents: %.2f%% Done",
-				    (float) cid / nPossibleCrossings);
+				// If two chromosomes have at least one identical
+				// gene and the length sum is legal
+				const Chromosome & father =  myPopulation.at(i);
+				const Chromosome & mother =  myPopulation.at(j);
+
+				IdPairs crossingIds = father.findCompatibleCrossings(mother);
+				if (crossingIds.size() > 0)
+					parentIds.push_back(
+					    std::make_tuple(
+					        std::make_tuple(i, j),
+					        crossingIds));
+
+				const ulong cid = nPossibleCrossings -
+				                  ((mySruviverCutoff - i) * (mySruviverCutoff - i + 1)) / 2
+				                  + (j - i);
+
+				if (cid % gaCrossBlock == 0)
+				{
+					ERASE_LINE();
+					msg("Computing cross-able parents: %.2f%% Done",
+					    (float) cid / nPossibleCrossings);
+				}
 			}
 		}
+		ERASE_LINE();
+		msg("Computing cross-able parents: 100%% Done\n");
 	}
-	ERASE_LINE();
-	msg("Computing cross-able parents: 100%% Done\n");
-
 	TIMING_END("crossing-pairs", startTimeCrossingPairs);
 
 
-
-
 	TIMING_START(startTimeMutation);
-
-	// Probabilistic generation evolution
-	msg("Evolution: %.2f%% Done", (float) 0.0f);
-
-	ulong crossCount = 0, pmCount = 0, lmCount = 0, randCount = 0;
-	const uint gaPopBlock = myOptions.gaPopSize / 10;
-
-	OMP_PAR_FOR
-	for (int i = mySruviverCutoff; i < myOptions.gaPopSize; i++)
 	{
-		const ulong dice = mySruviverCutoff +
-		                   getDice(myNonSurviverCount);
+		// Probabilistic generation evolution
+		msg("Evolution: %.2f%% Done", (float) 0.0f);
 
-		if (dice < myCrossCutoff)
+		ulong crossCount = 0, pmCount = 0, lmCount = 0, randCount = 0;
+		const ulong gaPopBlock = myOptions.gaPopSize / 10;
+
+		OMP_PAR_FOR
+		for (int i = mySruviverCutoff; i < myOptions.gaPopSize; i++)
 		{
-			// Pick random parent pair and cross
-			if (parentIds.size() > 0)
+			const ulong dice = mySruviverCutoff +
+			                   getDice(myNonSurviverCount);
+
+			if (dice < myCrossCutoff)
 			{
-				const uint randId = getDice(parentIds.size());
+				// Pick random parent pair and cross
+				if (parentIds.size() > 0)
+				{
+					const ulong randId = getDice(parentIds.size());
 
-				// Can't use std::tie() because we want references not values
-				const IdPair & parentTuple = std::get<0>(parentIds.at(randId));
-				const IdPairs & crossingIds = std::get<1>(parentIds.at(randId));
+					// Can't use std::tie() because we want references not values
+					const IdPair & parentTuple = std::get<0>(parentIds.at(randId));
+					const IdPairs & crossingIds = std::get<1>(parentIds.at(randId));
 
-				const Chromosome & father = myPopulation.at(std::get<0>(parentTuple));
-				const Chromosome & mother = myPopulation.at(std::get<1>(parentTuple));
+					const Chromosome & father = myPopulation.at(std::get<0>(parentTuple));
+					const Chromosome & mother = myPopulation.at(std::get<1>(parentTuple));
 
-				if (!myPopulation.at(i).cross(father, mother, crossingIds))
-					myPopulation.at(i).inheritMutate(getDice(2) == 0 ?
-					                                 father : mother);
+					if (!myPopulation.at(i).cross(father, mother, crossingIds))
+						myPopulation.at(i).inheritMutate(getDice(2) == 0 ?
+						                                 father : mother);
+				}
+				else
+				{
+					// Pick a random parent to inherit from and then mutate
+					myPopulation.at(i).inheritMutate(
+					    myPopulation.at(getDice(myCrossCutoff))
+					);
+				}
+				crossCount++;
 			}
 			else
 			{
-				// Pick a random parent to inherit from and then mutate
-				myPopulation.at(i).inheritMutate(
-				    myPopulation.at(getDice(myCrossCutoff))
-				);
-			}
-			crossCount++;
-		}
-		else
-		{
-			// Replicate a high ranking parent
-			myPopulation.at(i) = Chromosome(
-			                         myPopulation.at(getDice(mySruviverCutoff))
-			                     );
+				// Replicate a high ranking parent
+				myPopulation.at(i) = Chromosome(
+				                         myPopulation.at(getDice(mySruviverCutoff))
+				                     );
 
-			if (dice < myPointMutateCutoff)
-			{
-				if (!myPopulation.at(i).pointMutate())
+				if (dice < myPointMutateCutoff)
+				{
+					if (!myPopulation.at(i).pointMutate())
+						myPopulation.at(i).randomise();
+					pmCount++;
+				}
+				else if (dice < myLimbMutateCutoff)
+				{
+					if (!myPopulation.at(i).limbMutate())
+						myPopulation.at(i).randomise();
+					lmCount++;
+				}
+				else
+				{
+					// Individuals not covered by specified mutation
+					// rates undergo random destructive mutation
 					myPopulation.at(i).randomise();
-				pmCount++;
+					randCount++;
+				}
 			}
-			else if (dice < myLimbMutateCutoff)
+
+			if (i % gaPopBlock == 0)
 			{
-				if (!myPopulation.at(i).limbMutate())
-					myPopulation.at(i).randomise();
-				lmCount++;
-			}
-			else
-			{
-				// Individuals not covered by specified mutation
-				// rates undergo random destructive mutation
-				myPopulation.at(i).randomise();
-				randCount++;
+				ERASE_LINE();
+				msg("Evolution: %.2f%% Done", (float) i / myOptions.gaPopSize);
 			}
 		}
 
-		if (i % gaPopBlock == 0)
-		{
-			ERASE_LINE();
-			msg("Evolution: %.2f%% Done", (float) i / myOptions.gaPopSize);
-		}
+		ERASE_LINE();
+		msg("Evolution: 100%% Done\n");
+
+		// Keep some actual counts to make sure the RNG is working
+		// correctly
+		dbg("Mutation rates: cross %.2f, pm %.2f, lm %.2f, rand %.2f, survivalCount: %d\n",
+		    (float) crossCount / myNonSurviverCount,
+		    (float) pmCount / myNonSurviverCount,
+		    (float) lmCount / myNonSurviverCount,
+		    (float) randCount / myNonSurviverCount,
+		    mySruviverCutoff);
 	}
-
-	ERASE_LINE();
-	msg("Evolution: 100%% Done\n");
-
-	// Keep some actual counts to make sure the RNG is working
-	// correctly
-	dbg("Mutation rates: cross %.2f, pm %.2f, lm %.2f, rand %.2f, survivalCount: %d\n",
-	    (float) crossCount / myNonSurviverCount,
-	    (float) pmCount / myNonSurviverCount,
-	    (float) lmCount / myNonSurviverCount,
-	    (float) randCount / myNonSurviverCount,
-	    mySruviverCutoff);
-
 	TIMING_END("mutation", startTimeMutation);
 }
 
@@ -246,10 +292,10 @@ EvolutionSolver::rankPopulation()
 	// Sort population according to fitness
 	// (low score = more fit)
 	TIMING_START(startTimeRanking);
-
-	std::sort(myPopulation.begin(),
-	          myPopulation.end());
-
+	{
+		std::sort(myPopulation.begin(),
+		          myPopulation.end());
+	}
 	TIMING_END("ranking", startTimeRanking);
 }
 
@@ -257,25 +303,25 @@ void
 EvolutionSolver::scorePopulation()
 {
 	TIMING_START(startTimeScoring);
-
-	msg("Scoring: 0%% Done");
-	const uint scoreBlock = myPopulation.size() / 10;
-
-	OMP_PAR_FOR
-	for (int i = 0; i < myPopulation.size(); i++)
 	{
-		myPopulation.at(i).score(mySpec);
+		msg("Scoring: 0%% Done");
+		const ulong scoreBlock = myPopulation.size() / 10;
 
-		if (i % scoreBlock == 0)
+		OMP_PAR_FOR
+		for (int i = 0; i < myPopulation.size(); i++)
 		{
-			ERASE_LINE();
-			msg("Scoring: %.2f%% Done",
-			    (float) i / myPopulation.size());
-		}
-	}
-	ERASE_LINE();
-	msg("Scoring: 100%% Done\n");
+			myPopulation.at(i).score(mySpec);
 
+			if (i % scoreBlock == 0)
+			{
+				ERASE_LINE();
+				msg("Scoring: %.2f%% Done",
+				    (float) i / myPopulation.size());
+			}
+		}
+		ERASE_LINE();
+		msg("Scoring: 100%% Done\n");
+	}
 	TIMING_END("scoring", startTimeScoring);
 }
 
@@ -283,27 +329,29 @@ void
 EvolutionSolver::initPopulation()
 {
 	TIMING_START(startTimeInit);
-
-	myPopulation = Population(myOptions.gaPopSize);
-
-	const uint block = myOptions.gaPopSize / 10;
-
-	msg("Initialising population: %.2f%% Done", 0.0f);
-
-	OMP_PAR_FOR
-	for (int i = 0; i < myOptions.gaPopSize; i++)
 	{
-		myPopulation.at(i).randomise();
-		if (i % block == 0)
+
+		myPopulation = Population(myOptions.gaPopSize);
+
+		const ulong block = myOptions.gaPopSize / 10;
+
+		msg("Initialising population: %.2f%% Done", 0.0f);
+
+		OMP_PAR_FOR
+		for (int i = 0; i < myOptions.gaPopSize; i++)
 		{
-			ERASE_LINE();
-			msg("Initialising population: %.2f%% Done", (float) i / myOptions.gaPopSize);
+			myPopulation.at(i).randomise();
+			if (i % block == 0)
+			{
+				ERASE_LINE();
+				msg("Initialising population: %.2f%% Done", (float) i / myOptions.gaPopSize);
+			}
 		}
+
+		ERASE_LINE();
+		msg("Initialising population: 100%% done\n");
+
 	}
-
-	ERASE_LINE();
-	msg("Initialising population: 100%% done\n");
-
 	TIMING_END("init", startTimeInit);
 }
 
@@ -360,7 +408,7 @@ EvolutionSolver::printEndMsg()
 	this->printTiming();
 
 	// Print best N solutions
-	const uint N = 3;
+	const ulong N = 3;
 
 	for (int i = 0; i < N; i++)
 	{
@@ -382,9 +430,9 @@ void
 EvolutionSolver::printTiming()
 {
 	const double timeElapsedInUs = get_timestamp_us() - myStartTimeInUs;
-	const uint minutes = std::floor(timeElapsedInUs / 1e6 / 60.0f);
-	const uint seconds = std::floor(fmod(timeElapsedInUs / 1e6, 60.0f));
-	const uint milliseconds = std::floor(fmod(timeElapsedInUs / 1e3, 1000.0f));
+	const ulong minutes = std::floor(timeElapsedInUs / 1e6 / 60.0f);
+	const ulong seconds = std::floor(fmod(timeElapsedInUs / 1e6, 60.0f));
+	const ulong milliseconds = std::floor(fmod(timeElapsedInUs / 1e3, 1000.0f));
 	raw("%um %us %ums\n",
 	    minutes, seconds, milliseconds);
 }

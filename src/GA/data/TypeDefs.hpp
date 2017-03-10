@@ -19,15 +19,15 @@ namespace elfin
 class PairRelationship;
 
 // Shorthands
-typedef std::map<std::string, int> NameIdMap;
-typedef std::map<int, std::string> IdNameMap;
+typedef std::map<std::string, long> NameIdMap;
+typedef std::map<long, std::string> IdNameMap;
 
 typedef std::vector<PairRelationship *> RelaRow;
 typedef std::vector<RelaRow> RelaMat;
 
-typedef std::vector<int> IdRoulette;
-typedef std::vector<int> Ids;
-typedef std::tuple<int, int> IdPair;
+typedef std::vector<long> IdRoulette;
+typedef std::vector<long> Ids;
+typedef std::tuple<long, long> IdPair;
 typedef std::vector<IdPair> IdPairs;
 
 template <typename T>
