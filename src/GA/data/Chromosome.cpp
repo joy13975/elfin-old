@@ -124,7 +124,7 @@ Chromosome::genes()
 }
 
 const Genes &
-Chromosome::getGenes() const
+Chromosome::genes() const
 {
 	return myGenes;
 }
@@ -161,8 +161,8 @@ Chromosome::cross(const Chromosome & father,
 		const uint fatherGeneId = std::get<0>(crossPoint);
 		const uint motherGeneId = std::get<1>(crossPoint);
 
-		const Genes & fatherG = father.getGenes();
-		const Genes & motherG = mother.getGenes();
+		const Genes & fatherG = father.genes();
+		const Genes & motherG = mother.genes();
 
 		Genes newGenes;
 		newGenes.insert(newGenes.end(), fatherG.begin(), fatherG.begin() + fatherGeneId);
@@ -222,7 +222,7 @@ Chromosome::findCompatibleCrossings(const Chromosome & other) const
 {
 	IdPairs crossingIds;
 
-	const Genes & otherG = other.getGenes();
+	const Genes & otherG = other.genes();
 	const uint otGeneLen = otherG.size();
 	const uint myGeneLen = myGenes.size();
 
@@ -846,11 +846,8 @@ Chromosome::synthesise(Genes & genes)
 	return true;
 }
 
-} // namespace elfin
 
-#ifdef _TEST_CHROMO
-
-int main(int argc, const char ** argv)
+int _testChromosome()
 {
 	using namespace elfin;
 
@@ -927,19 +924,39 @@ int main(int argc, const char ** argv)
 	// Test synthesis
 	uint failCount = 0;
 
-	if (!chromo.synthesise(chromo.getGenes()))
+	if (!chromo.synthesise(chromo.genes()))
 	{
 		failCount++;
-		wrn("Could not synthesise known spec!\n");
+		err("Failed to synthesise() known spec!\n");
 	}
 	else
 	{
 		// Check that exact coordinates match
-		for (int i = 0; i < chromo.getGenes().size(); i++)
+		for (int i = 0; i < chromo.genes().size(); i++)
 		{
-			if (!chromo.getGenes().at(i).com().approximates(l10Solution1.at(i)))
+			if (!chromo.genes().at(i).com().approximates(l10Solution1.at(i)))
+			{
 				failCount++;
+				err("Synthesis coordinate error\n");
+			}
 		}
+	}
+
+	// Test synthesiseReverse (and also copy move)
+	Chromosome revChromo = chromo;
+	const uint chromoNode0 = chromo.genes().at(0).nodeId();
+	std::reverse(revChromo.genes().begin(), revChromo.genes().end());
+
+	if (chromo.genes().at(0).nodeId() != chromoNode0)
+	{
+		failCount++;
+		err("Chromosome copy-move failed\n");
+	}
+
+	if (!chromo.synthesiseReverse(chromo.genes()))
+	{
+		failCount++;
+		err("Failed to synthesiseReverse() known spec!\n");
 	}
 
 	msg("%s\n", chromo.toString().c_str());
@@ -952,5 +969,4 @@ int main(int argc, const char ** argv)
 
 	return 0;
 }
-
-#endif //_TEST_CHROMO
+} // namespace elfin

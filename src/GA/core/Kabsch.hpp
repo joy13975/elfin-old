@@ -16,23 +16,13 @@ kabschScore(
     Points3f ref,
     Crc32 & checksum);
 
-// A Wrapper to call the a bit more complicated Rosetta version
-bool Kabsch(
-    Points3f const & mobile,
-    Points3f const & ref,
-    Matrix<double> & rot,
-    Vector3f & tran,
-    double & rms,
-    int mode = 1);
+float
+kabschScore(
+    Points3f mobile,
+    Points3f ref,
+    Crc32 & checksum);
 
-bool RosettaKabsch(
-    std::vector < std::vector < double > > const & x,
-    std::vector < std::vector < double > > const & y,
-    int const n,
-    int const mode,
-    double *rms,
-    std::vector < double > & t,
-    std::vector < std::vector < double > > & u );
+int _testKabsch();
 } // namespace elfin
 
 #endif /* include guard */

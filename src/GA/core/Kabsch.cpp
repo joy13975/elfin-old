@@ -105,68 +105,6 @@ upsample(
 	pts1IsLonger ? (pts2 = upsampled) : (pts1 = upsampled);
 }
 
-float
-kabschScore(
-    const Genes & genes,
-    Points3f ref,
-    Crc32 & checksum)
-{
-	// First make a copy of genes into points
-	Points3f mobile;
-	mobile.resize(genes.size());
-
-	// Also compute crc
-	checksum = 0xffff;
-	for (int i = 0; i < genes.size(); i++)
-	{
-		const Point3f & pt = genes.at(i).com();
-		checksumCascade(&checksum, &pt, sizeof(pt));
-		mobile.at(i) = pt;
-	}
-
-	if (genes.size() != ref.size())
-		upsample(ref, mobile);
-
-	// Run Kabsch to get RMS
-	Matrix<double> rot;
-	Vector3f tran;
-	double rms;
-
-	const bool retVal = Kabsch(mobile, ref, rot, tran, rms, 0);
-
-	panic_if(!retVal, "Kabsch failed!\n");
-
-	return rms;
-}
-
-// A Wrapper to call the a bit more complicated Rosetta version
-bool Kabsch(
-    const Points3f & mobile,
-    const Points3f & ref,
-    Matrix<double> & rot,
-    Vector3f & tran,
-    double & rms,
-    int mode)
-{
-	Matrix<double> xx = points3fToVectors(mobile);
-	Matrix<double> yy = points3fToVectors(ref);
-
-	std::vector<double> tt = point3fToVector(tran);
-
-	if (rot.size() < 3)
-		rot.resize(3);
-	for (auto & row : rot)
-		if (row.size() < 3)
-			row.resize(3);
-
-	const size_t n = mobile.size();
-
-	const bool retVal = RosettaKabsch(xx, yy, n, mode, &rms, tt, rot);
-	tran = Vector3f(std::vector<float>(tt.begin(), tt.end()));
-
-	return retVal;
-}
-
 // Implemetation of Kabsch algoritm for finding the best rotation matrix
 // ---------------------------------------------------------------------------
 // x    - x(i,m) are coordinates of atom m in set x            (input)
@@ -466,11 +404,79 @@ bool RosettaKabsch(
 	*rms = rms1;
 	return true;
 }
-} // namespace elfin
 
-#ifdef _TEST_KABSCH
+// A Wrapper to call the a bit more complicated Rosetta version
+bool Kabsch(
+    const Points3f & mobile,
+    const Points3f & ref,
+    Matrix<double> & rot,
+    Vector3f & tran,
+    double & rms,
+    int mode = 1)
+{
+	Matrix<double> xx = points3fToVectors(mobile);
+	Matrix<double> yy = points3fToVectors(ref);
 
-int main(int argc, const char ** argv)
+	std::vector<double> tt = point3fToVector(tran);
+
+	if (rot.size() < 3)
+		rot.resize(3);
+	for (auto & row : rot)
+		if (row.size() < 3)
+			row.resize(3);
+
+	const size_t n = mobile.size();
+
+	const bool retVal = RosettaKabsch(xx, yy, n, mode, &rms, tt, rot);
+	tran = Vector3f(std::vector<float>(tt.begin(), tt.end()));
+
+	return retVal;
+}
+
+float
+kabschScore(
+    const Genes & genes,
+    Points3f ref,
+    Crc32 & checksum)
+{
+	// First make a copy of genes into points
+	Points3f mobile;
+	mobile.resize(genes.size());
+
+	// Also compute crc
+	checksum = 0xffff;
+	for (int i = 0; i < genes.size(); i++)
+	{
+		const Point3f & pt = genes.at(i).com();
+		checksumCascade(&checksum, &pt, sizeof(pt));
+		mobile.at(i) = pt;
+	}
+
+	return kabschScore(mobile, ref, checksum);
+}
+
+float
+kabschScore(
+    Points3f mobile,
+    Points3f ref,
+    Crc32 & checksum)
+{
+	if (ref.size() != mobile.size())
+		upsample(ref, mobile);
+
+	// Run Kabsch to get RMS
+	Matrix<double> rot;
+	Vector3f tran;
+	double rms;
+
+	const bool retVal = Kabsch(mobile, ref, rot, tran, rms, 0);
+
+	panic_if(!retVal, "Kabsch failed!\n");
+
+	return rms;
+}
+
+int _testKabsch()
 {
 	using namespace elfin;
 
@@ -515,8 +521,6 @@ int main(int argc, const char ** argv)
 
 	Points3f A(arrA, arrA + sizeof(arrA) / sizeof(arrA[0]));
 	Points3f B(arrB, arrB + sizeof(arrB) / sizeof(arrB[0]));
-	wrn("A %s\n", pointsToString(A).c_str());
-	wrn("B %s\n", pointsToString(B).c_str());
 
 	Matrix<double> rot;
 	Vector3f tran;
@@ -536,12 +540,18 @@ int main(int argc, const char ** argv)
 		raw("%16.6f %16.6f %16.6f\n",
 		    row.at(0), row.at(1), row.at(2));
 		if (!Vector3f(row.at(0), row.at(1), row.at(2)).approximates(actualR[i]))
+		{
 			failCount++;
+			err("Rotation test failed: row does not approximate actual rotation row\n");
+		}
 	}
 
 	msg("Tran: %s\n", tran.toString().c_str());
 	if (!tran.approximates(actualTran))
+	{
 		failCount++;
+		err("Translation test failed: does not approximate actual translation\n");
+	}
 
 	// Test upsampling
 	Points3f Afewer = A;
@@ -556,7 +566,7 @@ int main(int argc, const char ** argv)
 	if (Afewer.size() != B.size())
 	{
 		failCount++;
-		wrn("Upsampling failed! Lengths: Afewer=%d B=%d\n",
+		err("Upsampling failed: Lengths: Afewer=%d B=%d\n",
 		    Afewer.size(), B.size());
 	}
 
@@ -575,18 +585,21 @@ int main(int argc, const char ** argv)
 		G.push_back(Gene(i, A.at(i)));
 
 	Point3f B0Copy = B.at(0);
-	msg("Ref(B[0]) before scoring: %s\n",
-	    B0Copy.toString().c_str());
 
-	float score = kabschScore(G, B);
+	Crc32 crc;
+	float score = kabschScore(G, B, crc);
 	msg("A-B Score: %.10f\n", score);
 	if (!float_approximates(score, 19195.6699218750))
+	{
 		failCount++;
+		err("A-B Score test failed\n");
+	}
 
-	msg("Ref(B[0]) after scoring: %s\n",
-	    B.at(0).toString().c_str());
 	if (!B.at(0).approximates(B0Copy))
+	{
 		failCount++;
+		err("Scoring const-ness failed: shape B was modified during scoring\n");
+	}
 
 
 	// Test scoring identical shapes
@@ -594,11 +607,14 @@ int main(int argc, const char ** argv)
 	for (int i = 0; i < B.size(); i++)
 		G.push_back(Gene(i, B.at(i)));
 
-	score = kabschScore(G, B);
+	score = kabschScore(G, B, crc);
 
 	msg("B-B Score: %.10f\n", score);
 	if (!float_approximates(score, 0.0))
+	{
 		failCount++;
+		err("B-B self score failed\n");
+	}
 
 
 	// Test scoring different sized (sub)shapes
@@ -610,18 +626,18 @@ int main(int argc, const char ** argv)
 		G.push_back(Gene(i, B.at(i)));
 	}
 
-	score = kabschScore(G, B);
+	score = kabschScore(G, B, crc);
 
 	msg("B[1:]-B score: %.10f\n", score);
 
 	if (score >= 4362.3974609375)
 	{
-		wrn("Upsampling not working - score worse than no upsampling\n");
+		err("Upsampling not working - score worse than no upsampling\n");
 		failCount++;
 	}
 	else if (!float_approximates(score, 3070.5651855469))
 	{
-		wrn("Upsampled score differs\n");
+		err("Upsampled score differs\n");
 		failCount++;
 	}
 
@@ -631,7 +647,7 @@ int main(int argc, const char ** argv)
 	else
 		err("Failed! failCount=%d\n", failCount);
 
-	return 0;
+	return failCount;
 }
 
-#endif //ifdef _TEST_KABSCH
+} // namespace elfin

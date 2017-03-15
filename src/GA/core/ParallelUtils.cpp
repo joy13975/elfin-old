@@ -27,22 +27,12 @@ void setupParaUtils(uint globalSeed)
 		get_timestamp_us() : (globalSeed + omp_get_thread_num());
 	}
 
-	wrn("Parallel utils setup\n");
-
 	paraUtilsSetup = true;
 }
 
-ulong getDice(ulong ceiling)
+std::vector<uint> & getParaRandSeeds()
 {
-	return (ulong) std::round(
-	           (
-	               (float) rand_r(
-	                   &(paraRandSeeds.at(omp_get_thread_num()))
-	               )
-	               / RAND_MAX
-	           )
-	       )
-	       * (ceiling - 1);;
+	return paraRandSeeds;
 }
 
 } // namespace elfin

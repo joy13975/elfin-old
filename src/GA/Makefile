@@ -50,22 +50,6 @@ CPPFLAGS 		:= -fdiagnostics-color=always -MMD -std=c++11 -fmax-errors=1\
 
 COMPILE 		:= $(CXX) $(CPPFLAGS)
 
-objToDelete	+= $(OBJ_DIR)/elfin.o
-objToDelete	+= $(OBJ_DIR)/core/Kabsch.o
-objToDelete	+= $(OBJ_DIR)/core/MathUtils.o
-objToDelete	+= $(OBJ_DIR)/data/Chromosome.o
-
-ifeq ($(TEST), kabsch)
-	DEFS		+= -D_TEST_KABSCH -D_NO_ELFIN_MAIN
-	EXE 		:= kabschTest
-else ifeq ($(TEST), math)
-	DEFS 		+= -D_TEST_MATHUTILS -D_NO_ELFIN_MAIN
-	EXE 		:= mathTest
-else ifeq ($(TEST), chromo)
-	DEFS 		+= -D_TEST_CHROMO -D_NO_ELFIN_MAIN
-	EXE 		:= chromoTest
-endif
-
 
 #
 # start of rules

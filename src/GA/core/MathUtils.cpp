@@ -1,17 +1,16 @@
-#ifdef _TEST_MATHUTILS
-
 #include <cmath>
 
 #include "MathUtils.hpp"
 #include "util.h"
 #include "../data/TypeDefs.hpp"
 
-using namespace elfin;
-
-int failCount = 0;
-
-int main(int argc, const char ** argv)
+namespace elfin
 {
+
+int _testMathUtils()
+{
+	int failCount = 0;
+
 	msg("Testing MathUtils\n");
 
 	// Translate 1
@@ -24,7 +23,10 @@ int main(int argc, const char ** argv)
 	a += t;
 	raw("%s\n", a.toString().c_str());
 	if (!a.approximates(Point3f(10.0f, 11.0f, 12.0f)))
+	{
 		failCount++;
+		err("Translation test 1 failed\n");
+	}
 
 	// Translate 2
 	t = Vector3f(-3.0f, 100.0f, 493.1337f);
@@ -35,7 +37,10 @@ int main(int argc, const char ** argv)
 	a += t;
 	raw("%s\n", a.toString().c_str());
 	if (!a.approximates(Point3f(7.0f, 111.0f, 505.1337f)))
+	{
 		failCount++;
+		err("Translation test 2 failed\n");
+	}
 
 	// Rotate 1
 	Vector3f rotRows1[3] = {
@@ -51,7 +56,10 @@ int main(int argc, const char ** argv)
 	a = a.dot(r);
 	raw("%s\n", a.toString().c_str());
 	if (!a.approximates(Point3f(7.0f, 111.0f, 505.1337f)))
+	{
 		failCount++;
+		err("Rotation test 1 failed\n");
+	}
 
 	// Rotate 2
 	Vector3f rotRows2[3] = {
@@ -67,7 +75,10 @@ int main(int argc, const char ** argv)
 	a = a.dot(r);
 	raw("%s\n", a.toString().c_str());
 	if (!a.approximates(Point3f(58.3f, 114.5f, 505.1337f)))
+	{
 		failCount++;
+		err("Rotation test 1 failed\n");
+	}
 
 	// Rotate + translate
 	t = Vector3f(-9.32f, 1.001f, -0.1337f);
@@ -85,7 +96,10 @@ int main(int argc, const char ** argv)
 	a = a.dot(r) + t;
 	raw("%s\n", a.toString().c_str());
 	if (!a.approximates(Point3f(5.258703160630904e2, 0.182810002279120e2, 0.830926340542118e2)))
+	{
 		failCount++;
+		err("Rotation + translation test failed\n");
+	}
 
 	// Test pre-dot
 	msg("Pre-dot rotmat %s with vector %s\n",
@@ -94,7 +108,10 @@ int main(int argc, const char ** argv)
 	a = r.dot(a);
 	raw("%s\n", a.toString().c_str());
 	if (!a.approximates(Point3f(237.104014947446f, 308.802344762272f, 474.114184096774f)))
+	{
 		failCount++;
+		err("Pre-dot test failed\n");
+	}
 
 	// Test rotmat self dot
 	msg("Self-dot on rotmat %s\n",
@@ -104,7 +121,10 @@ int main(int argc, const char ** argv)
 	if (!rdr.rows[0].approximates(Point3f(0.48000000912, 0.0500000015, 0.1760000045468)) ||
 	        !rdr.rows[1].approximates(Point3f(0.726999965396001, 0.06000000105, 0.20830000348028)) ||
 	        !rdr.rows[2].approximates(Point3f(0.3689999954404, 0.08999999897, 0.27010000356552)))
+	{
 		failCount++;
+		err("Self-dot test failed\n");
+	}
 
 	// Test matrix transpose
 	msg("Transpose on rotmat %s\n",
@@ -114,7 +134,10 @@ int main(int argc, const char ** argv)
 	if (!tr.rows[0].approximates(Point3f(00.400000006, 0.5, 0.8999999762)) ||
 	        !tr.rows[1].approximates(Point3f(0.1000000015, 0.1000000015, 0)) ||
 	        !tr.rows[2].approximates(Point3f(0.3000000119, 0.5299999714, 0.009999999776)))
+	{
 		failCount++;
+		err("Transpose test failed\n");
+	}
 
 	if (failCount > 0)
 	{
@@ -126,5 +149,4 @@ int main(int argc, const char ** argv)
 	}
 	return 0;
 }
-
-#endif //ifdef _TEST_MATHUTILS
+} // namespace elfin
