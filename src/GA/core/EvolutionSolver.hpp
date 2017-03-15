@@ -18,7 +18,8 @@ public:
 	                const OptionPack & options);
 	virtual ~EvolutionSolver() {};
 
-	const Population & getPopulation() const;
+	const Population & population() const;
+	const Population & bestSoFar() const;
 
 	void run();
 private:
@@ -36,6 +37,7 @@ private:
 
 	double myStartTimeInUs = 0;
 	Population myPopulation;
+	Population myBestSoFar; // Currently used for emergency output
 
 	void initPopulation();
 	void selectParents();

@@ -27,7 +27,7 @@ public:
 	// Getter & setters
 	float getScore() const;
 	Genes & genes();
-	const Genes & getGenes() const;
+	const Genes & genes() const;
 	Crc32 checksum() const;
 	std::vector<std::string> getNodeNames() const;
 
@@ -72,6 +72,7 @@ private:
 	    Genes genes = Genes());
 };
 
+int _testChromosome();
 } // namespace elfin
 
 #endif /* include guard */

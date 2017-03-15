@@ -63,11 +63,16 @@ struct OptionPack
 	uint randSeed = 0x1337cafe;
 	long gaPopSize = 10000;
 	long gaIters = 1000;
-	float gaSurviveRate = 0.1;
-	float gaCrossRate = 0.5;
-	float gaPointMutateRate = 0.5;
-	float gaLimbMutateRate = 0.5;
+	float gaSurviveRate = 0.1f;
+	float gaCrossRate = 0.5f;
+	float gaPointMutateRate = 0.5f;
+	float gaLimbMutateRate = 0.5f;
 
+	// Use a small number but not exactly 0.0
+	// because of imprecise float comparison
+	float scoreStopThreshold = 0.01f;
+
+	bool runUnitTests = false;
 };
 
 } // namespace elfin

@@ -5,11 +5,6 @@
 #include <stdlib.h>
 #include <unordered_map>
 
-#ifdef _NO_OMP
-inline int omp_get_thread_num() { return 0; }
-inline int omp_get_num_threads() { return 1; }
-#endif
-
 #include "EvolutionSolver.hpp"
 #include "util.h"
 #include "ParallelUtils.hpp"
@@ -45,9 +40,15 @@ EvolutionSolver::EvolutionSolver(const RelaMat & relaMat,
 }
 
 const Population &
-EvolutionSolver::getPopulation() const
+EvolutionSolver::population() const
 {
 	return myPopulation;
+}
+
+const Population &
+EvolutionSolver::bestSoFar() const
+{
+	return myBestSoFar;
 }
 
 // Public methods
@@ -60,6 +61,9 @@ EvolutionSolver::run()
 	this->startTimer();
 
 	initPopulation();
+
+	const int nBestSoFar = 3;
+	myBestSoFar.resize(nBestSoFar);
 
 	const int genDispDigits = std::ceil(std::log(myOptions.gaIters) / std::log(10));
 	char * genMsgFmt;
@@ -77,10 +81,24 @@ EvolutionSolver::run()
 
 		selectParents();
 
+		const float bestScore = myPopulation.front().getScore();
+		const float worstScore = myPopulation.back().getScore();
 		msg(genMsgFmt, i,
-		    myPopulation.front().getScore(),
-		    myPopulation.back().getScore(),
+		    bestScore,
+		    worstScore,
 		    (long) std::round((get_timestamp_us() - genStartTime) / 1e3));
+
+		// Can stop loop if best score is low enough
+		if (bestScore < myOptions.scoreStopThreshold)
+		{
+			msg("Score stop threshold %.2f reached\n", myOptions.scoreStopThreshold);
+			break;
+		}
+		else
+		{
+			for (int i = 0; i < nBestSoFar; i++)
+				myBestSoFar.at(i) = myPopulation.at(i);
+		}
 	}
 
 	// Must do final score & rank
@@ -197,7 +215,7 @@ EvolutionSolver::evolvePopulation()
 
 	TIMING_START(startTimeMutation);
 	{
-		// Probabilistic generation evolution
+		// Probabilistic evolution
 		msg("Evolution: %.2f%% Done", (float) 0.0f);
 
 		ulong crossCount = 0, pmCount = 0, lmCount = 0, randCount = 0;

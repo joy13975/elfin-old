@@ -9,12 +9,17 @@
 // Macro shorthands
 #define OMP_PAR _Pragma("omp parallel")
 
+#ifdef _NO_OMP
+inline int omp_get_thread_num() { return 0; }
+inline int omp_get_num_threads() { return 1; }
+#endif
+
 // Use dynamic by default because for elfin,
 // workloads can vary by a large margin
 // as there are many different branches leading
 // to different amount of work (though untested)
-#define OMP_FOR _Pragma("omp for schedule(dynamic)")
-#define OMP_PAR_FOR _Pragma("omp parallel for schedule(dynamic)")
+#define OMP_FOR _Pragma("omp for")
+#define OMP_PAR_FOR _Pragma("omp parallel for")
 
 #ifdef _DO_TIMING
 
@@ -37,8 +42,21 @@ namespace elfin
 
 void setupParaUtils(uint globalSeed);
 
-ulong getDice(ulong ceiling);
+std::vector<uint> & getParaRandSeeds();
 
+inline ulong getDice(ulong ceiling)
+{
+	return (ulong) std::floor(
+	           (
+	               (float)
+	               (ceiling - 1) *
+	               rand_r(
+	                   &(getParaRandSeeds().at(omp_get_thread_num()))
+	               )
+	               / RAND_MAX
+	           )
+	       );
+}
 } // namespace elfin
 
 #endif /* include guard */

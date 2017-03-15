@@ -84,6 +84,7 @@ minDistFromLine(const Point3f & point,
 	return minDist;
 }
 
+int _testMathUtils();
 } // namespace elfin
 
 #endif /* include guard */
