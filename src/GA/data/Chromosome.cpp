@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <tuple>
 
-#include "../core/MathUTils.hpp"
+#include "../core/MathUtils.hpp"
 #include "../core/Kabsch.hpp"
 #include "../data/PairRelationship.hpp"
 #include "../input/JSONParser.hpp"
