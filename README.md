@@ -5,15 +5,38 @@ The main idea is to use repeatable protein parts like rigid construction blocks 
 
 ![alt tag](res/gifs/6vjex8d.gif)
 
-### Status
+Figure 1: animated demonstration of how the naive greedy algorithm works towards a complete benchmark shape by building protein modules one after another. The benchmark shape is a randomly generated sequence of protein modules known to have that shape (minimised & shown low RMSD).
 
-10 Feb 2017: Stage 2/4 ongoing:
+### Project Status
+
+16 Mar 2017: Stage 3/4:
+   * **GA mostly implemented (~90% as far as this project is concerned)**
+      * Includes unit tests of critical code (ideally should be every bit of the code, but I have time constraints)
+         * Geomtry & Maths
+         * Randomiser & Parallel randomiser
+         * Evolution functions
+      * Features multiple evolution operators, namely:
+         * Crossing (combine 2 highly ranked parents at a random legal point)
+         * Point mutation (firstly inherit from one parent, then apply either of {insert, swap, delete})
+         * Limb mutation (sever from a random point in sequence, then grow a new "limb")
+         * Fully randomise (self explanatory)
+      * Implemented straightforward parallelism
+         * Simple #pragma omp parallel for
+         * Using parallel version of stdlib functions (-D_GLIBCXX_PARALLEL) so I don't need to re-implement stuff like sorting.
+         * TODO: further investigate memory access patterns and optimisation opportunities
+         * TODO: test on GPUs using OpenMP 4.5
+         * TODO: benchmark on a couple of different platforms.
+      * TODO: grid search to find good GA parameters
+      * TODO: a more complete documentation
+      * TODO: write a more visually helpful version of Synth.py to use Kabsch and align two sequences so they can appear to be more aligned in PyMol (instead of fixing one end to origin)
+
+10 Feb 2017: Stage 2/4:
    * **Main Algorithm Formulation**
       * In progress, thinking of a Genetic Algorithm that operates on domain constrained genes.
          * Genes will be sequences of repeat modules restricted by interaction relationship.
          * Main kernel looking to include Kabsch (shape sampling still not solved...) and nearest-point poly-line scoring.
       * Fabio proposed Dead-end Elimination, still need to look into the literature.
-         * TODO: Decide whether to include/replace with this method 
+         * Consider as alternative but no time to implement every possible algorithm 
 
 8 Feb 2017: Stage 1/4 complete:
    * **Pair and single module library**
