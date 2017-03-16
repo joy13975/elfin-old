@@ -24,7 +24,10 @@ DECL_ARG_CALLBACK(helpAndExit); // defined later due to need of bundle size
 DECL_ARG_CALLBACK(setSettingsFile) { options.settingsFile = arg_in; }
 DECL_ARG_CALLBACK(setInputFile) { options.inputFile = arg_in; }
 DECL_ARG_CALLBACK(setXDB) { options.xDBFile = arg_in; }
-DECL_ARG_CALLBACK(setOutputDir) { options.outputDir = arg_in; }
+DECL_ARG_CALLBACK(setOutputDir) { 
+    options.outputDir = arg_in; 
+    mkdir_ifn_exists(arg_in);
+}
 
 DECL_ARG_CALLBACK(setChromoLenDev) { options.chromoLenDev = parse_float(arg_in); }
 DECL_ARG_CALLBACK(setAvgPairDist) { options.avgPairDist = parse_float(arg_in); }
@@ -84,6 +87,10 @@ DECL_ARG_IN_FAIL_CALLBACK(argParseFail)
 
 void parseSettings()
 {
+    panic_if(!file_exists(options.settingsFile.c_str()),
+             "Settings file does not exist: \"%s\"\n",
+             options.settingsFile.c_str());
+
     JSON j = JSONParser().parse(options.settingsFile);
 
     // Perhaps there's a better way to parse these
@@ -414,10 +421,13 @@ int main(int argc, const char ** argv)
     // Default set to warning and above
     set_log_level(LOG_WARN);
 
+    // Parse user arguments first to potentially get a settings file path
+    parse_args(argc, argv, ARG_BUND_SIZE, argb, argParseFail);
+
     // Get values from settings json first
     parseSettings();
 
-    // Parse user arguments
+    // Parse user arguments a second time to override settings file
     parse_args(argc, argv, ARG_BUND_SIZE, argb, argParseFail);
 
     checkOptions();
