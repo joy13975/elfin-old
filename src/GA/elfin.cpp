@@ -12,7 +12,7 @@
 #include "input/JSONParser.hpp"
 #include "core/EvolutionSolver.hpp"
 #include "core/ParallelUtils.hpp"
-#include "core/Mathutils.hpp"
+#include "core/MathUtils.hpp"
 #include "core/Kabsch.hpp"
 
 namespace elfin

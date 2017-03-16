@@ -42,7 +42,7 @@ else
 	TIMING_FLAG=
 endif
 
-INCS 			:= -I./jutil/src/
+INCS 			:= -I./jutil/src/ -I.
 
 OPT_FLAGS 		:= -O3
 CPPFLAGS 		:= -fdiagnostics-color=always -MMD -std=c++11 -fmax-errors=1\
