@@ -53,8 +53,8 @@ def main():
 					for gcr in gaCrossRates:
 						for (gpmr, glmr) in zip(gaPointMutateRates, gaLimbMutateRates):
 							settingJson = OrderedDict([
-								('inputFile', '../../bm/l10/6vjex8d.json'),
-								('xDBFile', '../../res/xDB.json'),
+								('inputFile', './bm/l10/6vjex8d.json'),
+								('xDBFile', './res/xDB.json'),
 								('outputDir', './gs_{}_out/'.format(settingId)),
 								('randSeed', '0x600d1337'),
 
