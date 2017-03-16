@@ -71,9 +71,16 @@ Figure 1: animated demonstration of how the naive greedy algorithm works towards
 
 ### Setup 
 1. Install all of [must-have tools]() and optionally [complementaries]()
+3. Execute the following commands to install necesssary libraries:
+```
+cd elfin                         #if not already in the directory
+virtualenv venv                  #the name 'venv' is required
+. ./activate                     #get into the virtual environment
+pip install -r requirements.txt  #automatically fetch and instally the libraries needed (locally)
+```
 
 ### Must-have Tools: 
-1. [BioPython](http://biopython.org/wiki/Download) library for PDB IO
+1. Python 2.7.9+
 2. [VirtualEnv](https://virtualenv.pypa.io/en/stable/) for separation of python environment
 
 ### Optional Complementaries:
