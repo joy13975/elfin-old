@@ -10,6 +10,7 @@ def main():
 
 	if len(sys.argv) < 2:
 		print 'Using DEFAULT output directory: {}'.format(outputDir)
+		utils.mkdir(outputDir)
 
 		# print 'Usage: ./GenGASettings.py <outputDir>'
 		# exit()
