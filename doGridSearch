@@ -1,14 +1,33 @@
+#!/bin/bash
+
 endGridId=0 #inclusive
-queueName=teaching
+: ${queueName=teaching}
+: ${ppn=16}
+: ${configDir=./gridSearchConfigs/}
+: ${globalOutDir=./gs_out/}
 
 prog="./src/GA/bin/elfin"
+jobCount=0
 for gridId in $(seq 0 $endGridId); do
-	cmd="$prog -s gridSearchSettings/gs_$gridId.json"
-	outDir="./gs_out/gs_$gridId/"
-	mkdir -p $outDir
+	#Each config ID can have multiple benchmarks attached
+	bmConfigs=($(ls $configDir/*$gridId*\.json))
 
-	echo "cd $HOME/src/elfin" > $outDir/cmd
-	echo $cmd >> $outDir/cmd
+	for bmConfig in "${bmConfigs[@]}"; do
+		cmd="$prog -s $bmConfig"
+        gsOutDir=${bmConfig/$configDir/$globalOutDir}
+        gsOutDir=${gsOutDir/\.json/'/'}
+        cmdDir=$gsOutDir/cmd
 
-	qsub -N elfin_omp -joe -o $outDir/log -q $queueName -l nodes=1:ppn=16,walltime=00:30:00 "$outDir/cmd"
+        mkdir -p $gsOutDir
+
+        echo "cd $HOME/src/elfin" > $cmdDir
+        echo $cmd >> $cmdDir
+
+#        echo cmd is $cmd
+#        echo gsOutDir is $gsOutDir
+
+		jobCount=$((jobCount + 1))
+		echo Sending job "#$jobCount"
+        qsub -N elfin_omp -joe -o $gsOutDir/log -q $queueName -l nodes=1:ppn=$ppn,walltime=00:30:00 "$cmdDir"
+    done
 done

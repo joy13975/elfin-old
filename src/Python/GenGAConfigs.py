@@ -6,13 +6,13 @@ import json
 from collections import OrderedDict
 
 def main():
-	outputDir = './gridSearchSettings/'
+	outputDir = './gridSearchConfigs/'
 
 	if len(sys.argv) < 2:
 		print 'Using DEFAULT output directory: {}'.format(outputDir)
 		utils.mkdir(outputDir)
 
-		# print 'Usage: ./GenGASettings.py <outputDir>'
+		# print 'Usage: ./GenGAConfigs.py <outputDir>'
 		# exit()
 	else:
 		outputDir = sys.argv[1] + '/'
@@ -28,8 +28,8 @@ def main():
 	gaPointMutateRates 	= []
 	gaLimbMutateRates  	= []
 
-	# Create 3 settings - for 3 different benchmarks shapes
-	# using the same settings
+	# Create 3 configs - for 3 different benchmarks shapes
+	# using the same config
 	bmNames = ['6vjex8d', '9y8hxgo', 'j0m06n4']
 
 	# PM and LM rates depend on Cross rates
@@ -49,7 +49,7 @@ def main():
 	print 'Total runs needed: {}'.format(nRuns)
 
 	# Write all combinations of GA parameters to output
-	settingId = 0
+	configId = 0
 	for cld in chromoLenDevs:
 		for gps in gaPopSizes:
 			for gi in gaIters:
@@ -57,10 +57,10 @@ def main():
 					for gcr in gaCrossRates:
 						for (gpmr, glmr) in zip(gaPointMutateRates, gaLimbMutateRates):
 							for bmName in bmNames:
-								settingJson = OrderedDict([
+								configJson = OrderedDict([
 									('inputFile', './bm/l10/{}.json'.format(bmName)),
 									('xDBFile', './res/xDB.json'),
-									('outputDir', './gs_out/gs_{}/'.format(settingId)),
+									('outputDir', './gs_out/gs_{}/'.format(configId)),
 									('randSeed', '0x600d1337'),
 
 									('chromoLenDev', cld),
@@ -72,13 +72,15 @@ def main():
 									('gaLimbMutateRate', glmr),
 								])
 
-								json.dump(settingJson,
-									open(outputDir + 'gs_{}_{}.json'.format(settingId, bmName), 'w'),
+								json.dump(configJson,
+									open(outputDir + 'gs_{}_{}.json'.format(configId, bmName), 'w'),
 									separators=(',', ':'),
 									ensure_ascii=False,
 									indent=4)
 
-							settingId = settingId + 1
+							configId = configId + 1
+
+	print 'Max GS config ID: {}'.format(configId - 1)
 
 if __name__ == '__main__':
 	main()
