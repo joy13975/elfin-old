@@ -97,17 +97,15 @@ void parseSettings()
     // setting-variable names so it never gets out
     // of sync with argb...
 
-    std::ostringstream ss;
-
+    std::string tmpStr;
     auto jsonToCStr = [&](const JSON & j) {
-        ss.str("");
-
+        std::ostringstream ss;
         if (j.is_string())
             ss << j.get<std::string>();
         else
             ss << j;
-
-        return ss.str().c_str();
+        tmpStr = ss.str();
+        return tmpStr.c_str();
     };
 
 
