@@ -77,6 +77,8 @@ cd elfin                         #if not already in the directory
 virtualenv venv                  #the name 'venv' is required
 . ./activate                     #get into the virtual environment
 pip install -r requirements.txt  #automatically fetch and instally the libraries needed (locally)
+git submodule init		 #my jutil repository is needed for this project
+git submodule update
 ```
 
 ### Must-have Tools: 
