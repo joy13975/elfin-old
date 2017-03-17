@@ -57,10 +57,14 @@ def main():
 					for gcr in gaCrossRates:
 						for (gpmr, glmr) in zip(gaPointMutateRates, gaLimbMutateRates):
 							for bmName in bmNames:
+								outputName = 'gs_{}_{}'.format(configId, bmName)
+								bmOutputDir = './gs_out/{}/'.format(outputName)
+								utils.mkdir(bmOutputDir)
+
 								configJson = OrderedDict([
 									('inputFile', './bm/l10/{}.json'.format(bmName)),
 									('xDBFile', './res/xDB.json'),
-									('outputDir', './gs_out/gs_{}/'.format(configId)),
+									('outputDir', bmOutputDir),
 									('randSeed', '0x600d1337'),
 
 									('chromoLenDev', cld),
@@ -73,7 +77,7 @@ def main():
 								])
 
 								json.dump(configJson,
-									open(outputDir + 'gs_{}_{}.json'.format(configId, bmName), 'w'),
+									open(outputDir + '{}.json'.format(outputName), 'w'),
 									separators=(',', ':'),
 									ensure_ascii=False,
 									indent=4)
