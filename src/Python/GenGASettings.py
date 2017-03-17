@@ -28,6 +28,10 @@ def main():
 	gaPointMutateRates 	= []
 	gaLimbMutateRates  	= []
 
+	# Create 3 settings - for 3 different benchmarks shapes
+	# using the same settings
+	bmNames = ['6vjex8d', '9y8hxgo', 'j0m06n4']
+
 	# PM and LM rates depend on Cross rates
 	pmRatios = (0.25, 0.5, 0.75)
 	for cr in gaCrossRates:
@@ -41,7 +45,7 @@ def main():
 
 	nRuns = len(chromoLenDevs) * len(gaPopSizes) * len(gaIters) * \
 		len(gaSurviveRates) * len(gaCrossRates) * len(gaPointMutateRates) * \
-		len(gaLimbMutateRates)
+		len(gaLimbMutateRates) * len(bmNames)
 	print 'Total runs needed: {}'.format(nRuns)
 
 	# Write all combinations of GA parameters to output
@@ -52,26 +56,27 @@ def main():
 				for gsr in gaSurviveRates:
 					for gcr in gaCrossRates:
 						for (gpmr, glmr) in zip(gaPointMutateRates, gaLimbMutateRates):
-							settingJson = OrderedDict([
-								('inputFile', './bm/l10/6vjex8d.json'),
-								('xDBFile', './res/xDB.json'),
-								('outputDir', './gs_out/gs_{}/'.format(settingId)),
-								('randSeed', '0x600d1337'),
+							for bmName in bmNames:
+								settingJson = OrderedDict([
+									('inputFile', './bm/l10/{}.json'.format(bmName)),
+									('xDBFile', './res/xDB.json'),
+									('outputDir', './gs_out/gs_{}/'.format(settingId)),
+									('randSeed', '0x600d1337'),
 
-								('chromoLenDev', cld),
-								('gaPopSize', gps),
-								('gaIters', gi),
-								('gaSurviveRate', gsr),
-								('gaCrossRate', gcr),
-								('gaPointMutateRate', gpmr),
-								('gaLimbMutateRate', glmr),
-							])
+									('chromoLenDev', cld),
+									('gaPopSize', gps),
+									('gaIters', gi),
+									('gaSurviveRate', gsr),
+									('gaCrossRate', gcr),
+									('gaPointMutateRate', gpmr),
+									('gaLimbMutateRate', glmr),
+								])
 
-							json.dump(settingJson,
-								open(outputDir + 'gs_{}.json'.format(settingId), 'w'),
-								separators=(',', ':'),
-								ensure_ascii=False,
-								indent=4)
+								json.dump(settingJson,
+									open(outputDir + 'gs_{}_{}.json'.format(settingId, bmName), 'w'),
+									separators=(',', ':'),
+									ensure_ascii=False,
+									indent=4)
 
 							settingId = settingId + 1
 
