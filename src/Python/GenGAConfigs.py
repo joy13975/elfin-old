@@ -37,15 +37,15 @@ def main():
 	for cr in gaCrossRates:
 		# Each remaining portion after cross rates
 		# generate 3 ratios of RM and LM
-		rem = 1 - cr
+		rem = 0.9999 - cr
 		for pmRatio in pmRatios:
-			(pm, lm) = (pmRatio * rem, (1 - pmRatio) * rem)
+			(pm, lm) = (pmRatio * rem, (0.9999 - pmRatio) * rem)
 			gaPointMutateRates.append(pm)
 			gaLimbMutateRates.append(lm)
 
 	nRuns = len(chromoLenDevs) * len(gaPopSizes) * len(gaIters) * \
 		len(gaSurviveRates) * len(gaCrossRates) * len(gaPointMutateRates) * \
-		len(gaLimbMutateRates) * len(bmNames)
+		len(bmNames)
 	print 'Total runs needed: {}'.format(nRuns)
 
 	# Write all combinations of GA parameters to output
