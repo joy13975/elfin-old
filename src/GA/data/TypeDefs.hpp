@@ -72,6 +72,8 @@ struct OptionPack
 	// because of imprecise float comparison
 	float scoreStopThreshold = 0.01f;
 
+	int maxStagnantGens = 50;
+
 	bool runUnitTests = false;
 };
 

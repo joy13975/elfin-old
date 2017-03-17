@@ -4,6 +4,7 @@
 #include <omp.h>
 #include <stdlib.h>
 #include <unordered_map>
+#include <limits>
 
 #include "EvolutionSolver.hpp"
 #include "util.h"
@@ -65,6 +66,9 @@ EvolutionSolver::run()
 	const int nBestSoFar = 3;
 	myBestSoFar.resize(nBestSoFar);
 
+	float lastGenBestScore = std::numeric_limits<double>::infinity();
+	int stagnantCount = 0;
+
 	const int genDispDigits = std::ceil(std::log(myOptions.gaIters) / std::log(10));
 	char * genMsgFmt;
 	asprintf(&genMsgFmt,
@@ -81,15 +85,15 @@ EvolutionSolver::run()
 
 		selectParents();
 
-		const float bestScore = myPopulation.front().getScore();
-		const float worstScore = myPopulation.back().getScore();
+		const float genBestScore = myPopulation.front().getScore();
+		const float genWorstScore = myPopulation.back().getScore();
 		msg(genMsgFmt, i,
-		    bestScore,
-		    worstScore,
+		    genBestScore,
+		    genWorstScore,
 		    (long) std::round((get_timestamp_us() - genStartTime) / 1e3));
 
 		// Can stop loop if best score is low enough
-		if (bestScore < myOptions.scoreStopThreshold)
+		if (genBestScore < myOptions.scoreStopThreshold)
 		{
 			msg("Score stop threshold %.2f reached\n", myOptions.scoreStopThreshold);
 			break;
@@ -98,6 +102,27 @@ EvolutionSolver::run()
 		{
 			for (int i = 0; i < nBestSoFar; i++)
 				myBestSoFar.at(i) = myPopulation.at(i);
+
+			if (float_approximates(genBestScore, lastGenBestScore))
+			{
+				stagnantCount++;
+			}
+			else
+			{
+				stagnantCount = 0;
+			}
+
+			lastGenBestScore = genBestScore;
+
+			if (stagnantCount >= myOptions.maxStagnantGens)
+			{
+				wrn("Solver stopping because max stagnancy is reached (%d)\n", myOptions.maxStagnantGens);
+				break;
+			}
+			else
+			{
+				wrn("Current stagnancy: %d, max: %d\n", stagnantCount, myOptions.maxStagnantGens);
+			}
 		}
 	}
 
