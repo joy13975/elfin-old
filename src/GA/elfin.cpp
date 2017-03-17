@@ -24,8 +24,8 @@ DECL_ARG_CALLBACK(helpAndExit); // defined later due to need of bundle size
 DECL_ARG_CALLBACK(setSettingsFile) { options.settingsFile = arg_in; }
 DECL_ARG_CALLBACK(setInputFile) { options.inputFile = arg_in; }
 DECL_ARG_CALLBACK(setXDB) { options.xDBFile = arg_in; }
-DECL_ARG_CALLBACK(setOutputDir) { 
-    options.outputDir = arg_in; 
+DECL_ARG_CALLBACK(setOutputDir) {
+    options.outputDir = arg_in;
     mkdir_ifn_exists(arg_in);
 }
 
@@ -40,6 +40,7 @@ DECL_ARG_CALLBACK(setGaCrossRate) { options.gaCrossRate = parse_float(arg_in); }
 DECL_ARG_CALLBACK(setGaPointMutateRate) { options.gaPointMutateRate = parse_float(arg_in); }
 DECL_ARG_CALLBACK(setGaLimbMutateRate) { options.gaLimbMutateRate = parse_float(arg_in); }
 DECL_ARG_CALLBACK(setScoreStopThreshold) { options.scoreStopThreshold = parse_float(arg_in); }
+DECL_ARG_CALLBACK(setMaxStagnantGens) { options.maxStagnantGens = parse_long(arg_in); }
 
 DECL_ARG_CALLBACK(setLogLevel) { set_log_level((Log_Level) parse_long(arg_in)); }
 DECL_ARG_CALLBACK(setRunUnitTests) { options.runUnitTests = true; }
@@ -60,6 +61,7 @@ const argument_bundle argb[] = {
     {"-gmr", "--gaPointMutateRate", "Set GA surviver point mutation rate (default 0.3)", true, setGaPointMutateRate},
     {"-gmr", "--gaLimbMutateRate", "Set GA surviver limb mutation rate (default 0.3)", true, setGaLimbMutateRate},
     {"-stt", "--scoreStopThreshold", "Set GA exit score threshold (default 0.0)", true, setScoreStopThreshold},
+    {"-msg", "--maxStagnantGens", "Set number of stagnant generations before GA exits (default 50)", true, setMaxStagnantGens},
     {"-lg", "--logLevel", "Set log level", true, setLogLevel},
     {"-t", "--test", "Run unit tests", false, setRunUnitTests}
 };
@@ -146,6 +148,9 @@ void parseSettings()
 
     if (!j["scoreStopThreshold"].is_null())
         setScoreStopThreshold(jsonToCStr(j["scoreStopThreshold"]));
+
+    if (!j["maxStagnantGens"].is_null())
+        setMaxStagnantGens(jsonToCStr(j["maxStagnantGens"]));
 
     if (!j["avgPairDist"].is_null())
         setAvgPairDist(jsonToCStr(j["avgPairDist"]));
