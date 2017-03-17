@@ -14,21 +14,22 @@ for gridId in $(seq 0 $endGridId); do
 
 	for bmConfig in "${bmConfigs[@]}"; do
 		cmd="$prog -s $bmConfig"
-        gsOutDir=${bmConfig/$configDir/$globalOutDir}
-        gsOutDir=${gsOutDir/\.json/'/'}
-        cmdDir=$gsOutDir/cmd
+	        gsOutDir=${bmConfig/$configDir/$globalOutDir}
+        	gsOutDir=${gsOutDir/\.json/'/'}
+        	cmdDir=$gsOutDir/cmd
 
-        mkdir -p $gsOutDir
+	        mkdir -p $gsOutDir
 
-        echo "cd $HOME/src/elfin" > $cmdDir
-        echo $cmd >> $cmdDir
+	        echo "cd $HOME/src/elfin" > $cmdDir
+	        echo $cmd >> $cmdDir
 
-        echo cmd is $cmd
-        echo gsOutDir is $gsOutDir
+#	        echo cmd is $cmd
+#	        echo gsOutDir is $gsOutDir
 
 		jobCount=$((jobCount + 1))
 		echo Sending job "#$jobCount"
-        #qsub -N elfin_omp -joe -o $gsOutDir/log -q $queueName -l nodes=1:ppn=$ppn,walltime=00:30:00 "$cmdDir"
-    done
-
+        	qsubCmd="qsub -N elfin_omp -joe -o $gsOutDir/log -q $queueName -l nodes=1:ppn=$ppn,walltime=00:30:00 ""$cmdDir"
+#		echo qsubCmd: $qsubCmd
+		$qsubCmd
+	done
 done
