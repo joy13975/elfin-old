@@ -1,10 +1,14 @@
 endGridId=0 #inclusive
+queueName=teaching
+
 prog="./src/GA/bin/elfin"
 for gridId in $(seq 0 $endGridId); do
 	cmd="$prog -s gridSearchSettings/gs_$gridId.json"
 	outDir="./gs_out/gs_$gridId/"
 	mkdir -p $outDir
-	echo $cmd > $outDir/cmd
 
-	qsub -N elfin_omp -joe -o $outDir/log -q veryshort -l nodes=1:ppn=16,walltime=00:30:00 "$outDir/cmd"
+	echo "cd $HOME/src/elfin" > $outDir/cmd
+	echo $cmd >> $outDir/cmd
+
+	qsub -N elfin_omp -joe -o $outDir/log -q $queueName -l nodes=1:ppn=16,walltime=00:30:00 "$outDir/cmd"
 done
