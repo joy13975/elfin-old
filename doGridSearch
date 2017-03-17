@@ -1,6 +1,7 @@
 #!/bin/bash
 
-endGridId=0 #inclusive
+: ${startGridId=0} #includsive
+: ${endGridId=0} #inclusive
 : ${queueName=teaching}
 : ${ppn=16}
 : ${configDir=./gridSearchConfigs/}
@@ -8,7 +9,7 @@ endGridId=0 #inclusive
 
 prog="./src/GA/bin/elfin"
 jobCount=0
-for gridId in $(seq 0 $endGridId); do
+for gridId in $(seq $startGridId $endGridId); do
 	#Each config ID can have multiple benchmarks attached
 	bmConfigs=($(ls $configDir/*_"$gridId"_*\.json))
 
