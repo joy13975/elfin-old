@@ -230,10 +230,28 @@ void checkOptions()
              options.gaLimbMutateRate > 1.0,
              "GA limb mutate rate must be between 0 and 1 inclusive\n");
 
-    panic_if(options.gaCrossRate +
-             options.gaPointMutateRate +
-             options.gaLimbMutateRate > 1.0,
-             "Sum of GA cross + point mutate + limb mutate rates must be <= 1\n");
+    bool rateCorrected = false;
+    float sumRates = options.gaCrossRate +
+                     options.gaPointMutateRate +
+                     options.gaLimbMutateRate;
+    if (rateCorrected = (sumRates > 1.0))
+    {
+        options.gaCrossRate         /= sumRates;
+        options.gaPointMutateRate   /= sumRates;
+        options.gaLimbMutateRate    /= sumRates;
+        sumRates = options.gaCrossRate +
+                   options.gaPointMutateRate +
+                   options.gaLimbMutateRate;
+    }
+
+    if (rateCorrected)
+    {
+        wrn("Sum of GA cross + point mutate + limb mutate rates must be <= 1\n");
+        wrn("Rates corrected to: %.2f, %.2f, %.2f\n",
+            options.gaCrossRate,
+            options.gaPointMutateRate,
+            options.gaLimbMutateRate);
+    }
 
     panic_if(options.avgPairDist < 0, "Average CoM distance must be > 0\n");
 
