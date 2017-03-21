@@ -9,6 +9,7 @@ import GridSearchParams
 def main():
 	ap = argparse.ArgumentParser(description='Analyse the Grid Search output files');
 	ap.add_argument('--gsConfDir', default='./gsConfigs/')
+	ap.add_argument('--gsOutDir', default='./gs_out/')
 	ap.add_argument('--gsVersion', type=int, default=2)
 
 	args = ap.parse_args()
@@ -29,7 +30,7 @@ def main():
 						for (gpmr, glmr) in zip(gsParams.gaPointMutateRates, gsParams.gaLimbMutateRates):
 							for bmName in gsParams.bmNames:
 								outputName = 'gs_{}_{}'.format(configId, bmName)
-								bmOutputDir = './gs_out/{}/'.format(outputName)
+								bmOutputDir = './{}/{}/'.format(gsOutDir, outputName)
 								utils.mkdir(bmOutputDir)
 
 								configJson = OrderedDict([
