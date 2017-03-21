@@ -1,0 +1,746 @@
+[35m[MSG] [0mLog level set to LOG_WARN
+[35m[MSG] [0mUsing JSON input
+[35m[MSG] [0mUsing master seed: 1611469623
+[35m[MSG] [0mExpecting length: 18
+[35m[MSG] [0mUsing deviation allowance: 10.0%
+[35m[MSG] [0mEvolutionSolver starting with following settings:
+Population size:            100k
+Iterations:                 1000
+Survive cutoff:             2000
+Cross cutoff:               31400
+Point Mutate cutoff:        55895
+Limb Mutate cutoff:         80385
+New species:                19615
+[35m[MSG] [0mRunning with 256 threads
+[35m[MSG] [0mInitialising population: 0.00% Done[2K[35m[MSG] [0mInitialising population: 0.00% Done[2K[35m[MSG] [0mInitialising population: 0.70% Done[2K[35m[MSG] [0mInitialising population: 0.20% Done[2K[35m[MSG] [0mInitialising population: 0.40% Done[2K[35m[MSG] [0mInitialising population: 0.90% Done[2K[35m[MSG] [0mInitialising population: 0.60% Done[2K[35m[MSG] [0mInitialising population: 0.10% Done[2K[35m[MSG] [0mInitialising population: 0.80% Done[2K[35m[MSG] [0mInitialising population: 0.30% Done[2K[35m[MSG] [0mInitialising population: 0.50% Done[2K[35m[MSG] [0mInitialising population: 100% done
+[35m[MSG] [0mSection (init) time: 437ms
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 7315ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 242ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[2K[35m[MSG] [0mScoring: 0.30% Done[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 96ms
+[35m[MSG] [0mSection (ranking) time: 185ms
+[35m[MSG] [0mSection (selecting) time: 50ms
+[35m[MSG] [0mGeneration #  0: best=12525.05   worst=406451.25   time taken=8251ms
+[33m[WRN] [0mDifference exceeds tolerance (inf>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 1081ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 238ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 84ms
+[35m[MSG] [0mSection (ranking) time: 140ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration #  1: best=8786.77   worst=319267.72   time taken=1907ms
+[33m[WRN] [0mDifference exceeds tolerance (3738.2832031250>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 850ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 242ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 82ms
+[35m[MSG] [0mSection (ranking) time: 133ms
+[35m[MSG] [0mSection (selecting) time: 44ms
+[35m[MSG] [0mGeneration #  2: best=5658.19   worst=319759.03   time taken=1722ms
+[33m[WRN] [0mDifference exceeds tolerance (3128.5742187500>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 1033ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 231ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 82ms
+[35m[MSG] [0mSection (ranking) time: 145ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration #  3: best=5169.44   worst=351095.00   time taken=1955ms
+[33m[WRN] [0mDifference exceeds tolerance (488.7534179688>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 1216ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 231ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 80ms
+[35m[MSG] [0mSection (ranking) time: 129ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration #  4: best=4126.42   worst=334393.28   time taken=2062ms
+[33m[WRN] [0mDifference exceeds tolerance (1043.0141601562>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 1002ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 231ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 78ms
+[35m[MSG] [0mSection (ranking) time: 131ms
+[35m[MSG] [0mSection (selecting) time: 44ms
+[35m[MSG] [0mGeneration #  5: best=2897.75   worst=314044.00   time taken=1879ms
+[33m[WRN] [0mDifference exceeds tolerance (1228.6777343750>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 1046ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 223ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 136ms
+[35m[MSG] [0mSection (selecting) time: 44ms
+[35m[MSG] [0mGeneration #  6: best=2467.41   worst=326488.06   time taken=1951ms
+[33m[WRN] [0mDifference exceeds tolerance (430.3337402344>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 1121ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 208ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 78ms
+[35m[MSG] [0mSection (ranking) time: 125ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration #  7: best=1939.19   worst=310017.50   time taken=2065ms
+[33m[WRN] [0mDifference exceeds tolerance (528.2244873047>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 1260ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 216ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 72ms
+[35m[MSG] [0mSection (ranking) time: 126ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration #  8: best=1458.61   worst=322450.59   time taken=2254ms
+[33m[WRN] [0mDifference exceeds tolerance (480.5762939453>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 1062ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 203ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 75ms
+[35m[MSG] [0mSection (ranking) time: 121ms
+[35m[MSG] [0mSection (selecting) time: 43ms
+[35m[MSG] [0mGeneration #  9: best=1294.18   worst=336302.22   time taken=2037ms
+[33m[WRN] [0mDifference exceeds tolerance (164.4299316406>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 1040ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 202ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 72ms
+[35m[MSG] [0mSection (ranking) time: 116ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 10: best=1109.18   worst=289665.25   time taken=1972ms
+[33m[WRN] [0mDifference exceeds tolerance (184.9985351562>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 946ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 205ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 75ms
+[35m[MSG] [0mSection (ranking) time: 118ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 11: best=339.25   worst=317219.84   time taken=1871ms
+[33m[WRN] [0mDifference exceeds tolerance (769.9390258789>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 947ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 210ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 75ms
+[35m[MSG] [0mSection (ranking) time: 151ms
+[35m[MSG] [0mSection (selecting) time: 76ms
+[35m[MSG] [0mGeneration # 12: best=140.50   worst=363683.97   time taken=1924ms
+[33m[WRN] [0mDifference exceeds tolerance (198.7415008545>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 919ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 214ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 74ms
+[35m[MSG] [0mSection (ranking) time: 118ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 13: best=110.73   worst=310053.41   time taken=1821ms
+[33m[WRN] [0mDifference exceeds tolerance (29.7765808105>0.0000100000)!
+[33m[WRN] [0mCurrent stagnancy: 0, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 897ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 210ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 118ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 14: best=110.73   worst=320908.31   time taken=1779ms
+[33m[WRN] [0mCurrent stagnancy: 1, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 901ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 208ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 70ms
+[35m[MSG] [0mSection (ranking) time: 123ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 15: best=110.73   worst=297404.59   time taken=1776ms
+[33m[WRN] [0mCurrent stagnancy: 2, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 897ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 212ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 74ms
+[35m[MSG] [0mSection (ranking) time: 127ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 16: best=110.73   worst=337659.03   time taken=1795ms
+[33m[WRN] [0mCurrent stagnancy: 3, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 963ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 208ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 124ms
+[35m[MSG] [0mSection (selecting) time: 44ms
+[35m[MSG] [0mGeneration # 17: best=110.73   worst=322712.81   time taken=1839ms
+[33m[WRN] [0mCurrent stagnancy: 4, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 951ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 219ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 74ms
+[35m[MSG] [0mSection (ranking) time: 117ms
+[35m[MSG] [0mSection (selecting) time: 44ms
+[35m[MSG] [0mGeneration # 18: best=110.73   worst=334393.28   time taken=1836ms
+[33m[WRN] [0mCurrent stagnancy: 5, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 968ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 218ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 118ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 19: best=110.73   worst=321934.50   time taken=1861ms
+[33m[WRN] [0mCurrent stagnancy: 6, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 908ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 216ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 70ms
+[35m[MSG] [0mSection (ranking) time: 122ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 20: best=110.73   worst=318007.81   time taken=1816ms
+[33m[WRN] [0mCurrent stagnancy: 7, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 917ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 212ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 119ms
+[35m[MSG] [0mSection (selecting) time: 43ms
+[35m[MSG] [0mGeneration # 21: best=110.73   worst=321663.25   time taken=1811ms
+[33m[WRN] [0mCurrent stagnancy: 8, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 912ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 216ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 116ms
+[35m[MSG] [0mSection (selecting) time: 44ms
+[35m[MSG] [0mGeneration # 22: best=110.73   worst=295646.81   time taken=1814ms
+[33m[WRN] [0mCurrent stagnancy: 9, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 925ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 219ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 118ms
+[35m[MSG] [0mSection (selecting) time: 44ms
+[35m[MSG] [0mGeneration # 23: best=110.73   worst=349201.12   time taken=1820ms
+[33m[WRN] [0mCurrent stagnancy: 10, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 934ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 213ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 117ms
+[35m[MSG] [0mSection (selecting) time: 43ms
+[35m[MSG] [0mGeneration # 24: best=110.73   worst=309764.94   time taken=1809ms
+[33m[WRN] [0mCurrent stagnancy: 11, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 915ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 218ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 116ms
+[35m[MSG] [0mSection (selecting) time: 43ms
+[35m[MSG] [0mGeneration # 25: best=110.73   worst=349059.47   time taken=1795ms
+[33m[WRN] [0mCurrent stagnancy: 12, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 939ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 213ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 126ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 26: best=110.73   worst=295541.62   time taken=1821ms
+[33m[WRN] [0mCurrent stagnancy: 13, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 900ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 219ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 75ms
+[35m[MSG] [0mSection (ranking) time: 126ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 27: best=110.73   worst=316817.25   time taken=1794ms
+[33m[WRN] [0mCurrent stagnancy: 14, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 909ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 221ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 122ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 28: best=110.73   worst=336355.41   time taken=1796ms
+[33m[WRN] [0mCurrent stagnancy: 15, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 920ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 206ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 118ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 29: best=110.73   worst=349059.47   time taken=1790ms
+[33m[WRN] [0mCurrent stagnancy: 16, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 918ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 222ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 74ms
+[35m[MSG] [0mSection (ranking) time: 123ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 30: best=110.73   worst=322712.81   time taken=1813ms
+[33m[WRN] [0mCurrent stagnancy: 17, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 915ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 206ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 117ms
+[35m[MSG] [0mSection (selecting) time: 44ms
+[35m[MSG] [0mGeneration # 31: best=110.73   worst=300018.03   time taken=1782ms
+[33m[WRN] [0mCurrent stagnancy: 18, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 911ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 215ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 121ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 32: best=110.73   worst=309855.00   time taken=1791ms
+[33m[WRN] [0mCurrent stagnancy: 19, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 898ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 211ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 117ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 33: best=110.73   worst=320066.44   time taken=1772ms
+[33m[WRN] [0mCurrent stagnancy: 20, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 931ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 215ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 118ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 34: best=110.73   worst=299554.44   time taken=1813ms
+[33m[WRN] [0mCurrent stagnancy: 21, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 924ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 203ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 70ms
+[35m[MSG] [0mSection (ranking) time: 139ms
+[35m[MSG] [0mSection (selecting) time: 51ms
+[35m[MSG] [0mGeneration # 35: best=110.73   worst=294457.66   time taken=1829ms
+[33m[WRN] [0mCurrent stagnancy: 22, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 914ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 213ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 128ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 36: best=110.73   worst=320622.00   time taken=1801ms
+[33m[WRN] [0mCurrent stagnancy: 23, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 930ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 214ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 119ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 37: best=110.73   worst=300155.94   time taken=1811ms
+[33m[WRN] [0mCurrent stagnancy: 24, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 942ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 216ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 70ms
+[35m[MSG] [0mSection (ranking) time: 121ms
+[35m[MSG] [0mSection (selecting) time: 50ms
+[35m[MSG] [0mGeneration # 38: best=110.73   worst=308842.47   time taken=1828ms
+[33m[WRN] [0mCurrent stagnancy: 25, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 923ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 214ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 121ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 39: best=110.73   worst=312729.94   time taken=1827ms
+[33m[WRN] [0mCurrent stagnancy: 26, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 912ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 218ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 118ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 40: best=110.73   worst=341897.31   time taken=1792ms
+[33m[WRN] [0mCurrent stagnancy: 27, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 947ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 210ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 70ms
+[35m[MSG] [0mSection (ranking) time: 121ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 41: best=110.73   worst=303507.34   time taken=1827ms
+[33m[WRN] [0mCurrent stagnancy: 28, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 911ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 212ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 120ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 42: best=110.73   worst=322003.41   time taken=1801ms
+[33m[WRN] [0mCurrent stagnancy: 29, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 928ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 215ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 70ms
+[35m[MSG] [0mSection (ranking) time: 120ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 43: best=110.73   worst=297568.62   time taken=1805ms
+[33m[WRN] [0mCurrent stagnancy: 30, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 951ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 220ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 117ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 44: best=110.73   worst=335742.41   time taken=1843ms
+[33m[WRN] [0mCurrent stagnancy: 31, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 931ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 215ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 117ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 45: best=110.73   worst=323642.59   time taken=1810ms
+[33m[WRN] [0mCurrent stagnancy: 32, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 954ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 216ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 136ms
+[35m[MSG] [0mSection (selecting) time: 50ms
+[35m[MSG] [0mGeneration # 46: best=110.73   worst=335742.41   time taken=1856ms
+[33m[WRN] [0mCurrent stagnancy: 33, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 926ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 208ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[2K[35m[MSG] [0mScoring: 0.30% Done[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 117ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 47: best=110.73   worst=331237.25   time taken=1817ms
+[33m[WRN] [0mCurrent stagnancy: 34, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 931ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 213ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 115ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 48: best=110.73   worst=307899.22   time taken=1806ms
+[33m[WRN] [0mCurrent stagnancy: 35, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 957ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 210ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 72ms
+[35m[MSG] [0mSection (ranking) time: 117ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 49: best=110.73   worst=333453.31   time taken=1830ms
+[33m[WRN] [0mCurrent stagnancy: 36, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 907ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 212ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 72ms
+[35m[MSG] [0mSection (ranking) time: 118ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 50: best=110.73   worst=343828.22   time taken=1784ms
+[33m[WRN] [0mCurrent stagnancy: 37, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 919ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 215ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 116ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 51: best=110.73   worst=309764.94   time taken=1796ms
+[33m[WRN] [0mCurrent stagnancy: 38, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 911ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 209ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 116ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 52: best=110.73   worst=301530.59   time taken=1783ms
+[33m[WRN] [0mCurrent stagnancy: 39, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 920ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 206ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 119ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 53: best=110.73   worst=299748.62   time taken=1788ms
+[33m[WRN] [0mCurrent stagnancy: 40, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 910ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 219ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 120ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 54: best=110.73   worst=307050.06   time taken=1793ms
+[33m[WRN] [0mCurrent stagnancy: 41, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 906ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 216ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 74ms
+[35m[MSG] [0mSection (ranking) time: 144ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 55: best=110.73   worst=327045.47   time taken=1814ms
+[33m[WRN] [0mCurrent stagnancy: 42, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 937ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 221ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 119ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 56: best=110.73   worst=353009.75   time taken=1822ms
+[33m[WRN] [0mCurrent stagnancy: 43, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 904ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 212ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 74ms
+[35m[MSG] [0mSection (ranking) time: 117ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 57: best=110.73   worst=322712.81   time taken=1779ms
+[33m[WRN] [0mCurrent stagnancy: 44, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 911ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 219ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 74ms
+[35m[MSG] [0mSection (ranking) time: 116ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 58: best=110.73   worst=326089.84   time taken=1794ms
+[33m[WRN] [0mCurrent stagnancy: 45, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 931ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 213ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 123ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 59: best=110.73   worst=311981.38   time taken=1811ms
+[33m[WRN] [0mCurrent stagnancy: 46, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 913ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 221ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 116ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 60: best=110.73   worst=317385.44   time taken=1795ms
+[33m[WRN] [0mCurrent stagnancy: 47, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 917ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 220ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 119ms
+[35m[MSG] [0mSection (selecting) time: 45ms
+[35m[MSG] [0mGeneration # 61: best=110.73   worst=336139.66   time taken=1801ms
+[33m[WRN] [0mCurrent stagnancy: 48, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 921ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 224ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 71ms
+[35m[MSG] [0mSection (ranking) time: 120ms
+[35m[MSG] [0mSection (selecting) time: 50ms
+[35m[MSG] [0mGeneration # 62: best=110.73   worst=323383.59   time taken=1814ms
+[33m[WRN] [0mCurrent stagnancy: 49, max: 50
+[35m[MSG] [0mComputing cross-able parents: 0% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.00% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.70% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.80% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.50% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.40% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.20% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.90% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.60% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.30% Done[2K[35m[MSG] [0mComputing cross-able parents: 0.10% Done[2K[35m[MSG] [0mComputing cross-able parents: 100% Done
+[35m[MSG] [0mSection (crossing-pairs) time: 922ms
+[35m[MSG] [0mEvolution: 0.00% Done[2K[35m[MSG] [0mEvolution: 0.30% Done[2K[35m[MSG] [0mEvolution: 0.40% Done[2K[35m[MSG] [0mEvolution: 0.50% Done[2K[35m[MSG] [0mEvolution: 0.60% Done[2K[35m[MSG] [0mEvolution: 0.70% Done[2K[35m[MSG] [0mEvolution: 0.80% Done[2K[35m[MSG] [0mEvolution: 0.90% Done[2K[35m[MSG] [0mEvolution: 0.10% Done[2K[35m[MSG] [0mEvolution: 0.20% Done[2K[35m[MSG] [0mEvolution: 100% Done
+[35m[MSG] [0mSection (mutation) time: 215ms
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 73ms
+[35m[MSG] [0mSection (ranking) time: 122ms
+[35m[MSG] [0mSection (selecting) time: 46ms
+[35m[MSG] [0mGeneration # 63: best=110.73   worst=310017.50   time taken=1806ms
+[33m[WRN] [0mSolver stopping because max stagnancy is reached (50)
+[35m[MSG] [0mScoring: 0% Done[2K[35m[MSG] [0mScoring: 0.00% Done[2K[35m[MSG] [0mScoring: 0.70% Done[2K[35m[MSG] [0mScoring: 0.20% Done[2K[35m[MSG] [0mScoring: 0.40% Done[2K[35m[MSG] [0mScoring: 0.90% Done[2K[35m[MSG] [0mScoring: 0.60% Done[2K[35m[MSG] [0mScoring: 0.10% Done[2K[35m[MSG] [0mScoring: 0.80% Done[2K[35m[MSG] [0mScoring: 0.30% Done[2K[35m[MSG] [0mScoring: 0.50% Done[2K[35m[MSG] [0mScoring: 100% Done
+[35m[MSG] [0mSection (scoring) time: 72ms
+[35m[MSG] [0mSection (ranking) time: 68ms
+[35m[MSG] [0mEvolutionSolver finished: 2m 4s 641ms
+[35m[MSG] [0mSolution #0 score 110.73: 
+Chromosome 0x7f16616c5010:
+Node #0 / 21: ID: 25 Name: D54 CoM: v3f[-104.8186874, -40.41695404, -139.7380066]
+Node #1 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[-130.8083191, -37.27557373, -159.4977112]
+Node #2 / 21: ID: 32 Name: D79_j2_D14 CoM: v3f[-160.2786713, -40.79864502, -185.7460785]
+Node #3 / 21: ID: 5 Name: D14_j1_D79 CoM: v3f[-152.0187531, -17.45105553, -228.6291351]
+Node #4 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[-130.4393921, 5.074487686, -254.3741455]
+Node #5 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[-142.4339905, 47.81299591, -252.384613]
+Node #6 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[-151.663559, 86.26184845, -250.0908508]
+Node #7 / 21: ID: 25 Name: D54 CoM: v3f[-152.637558, 93.32410431, -220.448349]
+Node #8 / 21: ID: 25 Name: D54 CoM: v3f[-150.7030792, 91.02826691, -201.5475464]
+Node #9 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[-148.899826, 84.76691437, -169.4022827]
+Node #10 / 21: ID: 30 Name: D79 CoM: v3f[-144.180542, 88.35629272, -135.7546692]
+Node #11 / 21: ID: 30 Name: D79 CoM: v3f[-150.3300323, 79.4590683, -115.8626785]
+Node #12 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[-149.2098083, 53.07684326, -105.3812332]
+Node #13 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[-107.8346863, 36.96121216, -103.7095108]
+Node #14 / 21: ID: 30 Name: D79 CoM: v3f[-79.39377594, 18.03512764, -103.2243805]
+Node #15 / 21: ID: 30 Name: D79 CoM: v3f[-57.27659607, 19.00559425, -107.9738007]
+Node #16 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[-36.51859283, 36.50371552, -99.60367584]
+Node #17 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[-30.57281113, 36.33462906, -55.56929016]
+Node #18 / 21: ID: 30 Name: D79 CoM: v3f[-23.69360352, 43.14717865, -22.80370522]
+Node #19 / 21: ID: 32 Name: D79_j2_D14 CoM: v3f[-24.02525139, 30.39727974, 2.576941013]
+Node #20 / 21: ID: 7 Name: D14_j2_D14 CoM: v3f[0, 0, 0]
+
+[35m[MSG] [0mSolution #1 score 140.50: 
+Chromosome 0x7f16616c5038:
+Node #0 / 21: ID: 25 Name: D54 CoM: v3f[156.6173096, -22.73400497, 98.8075943]
+Node #1 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[180.5174255, -40.97973251, 111.9092484]
+Node #2 / 21: ID: 32 Name: D79_j2_D14 CoM: v3f[210.3826599, -56.81639099, 132.5770569]
+Node #3 / 21: ID: 5 Name: D14_j1_D79 CoM: v3f[254.2329407, -54.51181793, 109.6830368]
+Node #4 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[279.0931396, -44.78761292, 79.2974472]
+Node #5 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[285.0396729, -79.10279083, 51.70187378]
+Node #6 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[289.6475525, -108.8410416, 25.94987297]
+Node #7 / 21: ID: 25 Name: D54 CoM: v3f[261.8234558, -119.9064407, 20.21587944]
+Node #8 / 21: ID: 25 Name: D54 CoM: v3f[242.7234497, -121.0560989, 20.5634594]
+Node #9 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[210.1473694, -122.847496, 23.93476677]
+Node #10 / 21: ID: 30 Name: D79 CoM: v3f[177.0145264, -128.2595062, 17.59124565]
+Node #11 / 21: ID: 30 Name: D79 CoM: v3f[157.3143921, -132.2708435, 28.00667381]
+Node #12 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[143.2046814, -118.5511475, 48.49629974]
+Node #13 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[132.7089233, -76.87072754, 37.22730255]
+Node #14 / 21: ID: 30 Name: D79 CoM: v3f[125.0458908, -43.6037674, 35.8471756]
+Node #15 / 21: ID: 30 Name: D79 CoM: v3f[126.2897568, -25.59712219, 22.17668915]
+Node #16 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[117.2407074, -20.86771011, -4.335298538]
+Node #17 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[73.23643494, -25.3578701, -8.56265831]
+Node #18 / 21: ID: 30 Name: D79 CoM: v3f[41.07106018, -30.70711517, -18.7652092]
+Node #19 / 21: ID: 32 Name: D79_j2_D14 CoM: v3f[14.53940582, -29.06314659, -8.754419327]
+Node #20 / 21: ID: 0 Name: D14 CoM: v3f[0, 0, 0]
+
+[35m[MSG] [0mSolution #2 score 197.72: 
+Chromosome 0x7f16616c5060:
+Node #0 / 21: ID: 25 Name: D54 CoM: v3f[170.4366608, -60.39094925, 19.85085869]
+Node #1 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[194.7446136, -82.3994751, 19.12713814]
+Node #2 / 21: ID: 32 Name: D79_j2_D14 CoM: v3f[227.4521179, -104.2898102, 23.70118523]
+Node #3 / 21: ID: 5 Name: D14_j1_D79 CoM: v3f[261.1098938, -98.01872253, -12.07755852]
+Node #4 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[275.5030212, -81.84513855, -46.24080658]
+Node #5 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[267.4283447, -108.0930786, -81.17292786]
+Node #6 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[259.3106995, -130.3426056, -112.9191742]
+Node #7 / 21: ID: 25 Name: D54 CoM: v3f[229.9739685, -138.359436, -110.7772293]
+Node #8 / 21: ID: 25 Name: D54 CoM: v3f[212.0969238, -138.7469177, -103.9570999]
+Node #9 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[182.5518494, -139.9616089, -89.76597595]
+Node #10 / 21: ID: 30 Name: D79 CoM: v3f[148.7882385, -142.1389771, -85.01274109]
+Node #11 / 21: ID: 30 Name: D79 CoM: v3f[133.3234406, -147.8622437, -69.49653625]
+Node #12 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[128.7335815, -139.3106995, -42.79556274]
+Node #13 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[120.6035614, -95.72681427, -39.83639526]
+Node #14 / 21: ID: 30 Name: D79 CoM: v3f[117.3115234, -62.93675232, -30.82018089]
+Node #15 / 21: ID: 30 Name: D79 CoM: v3f[116.2727661, -42.08089447, -39.57361603]
+Node #16 / 21: ID: 31 Name: D79_j1_D54 CoM: v3f[99.62574768, -30.28682709, -59.34518433]
+Node #17 / 21: ID: 26 Name: D54_j1_D79 CoM: v3f[56.52908325, -31.65870667, -48.6118927]
+Node #18 / 21: ID: 30 Name: D79 CoM: v3f[22.39530563, -32.8203125, -47.68793488]
+Node #19 / 21: ID: 32 Name: D79_j2_D14 CoM: v3f[1.149425507, -32.69041443, -28.83474541]
+Node #20 / 21: ID: 4 Name: D14_j1_D76 CoM: v3f[0, 0, 0]
+
