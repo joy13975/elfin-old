@@ -1,62 +1,33 @@
 #!/usr/bin/env python
 
-import sys
 import utils
 import json
+import argparse
 from collections import OrderedDict
+import GridSearchParams
 
 def main():
-	outputDir = './gridSearchConfigs/'
+	ap = argparse.ArgumentParser(description='Analyse the Grid Search output files');
+	ap.add_argument('--gsConfDir', default='./gsConfigs/')
+	ap.add_argument('--gsVersion', type=int, default=2)
 
-	if len(sys.argv) < 2:
-		print 'Using DEFAULT output directory: {}'.format(outputDir)
-		utils.mkdir(outputDir)
+	args = ap.parse_args()
+	globals().update(vars(args))
 
-		# print 'Usage: ./GenGAConfigs.py <outputDir>'
-		# exit()
-	else:
-		outputDir = sys.argv[1] + '/'
-		print 'Using output directory: {}'.format(outputDir)
-		utils.mkdir(outputDir)
+	gsParams = utils.Bunch(GridSearchParams.getGSParams(gsVersion))
+	print 'Total runs needed: {}'.format(gsParams.nRuns)
 
-	# Define the grid
-	chromoLenDevs 		= [0.1, 0.2, 0.3]
-	gaPopSizes 			= [int(100e3)] 					
-	gaIters 			= [int(1e3)]						
-	gaSurviveRates 		= [0.005, 0.01, 0.02]
-	gaCrossRates 		= [0.3, 0.5, 0.7]
-	gaPointMutateRates 	= []
-	gaLimbMutateRates  	= []
-
-	# Create 3 configs - for 3 different benchmarks shapes
-	# using the same config
-	bmNames = ['6vjex8d', '9y8hxgo', 'j0m06n4']
-
-	# PM and LM rates depend on Cross rates
-	pmRatios = (0.25, 0.5, 0.75)
-	for cr in gaCrossRates:
-		# Each remaining portion after cross rates
-		# generate 3 ratios of RM and LM
-		rem = 0.9999 - cr
-		for pmRatio in pmRatios:
-			(pm, lm) = (pmRatio * rem, (0.9999 - pmRatio) * rem)
-			gaPointMutateRates.append(pm)
-			gaLimbMutateRates.append(lm)
-
-	nRuns = len(chromoLenDevs) * len(gaPopSizes) * len(gaIters) * \
-		len(gaSurviveRates) * len(gaCrossRates) * len(gaPointMutateRates) * \
-		len(bmNames)
-	print 'Total runs needed: {}'.format(nRuns)
+	utils.mkdir(gsConfDir)
 
 	# Write all combinations of GA parameters to output
 	configId = 0
-	for cld in chromoLenDevs:
-		for gps in gaPopSizes:
-			for gi in gaIters:
-				for gsr in gaSurviveRates:
-					for gcr in gaCrossRates:
-						for (gpmr, glmr) in zip(gaPointMutateRates, gaLimbMutateRates):
-							for bmName in bmNames:
+	for cld in gsParams.chromoLenDevs:
+		for gps in gsParams.gaPopSizes:
+			for gi in gsParams.gaIters:
+				for gsr in gsParams.gaSurviveRates:
+					for gcr in gsParams.gaCrossRates:
+						for (gpmr, glmr) in zip(gsParams.gaPointMutateRates, gsParams.gaLimbMutateRates):
+							for bmName in gsParams.bmNames:
 								outputName = 'gs_{}_{}'.format(configId, bmName)
 								bmOutputDir = './gs_out/{}/'.format(outputName)
 								utils.mkdir(bmOutputDir)
@@ -77,7 +48,7 @@ def main():
 								])
 
 								json.dump(configJson,
-									open(outputDir + '{}.json'.format(outputName), 'w'),
+									open(gsConfDir + '/{}.json'.format(outputName), 'w'),
 									separators=(',', ':'),
 									ensure_ascii=False,
 									indent=4)

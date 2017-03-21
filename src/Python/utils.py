@@ -5,6 +5,28 @@ import Bio.PDB
 import numpy as np
 
 RadiiTypes = ['avgAll', 'maxCA', 'maxHeavy']
+INF = float('inf')
+
+def canConvertToFloat(str):
+    try:
+        float(str)
+        return True
+    except ValueError:
+        return False
+
+# Credits to http://stackoverflow.com/questions/2597278/python-load-variables-in-a-dict-into-namespace
+class Bunch(object):
+  def __init__(self, adict):
+    self.__dict__.update(adict)
+
+def floatApproximates(a, b, error=1e-6):
+    return abs(a-b) < error
+
+def realPath(path):
+    return os.path.realpath(path)
+
+def normPath(path):
+    return os.path.normpath(path)
 
 def suffixPdb(className, fromFunction, scale, targetLen):
     return '_{}_{}_s{}_l{}.pdb'.format(
