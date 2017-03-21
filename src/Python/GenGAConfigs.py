@@ -8,12 +8,15 @@ import GridSearchParams
 
 def main():
 	ap = argparse.ArgumentParser(description='Analyse the Grid Search output files');
-	ap.add_argument('--gsConfDir', default='./gsConfigs/')
-	ap.add_argument('--gsOutDir', default='./gs_out/')
+#	ap.add_argument('--gsConfDir', default='./gsConfigs/')
+#	ap.add_argument('--gsOutDir', default='./gsOut/')
 	ap.add_argument('--gsVersion', type=int, default=2)
 
 	args = ap.parse_args()
 	globals().update(vars(args))
+
+	gsConfDir = './gsConfigsV{}/'.format(gsVersion)
+	gsOutDir = './gsOutV{}/'.format(gsVersion)
 
 	gsParams = utils.Bunch(GridSearchParams.getGSParams(gsVersion))
 	print 'Total runs needed: {}'.format(gsParams.nRuns)
