@@ -86,7 +86,7 @@ def draw(x=None, y=None, z=None, i=None, j=None, k=None, r=1.0, g=1.0, b=1.0, wi
 
         # # add labels to axes object 
         fontThickness = fontSize / 10
-        cyl_text(obj,plain,[i+30,j+30,k],label,
+        cyl_text(obj,plain,[i+5,j+5,k],label,
             fontThickness,axes=[[fontSize,0,0],[0,fontSize,0],[0,0,fontSize]])
        
         cmd.load_cgo(obj,'axis'+str(counter.state))
@@ -112,7 +112,7 @@ def draw_csv(specFile, scale=1.0, width=3.0):
     cmd.reset()
     cmd.set("depth_cue", 0)
 
-def draw_axis(l=250, w = 2.0):
+def draw_axis(l=250, w = 1):
     draw(-l,0,0, l,0,0, 1,0,0, w, label='X');
     draw(0,-l,0, 0,l,0, 0,1,0, w, label='Y');
     draw(0,0,-l, 0,0,l, 0,0,1, w, label='Z');
@@ -122,6 +122,7 @@ def draw_axis(l=250, w = 2.0):
     cmd.set("depth_cue", 0)
 
 cmd.extend("draw_axis", draw_axis)
+cmd.extend("draw_csv", draw_csv)
 draw_axis()
 print 'LineUtils Loaded'
 

@@ -7,9 +7,8 @@ from collections import OrderedDict
 import GridSearchParams
 
 def main():
-	ap = argparse.ArgumentParser(description='Analyse the Grid Search output files');
-#	ap.add_argument('--gsConfDir', default='./gsConfigs/')
-#	ap.add_argument('--gsOutDir', default='./gsOut/')
+	ap = argparse.ArgumentParser(description='Generate Grid Search configurations');
+	ap.add_argument('--gmDir', default='./bm/l20/')
 	ap.add_argument('--gsVersion', type=int, default=2)
 
 	args = ap.parse_args()
@@ -37,7 +36,7 @@ def main():
 								utils.mkdir(bmOutputDir)
 
 								configJson = OrderedDict([
-									('inputFile', './bm/l10/{}.json'.format(bmName)),
+									('inputFile', './{}/{}.json'.format(bmDir, bmName)),
 									('xDBFile', './res/xDB.json'),
 									('outputDir', bmOutputDir),
 									('randSeed', '0x600d1337'),
