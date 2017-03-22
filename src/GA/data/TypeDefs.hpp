@@ -47,13 +47,13 @@ typedef std::vector<Radii> RadiiList;
 struct OptionPack
 {
 	// Input settings
-	std::string xDBFile = "./xDB.json";
+	std::string xDBFile = "xDB.json";
 	std::string inputFile = "";
 
 	enum InputType { Unknown, CSV, JSON };
 	InputType inputType = Unknown;
-	std::string settingsFile = "./settings.json";
-	std::string outputDir = "./out/";
+	std::string settingsFile = "config.json";
+	std::string outputDir = "output";
 
 	float chromoLenDev = 0.2;
 	// Average CoM distance found by xDBStat.py as of 28/Feb/2017

@@ -1,16 +1,21 @@
 #!/bin/bash
 
-: ${elfin}
-: ${queueName="batch"}
-: ${ppn="256:knl"}
-: ${runScript="src/GA/run.sh"}
-: ${configFile="src/GA/settings.json"}
-: ${outputDir="output"}
-: ${walltime="00:30:00"}
+: ${jobName=elfin};
+: ${queueName="batch"};
+: ${ppn="256:knl"};
+: ${runScript="./runElfin.sh"};
+: ${walltime="00:30:00"};
+: ${execFile='./src/GA/bin/elfin'};
+: ${configFile='elfinConfig.json'};
+: ${outputDir="output"};
 
-
-qsub -N $jobName \
+cmd="qsub -N $jobName \
 	-q $queueName \
 	-joe -o $outputDir/log \
-	 -l nodes=1:ppn=$ppn,walltime=$walltime \
-	 $runScript
+	-l nodes=1:ppn=$ppn,walltime=$walltime \
+	-v execFile=$execFile,configFile=$configFile,outputDir=$outputDir \
+	 $runScript"
+
+mkdir -p $outputDir
+echo $cmd > $outputDir/cmd
+$cmd
