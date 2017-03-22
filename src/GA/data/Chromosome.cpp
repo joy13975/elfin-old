@@ -59,7 +59,7 @@ Chromosome::setup(const uint minLen,
 
 	// Compute neighbour counts
 	const uint dim = myRelaMat->size();
-	myNeighbourCounts.resize(dim, std::make_tuple(0, 0));
+	myNeighbourCounts.resize(dim, IdPair());
 	for (int i = 0; i < dim; i++)
 	{
 		uint lhs = 0, rhs = 0;
@@ -71,13 +71,13 @@ Chromosome::setup(const uint minLen,
 				rhs++;
 		}
 
-		myNeighbourCounts.at(i) = std::make_tuple(lhs, rhs);
+		myNeighbourCounts.at(i) = IdPair(lhs, rhs);
 	}
 
-	// Compute global roulette as neighbour count
+	// Compute global roulette as rhs neighbour count
 	myGlobalRoulette.clear();
 	for (int i = 0; i < dim; i++)
-		for (int j = 0; j < std::get<1>(myNeighbourCounts.at(i)); j++)
+		for (int j = 0; j < myNeighbourCounts.at(i).y; j++)
 			myGlobalRoulette.push_back(i);
 
 	setupDone = true;
@@ -158,8 +158,8 @@ Chromosome::cross(const Chromosome & father,
 	{
 		// Pick random crossing point
 		const IdPair & crossPoint = crossingIds.at(getDice(crossingIds.size()));
-		const uint fatherGeneId = std::get<0>(crossPoint);
-		const uint motherGeneId = std::get<1>(crossPoint);
+		const uint fatherGeneId = crossPoint.x;
+		const uint motherGeneId = crossPoint.y;
 
 		const Genes & fatherG = father.genes();
 		const Genes & motherG = mother.genes();
@@ -257,7 +257,7 @@ Chromosome::findCompatibleCrossings(const Chromosome & other) const
 					}
 #endif
 
-					crossingIds.push_back(std::make_tuple(i, j));
+					crossingIds.push_back(IdPair(i, j));
 				}
 			}
 		}
@@ -290,7 +290,7 @@ Chromosome::findCompatibleCrossings(const Chromosome & other) const
 					}
 #endif
 
-					crossingIds.push_back(std::make_tuple(i, j));
+					crossingIds.push_back(IdPair(i, j));
 				}
 			}
 		}
@@ -404,7 +404,7 @@ Chromosome::pointMutate()
 							// dbg("checking swap at %d/%d of %s\n",
 							//     i, myGeneSize, toString().c_str());
 							if (synthesise(testGenes))
-								swappableIds.push_back(std::make_tuple(i, j));
+								swappableIds.push_back(IdPair(i, j));
 						}
 					}
 				}
@@ -413,9 +413,8 @@ Chromosome::pointMutate()
 			// Pick a random one, or report impossible
 			if (swappableIds.size() > 0)
 			{
-				uint swapIndex, swapToNodeId;
-				std::tie(swapIndex, swapToNodeId) = swappableIds.at(getDice(swappableIds.size()));
-				myGenes.at(swapIndex).nodeId() = swapToNodeId;
+				const IdPair & ids = swappableIds.at(getDice(swappableIds.size()));
+				myGenes.at(ids.x).nodeId() = ids.y;
 
 				synthesise(myGenes); // This is guaranteed to succeed
 				return true;
@@ -448,7 +447,7 @@ Chromosome::pointMutate()
 							// dbg("checking insertion at %d/%d of %s\n",
 							//     i, myGeneSize, toString().c_str());
 							if (synthesise(testGenes))
-								insertableIds.push_back(std::make_tuple(i, j));
+								insertableIds.push_back(IdPair(i, j));
 						}
 					}
 				}
@@ -456,10 +455,9 @@ Chromosome::pointMutate()
 				// Pick a random one, or report impossible
 				if (insertableIds.size() > 0)
 				{
-					uint insertAt, insertNodeId;
-					std::tie(insertAt, insertNodeId) = insertableIds.at(getDice(insertableIds.size()));
-					myGenes.insert(myGenes.begin() + insertAt, //This is insertion before i
-					               Gene(insertNodeId));
+					const IdPair & ids = insertableIds.at(getDice(insertableIds.size()));
+					myGenes.insert(myGenes.begin() + ids.x, //This is insertion before i
+					               Gene(ids.y));
 
 					synthesise(myGenes); // This is guaranteed to succeed
 					return true;
@@ -532,15 +530,14 @@ Chromosome::limbMutate()
 		const uint geneId = getDice(N - 1) + 1;
 		const uint nodeId = myGenes.at(geneId).nodeId();
 
-		uint lhs, rhs;
-		std::tie(lhs, rhs) = myNeighbourCounts.at(nodeId);
+		const IdPair & ids = myNeighbourCounts.at(nodeId);
 
-		if (lhs == 1 && rhs == 1)
+		if (ids.x == 1 && ids.y == 1)
 			continue;
 
-		if (lhs == 1)
+		if (ids.x == 1)
 			mutateLeftLimb = false;
-		else if (rhs == 1)
+		else if (ids.y == 1)
 			mutateLeftLimb = true;
 		else
 			mutateLeftLimb = getDice(2);
@@ -618,15 +615,17 @@ Chromosome::genRandomGenesReverse(
 
 			const Point3f checkpoint = prPtr->tran;
 
-			// Create roulette based on number of neighbours
+			// Create roulette based on number of LHS neighbours
 			// of the current neighbour being considered
 			if (!collides(i,
 			              checkpoint,
 			              genes.begin(),
 			              genes.end() - 2,
 			              *myRadiiList))
-				for (int j = 0; j < std::get<0>(myNeighbourCounts.at(i)); j++)
+			{
+				for (int j = 0; j < myNeighbourCounts.at(i).x; j++)
 					rouletteWheel.push_back(i);
+			}
 		}
 
 		if (rouletteWheel.size() == 0)
@@ -703,14 +702,14 @@ Chromosome::genRandomGenes(
 				continue;
 			const PairRelationship * prPtr = rr.at(i);
 
-			// Create roulette based on number of neighbours
+			// Create roulette based on number of RHS neighbours
 			// of the current neighbour being considered
 			if (prPtr && !collides(i,
 			                       prPtr->comB,
 			                       genes.begin(),
 			                       genes.end() - 2,
 			                       *myRadiiList))
-				for (int j = 0; j < std::get<1>(myNeighbourCounts.at(i)); j++)
+				for (int j = 0; j < myNeighbourCounts.at(i).y; j++)
 					rouletteWheel.push_back(i);
 		}
 
