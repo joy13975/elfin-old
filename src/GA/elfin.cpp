@@ -452,6 +452,8 @@ int main(int argc, const char ** argv)
 
     mkdir_ifn_exists(options.outputDir.c_str());
 
+    msg("There are %d devices\n", omp_get_num_devices());
+    
     msg("Using master seed: %d\n", options.randSeed);
 
     RelaMat relaMat;

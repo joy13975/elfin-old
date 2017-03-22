@@ -180,8 +180,8 @@ EvolutionSolver::selectParents()
 void
 EvolutionSolver::evolvePopulation()
 {
-	using ParentIdVector = std::vector<std::tuple<IdPair, IdPairs>>;
-	ParentIdVector parentIds;
+	using CrossingVector = std::vector<std::tuple<IdPair, IdPairs>>;
+	CrossingVector possibleCrossings;
 
 	TIMING_START(startTimeCrossingPairs);
 	{
@@ -199,11 +199,11 @@ EvolutionSolver::evolvePopulation()
 		// http://stackoverflow.com/questions/18669296/c-openmp-parallel-for-loop-alternatives-to-stdvector
 		#pragma omp declare reduction 										\
 		(																	\
-		        mergeParentIds : ParentIdVector : 							\
+		        mergeCrossingVectors : CrossingVector : 							\
 		        omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end())	\
 		)
 
-		#pragma omp parallel for reduction(mergeParentIds: parentIds)
+		#pragma omp target teams distribute parallel for reduction(mergeCrossingVectors: possibleCrossings)
 		for (int i = 0; i < mySruviverCutoff; i++)
 		{
 			for (int j = i; j < mySruviverCutoff; j++)
@@ -215,9 +215,9 @@ EvolutionSolver::evolvePopulation()
 
 				IdPairs crossingIds = father.findCompatibleCrossings(mother);
 				if (crossingIds.size() > 0)
-					parentIds.push_back(
+					possibleCrossings.push_back(
 					    std::make_tuple(
-					        std::make_tuple(i, j),
+					        IdPair(i, j),
 					        crossingIds));
 
 				const ulong cid = nPossibleCrossings -
@@ -255,16 +255,16 @@ EvolutionSolver::evolvePopulation()
 			if (dice < myCrossCutoff)
 			{
 				// Pick random parent pair and cross
-				if (parentIds.size() > 0)
+				if (possibleCrossings.size() > 0)
 				{
-					const ulong randId = getDice(parentIds.size());
+					const ulong randId = getDice(possibleCrossings.size());
 
 					// Can't use std::tie() because we want references not values
-					const IdPair & parentTuple = std::get<0>(parentIds.at(randId));
-					const IdPairs & crossingIds = std::get<1>(parentIds.at(randId));
+					const IdPair & parentTuple = std::get<0>(possibleCrossings.at(randId));
+					const IdPairs & crossingIds = std::get<1>(possibleCrossings.at(randId));
 
-					const Chromosome & father = myPopulation.at(std::get<0>(parentTuple));
-					const Chromosome & mother = myPopulation.at(std::get<1>(parentTuple));
+					const Chromosome & father = myPopulation.at(parentTuple.x);
+					const Chromosome & mother = myPopulation.at(parentTuple.y);
 
 					if (!myPopulation.at(i).cross(father, mother, crossingIds))
 						myPopulation.at(i).inheritMutate(getDice(2) == 0 ?

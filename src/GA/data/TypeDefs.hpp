@@ -27,7 +27,14 @@ typedef std::vector<RelaRow> RelaMat;
 
 typedef std::vector<long> IdRoulette;
 typedef std::vector<long> Ids;
-typedef std::tuple<long, long> IdPair;
+
+struct Vec2d
+{
+	long x, y;
+	Vec2d() : x(0), y(0) {};
+	Vec2d(long _x, long _y) : x(_x), y(_y) {};
+};
+typedef Vec2d IdPair;
 typedef std::vector<IdPair> IdPairs;
 
 template <typename T>
