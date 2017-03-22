@@ -24,10 +24,7 @@ DECL_ARG_CALLBACK(helpAndExit); // defined later due to need of bundle size
 DECL_ARG_CALLBACK(setSettingsFile) { options.settingsFile = arg_in; }
 DECL_ARG_CALLBACK(setInputFile) { options.inputFile = arg_in; }
 DECL_ARG_CALLBACK(setXDB) { options.xDBFile = arg_in; }
-DECL_ARG_CALLBACK(setOutputDir) {
-    options.outputDir = arg_in;
-    mkdir_ifn_exists(arg_in);
-}
+DECL_ARG_CALLBACK(setOutputDir) { options.outputDir = arg_in; }
 
 DECL_ARG_CALLBACK(setChromoLenDev) { options.chromoLenDev = parse_float(arg_in); }
 DECL_ARG_CALLBACK(setAvgPairDist) { options.avgPairDist = parse_float(arg_in); }
@@ -452,6 +449,8 @@ int main(int argc, const char ** argv)
     parse_args(argc, argv, ARG_BUND_SIZE, argb, argParseFail);
 
     checkOptions();
+
+    mkdir_ifn_exists(options.outputDir.c_str());
 
     msg("Using master seed: %d\n", options.randSeed);
 
