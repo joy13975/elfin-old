@@ -24,10 +24,10 @@ def main():
 	gsOutDir = './gsOutV{}/'.format(gsVersion)
 	
 	gsParams = utils.Bunch(GridSearchParams.getGSParams(gsVersion))
-
+	
 	scoreLineToken = '#0 score '
 	aggregate = []
-	confIdRange = xrange(0, 243)
+	confIdRange = xrange(0, gsParams.nRuns/len(gsParams.bmNames))
 	for configId in confIdRange:
 		for bmName in gsParams.bmNames:
 			gsConfName = 'gs_{}_{}'.format(configId, bmName)
