@@ -8,7 +8,7 @@ import GridSearchParams
 
 def main():
 	ap = argparse.ArgumentParser(description='Generate Grid Search configurations');
-	ap.add_argument('--gmDir', default='./bm/l20/')
+	ap.add_argument('--bmDir', default='./bm/l20/')
 	ap.add_argument('--gsVersion', type=int, default=2)
 
 	args = ap.parse_args()
