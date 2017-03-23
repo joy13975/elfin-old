@@ -11,18 +11,22 @@
 namespace elfin
 {
 
+// Some of the stochastic processes may fail
+// to meet algorithm criteria
+#define MAX_STOCHASTIC_FAILS 10
+
 class Chromosome
 {
 public:
 	Chromosome();
 	Chromosome(const Chromosome & rhs);
 	Chromosome(const Genes & genes);
-	// Chromosome & operator=(const Chromosome & rhs);
 	virtual ~Chromosome() {};
 
-	void score(const Points3f & ref);
 	bool operator>(const Chromosome & rhs) const;
 	bool operator<(const Chromosome & rhs) const;
+
+	void score(const Points3f & ref);
 
 	// Getter & setters
 	float getScore() const;
@@ -32,16 +36,12 @@ public:
 	std::vector<std::string> getNodeNames() const;
 
 	std::string toString() const;
-	bool cross(const Chromosome & father,
-	           const Chromosome & mother,
-	           const IdPairs & crossingIds);
-	void inheritMutate(const Chromosome & parent);
+	bool cross(const Chromosome & father, Chromosome & out) const;
+	Chromosome mutateChild() const;
 	void autoMutate();
 	void randomise();
 	bool pointMutate();
 	bool limbMutate();
-
-	IdPairs findCompatibleCrossings(const Chromosome & other) const;
 
 	static void setup(const uint minLen,
 	                  const uint maxLen,

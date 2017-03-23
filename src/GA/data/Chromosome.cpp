@@ -15,7 +15,6 @@ namespace elfin
 {
 
 // Static variables
-
 bool Chromosome::setupDone = false;
 uint Chromosome::myMinLen = 0;
 uint Chromosome::myMaxLen = 0;
@@ -24,7 +23,7 @@ const RadiiList * Chromosome::myRadiiList = NULL;
 IdPairs Chromosome::myNeighbourCounts;
 IdRoulette Chromosome::myGlobalRoulette;
 
-// Constructors
+// Constructors and Operators
 Chromosome::Chromosome()
 {
 	panic_if(!setupDone, "Chromosome::setup() not called!\n");
@@ -43,6 +42,19 @@ Chromosome::Chromosome(const Genes & genes)
 	myGenes = genes;
 }
 
+bool
+Chromosome::operator>(const Chromosome & rhs) const
+{
+	return myScore > rhs.getScore();
+}
+
+bool
+Chromosome::operator<(const Chromosome & rhs) const
+{
+	return myScore < rhs.getScore();
+}
+
+// Public methods
 void
 Chromosome::setup(const uint minLen,
                   const uint maxLen,
@@ -83,8 +95,6 @@ Chromosome::setup(const uint minLen,
 	setupDone = true;
 }
 
-// Public methods
-
 void
 Chromosome::score(const Points3f & ref)
 {
@@ -97,18 +107,6 @@ Chromosome::score(const Points3f & ref)
 
 	// for (auto & g : myGenes)
 	// 	myScore += minDistFromLine(g.com(), ref);
-}
-
-bool
-Chromosome::operator>(const Chromosome & rhs) const
-{
-	return myScore > rhs.getScore();
-}
-
-bool
-Chromosome::operator<(const Chromosome & rhs) const
-{
-	return myScore < rhs.getScore();
 }
 
 float
@@ -148,52 +146,102 @@ Chromosome::getNodeNames() const
 
 
 bool
-Chromosome::cross(const Chromosome & father,
-                  const Chromosome & mother,
-                  const IdPairs & crossingIds)
+Chromosome::cross(const Chromosome & father, Chromosome & out) const
 {
-	// cross can fail - if resultant genes collide during synth
-	const uint maxTries = 10;
-	for (int i = 0; i < maxTries; i++)
+	// Current chromosome is mother
+
+	IdPairs crossingIds;
+
+	const Genes & fatherG = father.genes();
+	const uint fgLen = fatherG.size();
+	const uint mgLen = myGenes.size();
+
+	// In below comments gene1 = this, gene2 = other
+	for (int i = 0; i < mgLen; i++)
 	{
-		// Pick random crossing point
-		const IdPair & crossPoint = crossingIds.at(getDice(crossingIds.size()));
-		const uint fatherGeneId = crossPoint.x;
-		const uint motherGeneId = crossPoint.y;
-
-		const Genes & fatherG = father.genes();
-		const Genes & motherG = mother.genes();
-
-		Genes newGenes;
-		newGenes.insert(newGenes.end(), fatherG.begin(), fatherG.begin() + fatherGeneId);
-		newGenes.insert(newGenes.end(), motherG.begin() + motherGeneId, motherG.end());
-
-		// dbg("Crossing at father[%d] and mother[%d]\n", fatherGeneId, motherGeneId);
-		// dbg("Father: \n%s\nMother: %s\n", father.toCString(), mother.toCString());
-		// dbg("New Genes: \n%s\n", genesToString(newGenes).c_str());
-
-		if (synthesise(newGenes))
+		// Using i as gene1 left limb cutoff
 		{
-			myGenes = newGenes;
-			return true;
+			const uint leftLimbLen = i + 1; // This includes the node i
+			const uint maxJ = std::min(
+			                      std::max(
+			                          fgLen - (myMinLen - leftLimbLen) - 1, // -1 to account for the duplicate cross point node
+			                          (uint) 0),
+			                      (uint) fgLen - 1);
+			const uint minJ = std::min(
+			                      std::max(
+			                          fgLen - (myMaxLen - leftLimbLen) - 1, // -1 to account for the duplicate cross point node
+			                          (uint) 0),
+			                      (uint) fgLen - 1);
+			for (int j = minJ; j < maxJ; j++)
+			{
+				if (myGenes.at(i).nodeId() == fatherG.at(j).nodeId())
+				{
+
+#ifdef _TEST_CHROMO
+					// Test 0-i=(left limb), j-end=(right limb)
+					const uint childLen = leftLimbLen + (fgLen - j - 1);
+
+					if (childLen < myMinLen || childLen > myMaxLen)
+					{
+						die("Fatal: length invalid (i=leftLimb) childLen=%d, myMinLen=%d, myMaxLen=%d\n",
+						    childLen, myMinLen, myMaxLen);
+					}
+#endif
+
+					crossingIds.push_back(IdPair(i, j));
+				}
+			}
+		}
+	}
+
+	if (crossingIds.size() > 0)
+	{
+		// cross can fail - if resultant genes collide during synth
+		for (int i = 0; i < MAX_STOCHASTIC_FAILS; i++)
+		{
+			// Pick random crossing point
+			const IdPair & crossPoint = crossingIds.at(getDice(crossingIds.size()));
+			const uint motherGeneId = crossPoint.x;
+			const uint fatherGeneId = crossPoint.y;
+
+			const Genes & motherG = myGenes;
+			const Genes & fatherG = father.genes();
+
+			Genes newGenes;
+			newGenes.insert(newGenes.end(), motherG.begin(), motherG.begin() + motherGeneId);
+			newGenes.insert(newGenes.end(), fatherG.begin() + fatherGeneId, fatherG.end());
+
+			// dbg("Crossing at mother[%d] and father[%d]\n", motherGeneId, fatherGeneId);
+			// dbg("Mother: \n%s\n", mother.toCString());
+			// dbg("Father: \n%s\n", father.toCString());
+			// dbg("New Genes: \n%s\n", genesToString(newGenes).c_str());
+
+			if (synthesise(newGenes))
+			{
+				out = Chromosome(newGenes);
+				return true;
+			}
 		}
 	}
 
 	return false;
 }
 
-void
-Chromosome::inheritMutate(const Chromosome & parent)
+Chromosome
+Chromosome::mutateChild() const
 {
-	*this = Chromosome(parent);
-	autoMutate();
+	Chromosome out = *this;
+	out.autoMutate();
+
+	return out;
 }
 
 void
 Chromosome::autoMutate()
 {
 	// Try point mutate first, if not possible then
-	// do limb mutate
+	// do limb mutate. If still not possible, create
+	// a new chromosome
 
 	if (!pointMutate())
 	{
@@ -215,88 +263,6 @@ Chromosome::toString() const
 	ss << genesToString(myGenes);
 
 	return ss.str();
-}
-
-IdPairs
-Chromosome::findCompatibleCrossings(const Chromosome & other) const
-{
-	IdPairs crossingIds;
-
-	const Genes & otherG = other.genes();
-	const uint otGeneLen = otherG.size();
-	const uint myGeneLen = myGenes.size();
-
-	// In below comments gene1 = this, gene2 = other
-	for (int i = 0; i < myGeneLen; i++)
-	{
-		// Using i as gene1 left limb cutoff
-		{
-			const uint leftLimbLen = i + 1; // This includes the cutoff point
-			const uint maxJ = std::min(
-			                      std::max(
-			                          otGeneLen - (myMinLen - leftLimbLen) - 1, // -1 to account for the duplicate cross point node
-			                          (uint) 0),
-			                      (uint) otGeneLen - 1);
-			const uint minJ = std::min(
-			                      std::max(
-			                          otGeneLen - (myMaxLen - leftLimbLen) - 1, // -1 to account for the duplicate cross point node
-			                          (uint) 0),
-			                      (uint) otGeneLen - 1);
-			for (int j = minJ; j < maxJ; j++)
-			{
-				if (myGenes.at(i).nodeId() == otherG.at(j).nodeId())
-				{
-					// Test 0-i=(left limb), j-end=(right limb)
-					const uint childLen = leftLimbLen + (otGeneLen - j - 1);
-
-#ifdef _TEST_CHROMO
-					if (childLen < myMinLen || childLen > myMaxLen)
-					{
-						die("Fatal: length invalid (i=leftLimb) childLen=%d, myMinLen=%d, myMaxLen=%d\n",
-						    childLen, myMinLen, myMaxLen);
-					}
-#endif
-
-					crossingIds.push_back(IdPair(i, j));
-				}
-			}
-		}
-
-		// Using i as gene1 right limb cutoff
-		{
-			const uint rightLimbLen = myGeneLen - i; // This includes the cutoff point
-			const uint minJ = std::min(
-			                      std::max(
-			                          (myMinLen - rightLimbLen),
-			                          (uint) 0),
-			                      (uint) otGeneLen - 1);
-			const uint maxJ = std::min(
-			                      std::max(
-			                          (myMaxLen - rightLimbLen),
-			                          (uint) 0),
-			                      (uint) otGeneLen - 1);
-			for (int j = minJ; j < maxJ; j++)
-			{
-				if (myGenes.at(i).nodeId() == otherG.at(j).nodeId())
-				{
-					// Test 0-j=(left limb), i-myGenLen=(right limb)
-					const uint childLen = j + rightLimbLen;
-
-#ifdef _TEST_CHROMO
-					if (childLen < myMinLen || childLen > myMaxLen)
-					{
-						die("Fatal: length invalid (i=rightLimb) childLen=%d, myMinLen=%d, myMaxLen=%d\n",
-						    childLen, myMinLen, myMaxLen);
-					}
-#endif
-
-					crossingIds.push_back(IdPair(i, j));
-				}
-			}
-		}
-	}
-
-	return crossingIds;
 }
 
 /*
@@ -410,7 +376,7 @@ Chromosome::pointMutate()
 				}
 			}
 
-			// Pick a random one, or report impossible
+			// Pick a random one, or fall through to next case
 			if (swappableIds.size() > 0)
 			{
 				const IdPair & ids = swappableIds.at(getDice(swappableIds.size()));
@@ -452,7 +418,7 @@ Chromosome::pointMutate()
 					}
 				}
 
-				// Pick a random one, or report impossible
+				// Pick a random one, or fall through to next case
 				if (insertableIds.size() > 0)
 				{
 					const IdPair & ids = insertableIds.at(getDice(insertableIds.size()));
@@ -523,9 +489,7 @@ Chromosome::limbMutate()
 	uint severId = -1;
 	bool mutateLeftLimb = false;
 
-	// Try max 10 times
-	const int maxTries = 10;
-	for (int i = 0; i < maxTries; i++)
+	for (int i = 0; i < MAX_STOCHASTIC_FAILS; i++)
 	{
 		const uint geneId = getDice(N - 1) + 1;
 		const uint nodeId = myGenes.at(geneId).nodeId();
@@ -559,7 +523,7 @@ Chromosome::limbMutate()
 
 	// Re-generate that whole "limb"
 	Genes newGenes;
-	for (int i = 0; i < maxTries; i++)
+	for (int i = 0; i < MAX_STOCHASTIC_FAILS; i++)
 	{
 		newGenes = mutateLeftLimb ?
 		           genRandomGenesReverse(myMaxLen, myGenes) :
@@ -968,4 +932,5 @@ int _testChromosome()
 
 	return 0;
 }
+
 } // namespace elfin

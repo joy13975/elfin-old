@@ -89,8 +89,8 @@ Points3f CSVParser::parseSpec(const std::string & filename)
 		const LokiAstari::CSVRow & row = (*loop);
 		panic_if(
 		    row.getNumParts() != 3, /* 3D points must be 3 values */
-		    "Invalid row in spec file: \"%s\" - must have 3 components\n",
-		    row.getLine().c_str());
+		    "Invalid row in spec file: \"%s\" - must have 3 components but there are %d\n",
+		    row.getLine().c_str(), row.getNumParts());
 
 		for (auto & part : row.getParts())
 		{

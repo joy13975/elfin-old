@@ -6,19 +6,12 @@
 
 #include "../data/PrimitiveShorthands.hpp"
 
-// Macro shorthands
-#define OMP_PAR _Pragma("omp parallel")
-
 #ifdef _NO_OMP
 inline int omp_get_thread_num() { return 0; }
 inline int omp_get_num_threads() { return 1; }
+inline int omp_get_num_devices() { return 0; }
 #endif
 
-// Use dynamic by default because for elfin,
-// workloads can vary by a large margin
-// as there are many different branches leading
-// to different amount of work (though untested)
-#define OMP_FOR _Pragma("omp for")
 #define OMP_PAR_FOR _Pragma("omp parallel for")
 
 #ifdef _DO_TIMING
