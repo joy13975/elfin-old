@@ -3,9 +3,91 @@ import json
 import os
 import Bio.PDB
 import numpy as np
+import csv
+import re
 
 RadiiTypes = ['avgAll', 'maxCA', 'maxHeavy']
 INF = float('inf')
+
+def upsample(pts1, pts2):
+    # Upsample the shape with fewer points
+    pts1IsLonger = len(pts1) > len(pts2)
+    N = max(len(pts1), len(pts2))
+
+    # Use a proportion based algorithm because
+    # we want to assume both shapes are roughly
+    # the same length, but not exactly
+    if pts1IsLonger:
+        morePoints, fewerPoints = (np.copy(pts1), np.copy(pts2))
+    else:
+        morePoints, fewerPoints = (np.copy(pts2), np.copy(pts1))
+
+    # N === len(morePoints)
+
+    # Compute longer shape total length
+    mpTotalLength = 0.0
+    for i in xrange(1, N):
+        mpTotalLength += np.linalg.norm(morePoints[i] - morePoints[i - 1])
+
+    fpTotalLength = 0.0
+    for i in xrange(1, len(fewerPoints)):
+        fpTotalLength += np.linalg.norm(fewerPoints[i] - fewerPoints[i - 1])
+
+    # Upsample fewerPoints
+    upsampled = np.empty([0, 3])
+
+    # First and last points are the same
+    upsampled = np.append(upsampled, [fewerPoints[0]], axis=0)
+
+    mpProportion = 0.0
+    fpProportion = 0.0
+    mpi = 1
+    for i in xrange(1, len(fewerPoints)):
+        baseFpPoint = fewerPoints[i - 1]
+        nextFpPoint = fewerPoints[i]
+        baseFpProportion = fpProportion
+        fpSegment = np.linalg.norm(nextFpPoint - baseFpPoint) / fpTotalLength
+        vec = nextFpPoint - baseFpPoint
+
+        fpProportion += fpSegment
+        while (mpProportion <= fpProportion and mpi < N):
+            mpSegment = \
+                np.linalg.norm(morePoints[mpi] - morePoints[mpi - 1]) \
+                / mpTotalLength
+
+            if (mpProportion + mpSegment) > fpProportion:
+                break
+            mpProportion += mpSegment
+
+            s = (mpProportion - baseFpProportion) / fpSegment
+            upsampled = np.append(upsampled, [baseFpPoint + (vec * s)], axis=0)
+
+            mpi += 1
+
+    # Sometimes the last node is automatically added
+    if len(upsampled) < N:
+        upsampled = np.append(upsampled, [fewerPoints[-1]], axis=0)
+
+    if pts1IsLonger:
+        pts2 = upsampled 
+    else: 
+        pts1 = upsampled
+
+    return pts1, pts2
+
+def readCSVPoints(csvFile):
+    pts = []
+    
+    with open(csvFile, 'r') as file:
+        pts = np.asarray([[float(n) for n in re.split(', *| *', l.strip())] for l in file.read().split('\n') if len(l) > 0])
+    
+    return pts
+
+def saveCSV(npArray, saveFile, delimiter=' '):
+    with open(saveFile, 'wb') as csvFile:
+        wt = csv.writer(csvFile, delimiter=delimiter)
+        for row in npArray:
+            wt.writerow(row)
 
 def canConvertToFloat(str):
     try:
@@ -75,14 +157,14 @@ def checkCollision(xdb, collisionMeasure, nodes, newNode, shape):
 
     # previous node PAIR (not just single node!) is inherently non-colliding
     for i in xrange(0, len(nodes) - 2):
-        comDist = np.linalg.norm(shape[i] - newCOM);
+        comDist = np.linalg.norm(shape[i] - newCOM)
         collisionDist = xdb['singlesData'][newNode]['radii'][collisionMeasure] + \
-                            xdb['singlesData'][nodes[i]]['radii'][collisionMeasure];
+                            xdb['singlesData'][nodes[i]]['radii'][collisionMeasure]
 
         if comDist < collisionDist:
-            return True;
+            return True
 
-    return False;
+    return False
 
 def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=False):    
     # Load first "mother" pdb to host all subsequent chains
@@ -95,11 +177,11 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
 
     # Only for mother pdb, keep both chains
     motherChainB = motherPdb.child_list[0].child_dict['B']
-    motherModel = motherPdb.child_list[0]
-    motherModel.detach_child('B')
     if movieMode:
-        movieChainID = 'B'
+        moviePdbs = [motherPdb]
     else:
+        motherModel = motherPdb.child_list[0]
+        motherModel.detach_child('B')
         nResi = len(motherChainB.child_list)
         for j in xrange(0, nResi):
             r = motherChainB.child_list[j]
@@ -108,6 +190,8 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
                     r.id[2]) 
             motherChain.add(r)
         baseRId += nResi
+
+    comShape = np.asarray([[0,0,0]])
 
     startingPoint = np.zeros(3)
 
@@ -121,16 +205,17 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
         # mother pdb append and transform
         pdbFile = pairsDir + '/' + pairName + '.pdb'
         pdbPair = readPdb(pairName, pdbFile)
-
         
         childChain = pdbPair.child_list[0].child_dict['B']
         nResi = len(childChain.child_list)
         if movieMode:
-            childChain.id = movieChainID
-            motherModel.add(childChain)
+            # childChain.id = movieChainChars[movieChainID]
+            # motherModel.add(childChain)
 
-            movieChainID = chr(ord(movieChainID) + 1)
-            # pauseCode()
+            # movieChainID = movieChainID + 1
+            moviePdbs.append(pdbPair)
+            for pdb in moviePdbs:
+                pdb.transform(np.asarray(rel['rot']), rel['tran'])
         else:
             for j in xrange(0, nResi):
                 r = childChain.child_list[j]
@@ -138,22 +223,41 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
                         (baseRId + 1 + j),
                         r.id[2]) 
                 motherChain.add(r)
+            motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
+
+        comShape = np.append(comShape, [rel['comB']], axis=0)
+        comShape = np.dot(comShape, np.asarray(rel['rot'])) + rel['tran']
 
         baseRId += nResi
-        motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
         startingPoint = np.dot(startingPoint, np.asarray(rel['rot'])) + rel['tran']
         print 'Pair[{}]:   {}---{}'.format(str(i).ljust(chainLenDigits),
             lastNode.ljust(16), currNode.rjust(16))
 
        
     if fRot is not None:
-        motherPdb.transform(np.eye(3), -startingPoint)
-        motherPdb.transform(np.asarray(fRot), np.zeros(3))
+        if movieMode:
+            motherPdb.transform(np.eye(3), -startingPoint)
+            motherPdb.transform(np.asarray(fRot), np.zeros(3))
+        else:
+            for pdb in moviePdbs:
+                pdb.transform(np.eye(3), -startingPoint)
+                pdb.transform(np.asarray(fRot), np.zeros(3))
 
-    if saveFile is None:
-        return motherPdb
+    if not movieMode:
+        if saveFile is not None:
+            savePdb(motherPdb, saveFile)
+        return motherPdb, comShape
     else:
-        savePdb(motherPdb, saveFile)
+        if saveFile is not None:
+            pdbId = 0
+            saveFileDotIndex = saveFile.rfind('.')
+            for pdb in moviePdbs:
+                savePartFile = saveFile[0:saveFileDotIndex] + \
+                    'part' + str(pdbId) + \
+                    saveFile[saveFileDotIndex:]
+                savePdb(pdb, savePartFile)
+                pdbId = pdbId + 1
+        return moviePdbs, comShape
 
 def getXDBStat(xDB):
     # xdb = readJSON('res/xDB.json')
