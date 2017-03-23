@@ -506,8 +506,9 @@ int main(int argc, const char ** argv)
 
             std::ostringstream ss;
             ss << options.outputDir << "/" << &p->at(i) << ".json";
-            const char * data = j.dump().c_str();
-            const size_t len = j.dump().size();
+            std::string dump = j.dump();
+            const char * data = dump.c_str();
+            const size_t len = dump.size();
             write_binary(ss.str().c_str(), data, len);
         }
 
