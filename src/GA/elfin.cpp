@@ -453,7 +453,7 @@ int main(int argc, const char ** argv)
     mkdir_ifn_exists(options.outputDir.c_str());
 
     msg("There are %d devices\n", omp_get_num_devices());
-    
+
     msg("Using master seed: %d\n", options.randSeed);
 
     RelaMat relaMat;
@@ -492,20 +492,20 @@ int main(int argc, const char ** argv)
 
         es->run();
 
-        const Population & p = es->population();
+        const Population * p = es->population();
 
         // Output best N solutions
         const uint outputN = 3;
         for (int i = 0; i < outputN; i++)
         {
-            std::vector<std::string> nodeNames = p.at(i).getNodeNames();
+            std::vector<std::string> nodeNames = p->at(i).getNodeNames();
             JSON nn = nodeNames;
             JSON j;
             j["nodes"] = nn;
-            j["score"] = p.at(i).getScore();
+            j["score"] = p->at(i).getScore();
 
             std::ostringstream ss;
-            ss << options.outputDir << "/" << &p.at(i) << ".json";
+            ss << options.outputDir << "/" << &p->at(i) << ".json";
             const char * data = j.dump().c_str();
             const size_t len = j.dump().size();
             write_binary(ss.str().c_str(), data, len);

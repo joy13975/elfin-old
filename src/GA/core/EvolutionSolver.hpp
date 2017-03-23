@@ -18,7 +18,7 @@ public:
 	                const OptionPack & options);
 	virtual ~EvolutionSolver() {};
 
-	const Population & population() const;
+	const Population * population() const;
 	const Population & bestSoFar() const;
 
 	void run();
@@ -30,20 +30,23 @@ private:
 
 	uint myExpectedTargetLen;
 	ulong myNonSurviverCount;
-	ulong mySruviverCutoff;
+	ulong mySurviverCutoff;
 	ulong myCrossCutoff;
 	ulong myPointMutateCutoff;
 	ulong myLimbMutateCutoff;
 
 	double myStartTimeInUs = 0;
-	Population myPopulation;
+	Population myPopulationBuffers[2]; // double buffer
+	const Population *myCurrPop;
+	Population *myBuffPop;
 	Population myBestSoFar; // Currently used for emergency output
 
 	void initPopulation();
-	void selectParents();
 	void evolvePopulation();
-	void rankPopulation();
 	void scorePopulation();
+	void rankPopulation();
+	void selectParents();
+	void swapPopBuffers();
 
 	void printStartMsg();
 	void printEndMsg();

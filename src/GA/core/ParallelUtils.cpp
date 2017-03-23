@@ -16,7 +16,7 @@ void setupParaUtils(uint globalSeed)
 
 	// Seending the RNG needs to be done per-thread because std::rand()
 	// is not requied to be thread-safe
-	OMP_PAR
+	#pragma omp parallel
 	{
 		#pragma omp single
 		{
@@ -24,7 +24,7 @@ void setupParaUtils(uint globalSeed)
 		}
 
 		paraRandSeeds.at(omp_get_thread_num()) = globalSeed == 0 ?
-		get_timestamp_us() : (globalSeed + omp_get_thread_num());
+		        get_timestamp_us() : (globalSeed + omp_get_thread_num());
 	}
 
 	paraUtilsSetup = true;

@@ -24,10 +24,10 @@ EvolutionSolver::EvolutionSolver(const RelaMat & relaMat,
 	myRadiiList(radiiList),
 	myOptions(options)
 {
-	mySruviverCutoff = std::round(options.gaSurviveRate * options.gaPopSize);
+	mySurviverCutoff = std::round(options.gaSurviveRate * options.gaPopSize);
 
-	myNonSurviverCount = (options.gaPopSize - mySruviverCutoff);
-	myCrossCutoff = mySruviverCutoff + std::round(options.gaCrossRate * myNonSurviverCount);
+	myNonSurviverCount = (options.gaPopSize - mySurviverCutoff);
+	myCrossCutoff = mySurviverCutoff + std::round(options.gaCrossRate * myNonSurviverCount);
 	myPointMutateCutoff = myCrossCutoff + std::round(options.gaPointMutateRate * myNonSurviverCount);
 	myLimbMutateCutoff = std::min(
 	                         (ulong) (myPointMutateCutoff + std::round(options.gaLimbMutateRate * myNonSurviverCount)),
@@ -40,10 +40,10 @@ EvolutionSolver::EvolutionSolver(const RelaMat & relaMat,
 	Chromosome::setup(minTargetLen, maxTargetLen, myRelaMat, myRadiiList);
 }
 
-const Population &
+const Population *
 EvolutionSolver::population() const
 {
-	return myPopulation;
+	return myCurrPop;
 }
 
 const Population &
@@ -77,16 +77,20 @@ EvolutionSolver::run()
 	{
 		const double genStartTime = get_timestamp_us();
 
-		evolvePopulation();
+		{
+			evolvePopulation();
 
-		scorePopulation();
+			scorePopulation();
 
-		rankPopulation();
+			rankPopulation();
 
-		selectParents();
+			selectParents();
 
-		const float genBestScore = myPopulation.front().getScore();
-		const float genWorstScore = myPopulation.back().getScore();
+			swapPopBuffers();
+		}
+
+		const float genBestScore = myCurrPop->front().getScore();
+		const float genWorstScore = myCurrPop->back().getScore();
 		msg(genMsgFmt, i,
 		    genBestScore,
 		    genWorstScore,
@@ -101,8 +105,10 @@ EvolutionSolver::run()
 		else
 		{
 			for (int i = 0; i < nBestSoFar; i++)
-				myBestSoFar.at(i) = myPopulation.at(i);
+				myBestSoFar.at(i) = myCurrPop->at(i);
 
+			if (genBestScore > lastGenBestScore)
+				die("WTF!!!\n");
 			if (float_approximates(genBestScore, lastGenBestScore))
 			{
 				stagnantCount++;
@@ -116,20 +122,15 @@ EvolutionSolver::run()
 
 			if (stagnantCount >= myOptions.maxStagnantGens)
 			{
-				wrn("Solver stopping because max stagnancy is reached (%d)\n", myOptions.maxStagnantGens);
+				wrn("Solver stopped because max stagnancy is reached (%d)\n", myOptions.maxStagnantGens);
 				break;
 			}
 			else
 			{
-				wrn("Current stagnancy: %d, max: %d\n", stagnantCount, myOptions.maxStagnantGens);
+				msg("Current stagnancy: %d, max: %d\n", stagnantCount, myOptions.maxStagnantGens);
 			}
 		}
 	}
-
-	// Must do final score & rank
-	scorePopulation();
-
-	rankPopulation();
 
 	this->printEndMsg();
 }
@@ -137,106 +138,9 @@ EvolutionSolver::run()
 // Private methods
 
 void
-EvolutionSolver::selectParents()
-{
-	TIMING_START(startTimeSelectParents);
-	{
-		// Ensure variety within survivors using hashmap
-		// and crc as key
-		using CrcMap = std::unordered_map<Crc32, Chromosome>;
-		CrcMap crcMap;
-		ulong uniqueCount = 0;
-
-		// We don't want parallelism here because
-		// the loop must priotise low indexes
-		for (int i = 0; i < myPopulation.size(); i++)
-		{
-			const Crc32 crc = myPopulation.at(i).checksum();
-			if (crcMap.find(crc) == crcMap.end())
-			{
-				// This individual is a new one - record
-				crcMap[crc] = Chromosome(myPopulation.at(i));
-				uniqueCount++;
-
-				if (uniqueCount >= mySruviverCutoff)
-					break;
-			}
-		}
-
-		// Insert map-value-indexed individual back into population
-		ulong popIndex = 0;
-		for (CrcMap::iterator it = crcMap.begin(); it != crcMap.end(); ++it)
-		{
-			myPopulation.at(popIndex++) = Chromosome(it->second);
-		}
-
-		// Sort survivors
-		std::sort(myPopulation.begin(),
-		          myPopulation.begin() + uniqueCount);
-	}
-	TIMING_END("selecting", startTimeSelectParents);
-}
-
-void
 EvolutionSolver::evolvePopulation()
 {
-	using CrossingVector = std::vector<std::tuple<IdPair, IdPairs>>;
 	CrossingVector possibleCrossings;
-
-	TIMING_START(startTimeCrossingPairs);
-	{
-		// Make new generation by discarding unfit
-		// genes and mutating/reproducing fit genes
-		// to fill up discarded slots
-
-		// First compute possible crossing parents
-		msg("Computing cross-able parents: 0%% Done");
-
-		const ulong nPossibleCrossings = (mySruviverCutoff * (mySruviverCutoff + 1)) / 2;
-		const ulong gaCrossBlock = nPossibleCrossings / 10;
-
-		// Credit to Stack Overflow response by Z boson at
-		// http://stackoverflow.com/questions/18669296/c-openmp-parallel-for-loop-alternatives-to-stdvector
-		#pragma omp declare reduction 										\
-		(																	\
-		        mergeCrossingVectors : CrossingVector : 							\
-		        omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end())	\
-		)
-
-		#pragma omp target teams distribute parallel for reduction(mergeCrossingVectors: possibleCrossings)
-		for (int i = 0; i < mySruviverCutoff; i++)
-		{
-			for (int j = i; j < mySruviverCutoff; j++)
-			{
-				// If two chromosomes have at least one identical
-				// gene and the length sum is legal
-				const Chromosome & father =  myPopulation.at(i);
-				const Chromosome & mother =  myPopulation.at(j);
-
-				IdPairs crossingIds = father.findCompatibleCrossings(mother);
-				if (crossingIds.size() > 0)
-					possibleCrossings.push_back(
-					    std::make_tuple(
-					        IdPair(i, j),
-					        crossingIds));
-
-				const ulong cid = nPossibleCrossings -
-				                  ((mySruviverCutoff - i) * (mySruviverCutoff - i + 1)) / 2
-				                  + (j - i);
-
-				if (cid % gaCrossBlock == 0)
-				{
-					ERASE_LINE();
-					msg("Computing cross-able parents: %.2f%% Done",
-					    (float) cid / nPossibleCrossings);
-				}
-			}
-		}
-		ERASE_LINE();
-		msg("Computing cross-able parents: 100%% Done\n");
-	}
-	TIMING_END("crossing-pairs", startTimeCrossingPairs);
-
 
 	TIMING_START(startTimeMutation);
 	{
@@ -245,64 +149,67 @@ EvolutionSolver::evolvePopulation()
 
 		ulong crossCount = 0, pmCount = 0, lmCount = 0, randCount = 0;
 		const ulong gaPopBlock = myOptions.gaPopSize / 10;
+		ulong crossFailCount = 0;
 
 		OMP_PAR_FOR
-		for (int i = mySruviverCutoff; i < myOptions.gaPopSize; i++)
+		for (int i = 0; i < mySurviverCutoff; i++)
+			myBuffPop->at(i) = myCurrPop->at(i);
+
+		OMP_PAR_FOR
+		for (int i = mySurviverCutoff; i < myOptions.gaPopSize; i++)
 		{
-			const ulong dice = mySruviverCutoff +
-			                   getDice(myNonSurviverCount);
+			Chromosome & chromoToEvolve = myBuffPop->at(i);
+			const ulong evolutionDice = mySurviverCutoff +
+			                            getDice(myNonSurviverCount);
 
-			if (dice < myCrossCutoff)
+			if (evolutionDice < myCrossCutoff)
 			{
-				// Pick random parent pair and cross
-				if (possibleCrossings.size() > 0)
+				long motherId, fatherId;
+				if (getDice(2))
 				{
-					const ulong randId = getDice(possibleCrossings.size());
-
-					// Can't use std::tie() because we want references not values
-					const IdPair & parentTuple = std::get<0>(possibleCrossings.at(randId));
-					const IdPairs & crossingIds = std::get<1>(possibleCrossings.at(randId));
-
-					const Chromosome & father = myPopulation.at(parentTuple.x);
-					const Chromosome & mother = myPopulation.at(parentTuple.y);
-
-					if (!myPopulation.at(i).cross(father, mother, crossingIds))
-						myPopulation.at(i).inheritMutate(getDice(2) == 0 ?
-						                                 father : mother);
+					motherId = getDice(mySurviverCutoff);
+					fatherId = getDice(myOptions.gaPopSize);
 				}
 				else
 				{
+					motherId = getDice(myOptions.gaPopSize);
+					fatherId = getDice(mySurviverCutoff);
+				}
+
+				const Chromosome & mother = myCurrPop->at(motherId);
+				const Chromosome & father = myCurrPop->at(fatherId);
+
+				if (!mother.cross(father, chromoToEvolve))
+				{
 					// Pick a random parent to inherit from and then mutate
-					myPopulation.at(i).inheritMutate(
-					    myPopulation.at(getDice(myCrossCutoff))
-					);
+					chromoToEvolve = mother.mutateChild();
+					crossFailCount++;
 				}
 				crossCount++;
 			}
 			else
 			{
 				// Replicate a high ranking parent
-				myPopulation.at(i) = Chromosome(
-				                         myPopulation.at(getDice(mySruviverCutoff))
-				                     );
+				const ulong parentId = getDice(mySurviverCutoff);
+				chromoToEvolve = myCurrPop->at(parentId);
 
-				if (dice < myPointMutateCutoff)
+				if (evolutionDice < myPointMutateCutoff)
 				{
-					if (!myPopulation.at(i).pointMutate())
-						myPopulation.at(i).randomise();
+					if (!chromoToEvolve.pointMutate())
+						chromoToEvolve.randomise();
 					pmCount++;
 				}
-				else if (dice < myLimbMutateCutoff)
+				else if (evolutionDice < myLimbMutateCutoff)
 				{
-					if (!myPopulation.at(i).limbMutate())
-						myPopulation.at(i).randomise();
+					if (!chromoToEvolve.limbMutate())
+						chromoToEvolve.randomise();
 					lmCount++;
 				}
 				else
 				{
 					// Individuals not covered by specified mutation
 					// rates undergo random destructive mutation
-					myPopulation.at(i).randomise();
+					chromoToEvolve.randomise();
 					randCount++;
 				}
 			}
@@ -319,27 +226,15 @@ EvolutionSolver::evolvePopulation()
 
 		// Keep some actual counts to make sure the RNG is working
 		// correctly
-		dbg("Mutation rates: cross %.2f, pm %.2f, lm %.2f, rand %.2f, survivalCount: %d\n",
+		dbg("Mutation rates: cross %.2f (fail=%d), pm %.2f, lm %.2f, rand %.2f, survivalCount: %d\n",
 		    (float) crossCount / myNonSurviverCount,
+		    crossFailCount,
 		    (float) pmCount / myNonSurviverCount,
 		    (float) lmCount / myNonSurviverCount,
 		    (float) randCount / myNonSurviverCount,
-		    mySruviverCutoff);
+		    mySurviverCutoff);
 	}
 	TIMING_END("mutation", startTimeMutation);
-}
-
-void
-EvolutionSolver::rankPopulation()
-{
-	// Sort population according to fitness
-	// (low score = more fit)
-	TIMING_START(startTimeRanking);
-	{
-		std::sort(myPopulation.begin(),
-		          myPopulation.end());
-	}
-	TIMING_END("ranking", startTimeRanking);
 }
 
 void
@@ -348,18 +243,17 @@ EvolutionSolver::scorePopulation()
 	TIMING_START(startTimeScoring);
 	{
 		msg("Scoring: 0%% Done");
-		const ulong scoreBlock = myPopulation.size() / 10;
+		const ulong scoreBlock = myOptions.gaPopSize / 10;
 
 		OMP_PAR_FOR
-		for (int i = 0; i < myPopulation.size(); i++)
+		for (int i = 0; i < myOptions.gaPopSize; i++)
 		{
-			myPopulation.at(i).score(mySpec);
-
+			myBuffPop->at(i).score(mySpec);
 			if (i % scoreBlock == 0)
 			{
 				ERASE_LINE();
 				msg("Scoring: %.2f%% Done",
-				    (float) i / myPopulation.size());
+				    (float) i / myOptions.gaPopSize);
 			}
 		}
 		ERASE_LINE();
@@ -369,12 +263,74 @@ EvolutionSolver::scorePopulation()
 }
 
 void
+EvolutionSolver::rankPopulation()
+{
+	// Sort population according to fitness
+	// (low score = more fit)
+	TIMING_START(startTimeRanking);
+	{
+		std::sort(myBuffPop->begin(),
+		          myBuffPop->end());
+	}
+	TIMING_END("ranking", startTimeRanking);
+}
+
+void
+EvolutionSolver::selectParents()
+{
+	TIMING_START(startTimeSelectParents);
+	{
+		// Ensure variety within survivors using hashmap
+		// and crc as key
+		using CrcMap = std::unordered_map<Crc32, Chromosome>;
+		CrcMap crcMap;
+		ulong uniqueCount = 0;
+
+		// We don't want parallelism here because
+		// the loop must priotise low indexes
+		for (int i = 0; i < myBuffPop->size(); i++)
+		{
+			const Crc32 crc = myBuffPop->at(i).checksum();
+			if (crcMap.find(crc) == crcMap.end())
+			{
+				// This individual is a new one - record
+				crcMap[crc] = myBuffPop->at(i);
+				uniqueCount++;
+
+				if (uniqueCount >= mySurviverCutoff)
+					break;
+			}
+		}
+
+		// Insert map-value-indexed individual back into population
+		ulong popIndex = 0;
+		for (CrcMap::iterator it = crcMap.begin(); it != crcMap.end(); ++it)
+			myBuffPop->at(popIndex++) = it->second;
+
+		// Sort survivors
+		std::sort(myBuffPop->begin(),
+		          myBuffPop->begin() + uniqueCount);
+	}
+	TIMING_END("selecting", startTimeSelectParents);
+}
+
+void
+EvolutionSolver::swapPopBuffers()
+{
+	const Population * tmp = myCurrPop;
+	myCurrPop = myBuffPop;
+	myBuffPop = const_cast<Population *>(tmp);
+}
+
+void
 EvolutionSolver::initPopulation()
 {
 	TIMING_START(startTimeInit);
 	{
-
-		myPopulation = Population(myOptions.gaPopSize);
+		myPopulationBuffers[0] = Population(myOptions.gaPopSize);
+		myPopulationBuffers[1] = Population(myOptions.gaPopSize);
+		myCurrPop = &(myPopulationBuffers[0]);
+		myBuffPop = &(myPopulationBuffers[1]);
 
 		const ulong block = myOptions.gaPopSize / 10;
 
@@ -383,7 +339,7 @@ EvolutionSolver::initPopulation()
 		OMP_PAR_FOR
 		for (int i = 0; i < myOptions.gaPopSize; i++)
 		{
-			myPopulation.at(i).randomise();
+			myBuffPop->at(i).randomise();
 			if (i % block == 0)
 			{
 				ERASE_LINE();
@@ -396,6 +352,9 @@ EvolutionSolver::initPopulation()
 
 	}
 	TIMING_END("init", startTimeInit);
+
+	// We filled buffer first (because myCurrPop shouldn't be modified)
+	swapPopBuffers();
 }
 
 void
@@ -431,13 +390,13 @@ EvolutionSolver::printStartMsg()
 	    "New species:                %u\n",
 	    psStr.str().c_str(),
 	    niStr.str().c_str(),
-	    mySruviverCutoff,
+	    mySurviverCutoff,
 	    myCrossCutoff,
 	    myPointMutateCutoff,
 	    myLimbMutateCutoff,
 	    myOptions.gaPopSize - myLimbMutateCutoff);
 
-	OMP_PAR
+	#pragma omp parallel
 	{
 		if (omp_get_thread_num() == 0)
 			msg("Running with %d threads\n", omp_get_num_threads());
@@ -455,7 +414,7 @@ EvolutionSolver::printEndMsg()
 
 	for (int i = 0; i < N; i++)
 	{
-		const auto & p = myPopulation.at(i);
+		const auto & p = myCurrPop->at(i);
 		msg("Solution #%d score %.2f: \n%s\n",
 		    p.getScore(),
 		    i,
