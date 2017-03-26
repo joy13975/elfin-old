@@ -92,16 +92,16 @@ def draw(x=None, y=None, z=None, i=None, j=None, k=None, r=1.0, g=1.0, b=1.0, wi
         cmd.load_cgo(obj,'axis'+str(counter.state))
         counter.state += 1
 
-def draw_pts(pts, scale=1.0, width=3.0):
+def draw_pts(pts, scale=1.0, width=3.0, color=[1,0,0]):
     pts *= scale
-    delta = 1.0 / len(pts)
-    r,g,b = 1.0, 0.0, 0.0
+    # delta = 1.0 / len(pts)
+    r,g,b = color
 
     for (p1, p2) in zip(pts, np.roll(pts, -1, axis=0))[0:-1]:
         draw(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2], width=width,
             r=r,g=g,b=b)
-        r -= delta
-        b += delta
+        # r -= delta
+        # b += delta
 
 def draw_csv(specFile, scale=1.0, width=3.0):
 

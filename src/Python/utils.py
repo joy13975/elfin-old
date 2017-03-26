@@ -178,7 +178,7 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
     # Only for mother pdb, keep both chains
     motherChainB = motherPdb.child_list[0].child_dict['B']
     if movieMode:
-        moviePdbs = [motherPdb]
+        moviePdbs = []
     else:
         motherModel = motherPdb.child_list[0]
         motherModel.detach_child('B')

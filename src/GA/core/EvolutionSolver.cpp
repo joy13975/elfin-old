@@ -72,7 +72,7 @@ EvolutionSolver::run()
 	const int genDispDigits = std::ceil(std::log(myOptions.gaIters) / std::log(10));
 	char * genMsgFmt;
 	asprintf(&genMsgFmt,
-	         "Generation #%%%dd: best=%%.2f   worst=%%.2f   time taken=%%dms\n", genDispDigits);
+	         "Generation #%%%dd: best=%%.2f (%%.2f/module), worst=%%.2f, time taken=%%dms\n", genDispDigits);
 	for (int i = 0; i < myOptions.gaIters; i++)
 	{
 		const double genStartTime = get_timestamp_us();
@@ -90,9 +90,11 @@ EvolutionSolver::run()
 		}
 
 		const float genBestScore = myCurrPop->front().getScore();
+		const ulong genBestChromoLen = myCurrPop->front().genes().size();
 		const float genWorstScore = myCurrPop->back().getScore();
 		msg(genMsgFmt, i,
 		    genBestScore,
+		    genBestScore / genBestChromoLen,
 		    genWorstScore,
 		    (long) std::round((get_timestamp_us() - genStartTime) / 1e3));
 
