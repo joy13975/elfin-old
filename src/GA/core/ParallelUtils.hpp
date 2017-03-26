@@ -13,7 +13,7 @@ inline int omp_get_num_threads() { return 1; }
 inline int omp_get_num_devices() { return 0; }
 #endif
 
-#define OMP_PAR_FOR _Pragma("omp target teams distribute parallel for simd schedule(runtime)")
+#define OMP_PAR_FOR _Pragma("omp parallel for simd schedule(runtime)")
 
 #ifdef _DO_TIMING
 
