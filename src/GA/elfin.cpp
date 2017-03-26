@@ -194,7 +194,7 @@ void checkOptions()
     }
     else if (std::regex_match(
                  options.inputFile,
-                 std::regex("(.*)(\\.json$)", std::regex::icase)))
+                 std::regex("(.*)(\\.json)", std::regex::icase)))
     {
         msg("Using JSON input\n");
         options.inputType = OptionPack::InputType::JSON;
@@ -231,7 +231,7 @@ void checkOptions()
     float sumRates = options.gaCrossRate +
                      options.gaPointMutateRate +
                      options.gaLimbMutateRate;
-    if (rateCorrected = (sumRates > 1.0))
+    if ((rateCorrected = (sumRates > 1.0)))
     {
         options.gaCrossRate         /= sumRates;
         options.gaPointMutateRate   /= sumRates;
@@ -381,7 +381,7 @@ int runMetaTests(const Points3f & spec)
         const int dice = getDice(N);
         if (dice >= N)
         {
-            failCount;
+            failCount++;
             err("Failed to produce correct dice: getDice() produced %d for [0-%d)",
                 dice, N);
             break;
