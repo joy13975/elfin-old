@@ -46,7 +46,7 @@ INCS 			:= -I./jutil/src/ -I.
 
 OPT_FLAGS 		:= -O3
 CPPFLAGS 		:= -fdiagnostics-color=always -MMD -std=c++11 -fmax-errors=1\
-					$(OPT_FLAGS) $(DEBUG_FLAGS) $(OMP_FLAGS) $(TIMING_FLAGS) $(DEFS) $(INCS) $(EXTRA_FLAGS)
+					$(OPT_FLAGS) $(DEBUG_FLAGS) $(OMP_FLAGS) $(TIMING_FLAGS) $(DEFS) $(INCS)
 
 COMPILE 		:= $(CXX) $(CPPFLAGS)
 
@@ -58,12 +58,12 @@ COMPILE 		:= $(CXX) $(CPPFLAGS)
 EXTS=c cpp
 define make_rule
 $(OBJ_DIR)/%.o: %.$1
-	$$(COMPILE) $(DEFS) -o $$@ -c $$<
+	$$(COMPILE) -o $$@ -c $$< $(EXTRA_FLAGS)
 endef
 $(foreach EXT,$(EXTS),$(eval $(call make_rule,$(EXT))))
 
 $(EXE): deleteTestObjs $(OBJS)
-	$(COMPILE) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $(BIN_DIR)/$@
+	$(COMPILE) $(LDFLAGS) $(OBJS) -o $(BIN_DIR)/$@ $(LDLIBS)
 
 deleteTestObjs:
 	rm -rf $(objToDelete)
