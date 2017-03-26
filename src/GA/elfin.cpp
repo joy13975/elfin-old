@@ -265,6 +265,8 @@ Points3f parseInput()
     default:
         die("Unknown input format\n");
     }
+
+    return Points3f();
 }
 
 } // namespace elfin
@@ -332,6 +334,7 @@ int runUnitTests()
     failCount += _testMathUtils();
     failCount += _testKabsch();
     failCount += _testChromosome();
+    return failCount;
 }
 
 int runMetaTests(const Points3f & spec)
