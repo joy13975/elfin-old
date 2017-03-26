@@ -25,28 +25,28 @@ OMP=yes
 TIMING=yes
 
 ifeq ($(DEBUG), yes)
-	DEBUG_FLAG=-ggdb3
+	DEBUG_FLAGS=-ggdb3
 else
-	DEBUG_FLAG=
+	DEBUG_FLAGS=
 endif
 
 ifeq ($(OMP), yes)
-	OMP_FLAG=-fopenmp -D_GLIBCXX_PARALLEL
+	OMP_FLAGS=-fopenmp -D_GLIBCXX_PARALLEL
 else
-	OMP_FLAG=-D_NO_OMP
+	OMP_FLAGS=-D_NO_OMP
 endif
 
 ifeq ($(TIMING), yes)
-	TIMING_FLAG=-D_DO_TIMING
+	TIMING_FLAGS=-D_DO_TIMING
 else
-	TIMING_FLAG=
+	TIMING_FLAGS=
 endif
 
 INCS 			:= -I./jutil/src/ -I.
 
 OPT_FLAGS 		:= -O3
 CPPFLAGS 		:= -fdiagnostics-color=always -MMD -std=c++11 -fmax-errors=1\
-					$(OPT_FLAGS) $(DEBUG_FLAG) $(OMP_FLAG) $(TIMING_FLAG) $(DEFS) $(INCS)
+					$(OPT_FLAGS) $(DEBUG_FLAGS) $(OMP_FLAGS) $(TIMING_FLAGS) $(DEFS) $(INCS) $(EXTRA_FLAGS)
 
 COMPILE 		:= $(CXX) $(CPPFLAGS)
 
