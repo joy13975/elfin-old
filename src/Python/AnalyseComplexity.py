@@ -38,27 +38,30 @@ def main():
 	for l in xrange(1, length):
 		nCombs = Decimal(np.sum(np.linalg.matrix_power(adjMat, l)))
 
-		mmcYs.append(nCombs)
+		mmcYs.append(Decimal(nCombs))
 		# print 'L={}, NC={}'.format(l+1, nCombs)
 
+ 	# A typical repeat module is ~100 AA
 	Xs = np.asarray(range(2, length + 1))
+	Xs = [x*100 for x in Xs]
 	mmcYs = np.asarray(mmcYs)
-	aaYs = np.power(Decimal(20 * 80), Xs) # A typical repeat module is ~80 AA
+	aaYs = np.power(20.0, np.asarray(Xs, dtype=np.float64))
 
 	fig, ax1 = plt.subplots()
 
 	ax1.set_xlabel('Design Length/AA')
 	# ax2 = ax1.twinx()
 
-	ax1.plot(Xs, aaYs, label='AA')
+	utils.pauseCode()
+	ax1.plot(Xs[:len(aaYs)], aaYs, label='AA')
 	ax1.set_ylabel('No. Combs (log scale)')
 	ax1.set_yscale('log')
-
+ 	
 	ax1.plot(Xs, mmcYs, label='MMC')
 
-	xTickIds = np.arange(3, len(Xs) + 1, 5)
-	xTickIds = np.insert(xTickIds, 0, 0)
-	plt.xticks(xTickIds+2, Xs[(xTickIds)])
+	# xTickIds = np.arange(3, len(Xs) + 1, 5)
+	# xTickIds = np.insert(xTickIds, 0, 0)
+	# plt.xticks(xTickIds+2, [Xs[xtId] for xtId in xTickIds])
 
 	plt.legend()
 	plt.show()

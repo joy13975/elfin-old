@@ -18,3 +18,6 @@ format long g
 P=P./m;
 P=[P, zeros(size(P,1), 1)]
 
+cd('/Users/joy/src/elfin/bm/fun')
+
+% save using dlmwrite('R3.csv', P*3, ' ')
