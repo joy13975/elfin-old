@@ -31,7 +31,11 @@ else
 endif
 
 ifeq ($(OMP), yes)
-	OMP_FLAGS=-fopenmp -D_GLIBCXX_PARALLEL
+	ifeq ($(CXX), clang++)
+		OMP_FLAGS=-openmp
+	else
+		OMP_FLAGS=-fopenmp -D_GLIBCXX_PARALLEL
+	endif
 else
 	OMP_FLAGS=-D_NO_OMP
 endif
@@ -44,11 +48,31 @@ endif
 
 INCS 			:= -I./jutil/src/ -I.
 
-OPT_FLAGS 		:= -O3
-CPPFLAGS 		:= -fdiagnostics-color=always -MMD -std=c++11 -fmax-errors=1\
+ifeq ($(CXX), clang++)
+	# For clang, these include directories vary from system to system
+	# Find the one your gcc/g++ use
+	INCS	 	+= -I/usr/local/Cellar/gcc/6.1.0/include/c++/6.1.0 \
+				   -I/usr/local/Cellar/gcc/6.1.0/include/c++/6.1.0/x86_64-apple-darwin15.5.0 \
+				   -I/usr/local/Cellar/gcc/6.1.0/include/c++/6.1.0/backward \
+				   -I/usr/local/Cellar/gcc/6.1.0/lib/gcc/6/gcc/x86_64-apple-darwin15.5.0/6.1.0/include \
+				   -I/usr/local/include \
+				   -I/usr/local/Cellar/gcc/6.1.0/include \
+				   -I/usr/local/Cellar/gcc/6.1.0/lib/gcc/6/gcc/x86_64-apple-darwin15.5.0/6.1.0/include-fixed
+	# You also need libiomp (I got this from homebrew; your version may differ)
+	INCS 		+= -I/usr/local/Cellar/libiomp/20150701/include/libiomp
+
+	LD_FLAGS 	+= -Wl,-rpath,-L/usr/local/Cellar/gcc/6.1.0/lib/gcc/6 -lgomp
+
+	ERR_FLAGS 	:=
+else ifeq ($(CXX), g++)
+	ERR_FLAGS	:= -fdiagnostics-color=always -fmax-errors=1
+endif
+
+OPT_FLAGS 		+= -O3
+CPP_FLAGS 		+= -MMD -std=c++11 -stdlib=libstdc++ \
 					$(OPT_FLAGS) $(DEBUG_FLAGS) $(OMP_FLAGS) $(TIMING_FLAGS) $(DEFS) $(INCS) $(EXTRA_FLAGS)
 
-COMPILE 		:= $(CXX) $(CPPFLAGS)
+COMPILE 		:= $(CXX) $(CPP_FLAGS) $(ERR_FLAGS)
 
 
 #
@@ -63,7 +87,7 @@ endef
 $(foreach EXT,$(EXTS),$(eval $(call make_rule,$(EXT))))
 
 $(EXE): deleteTestObjs $(OBJS)
-	$(COMPILE) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $(BIN_DIR)/$@
+	$(COMPILE) $(OBJS) -o $(BIN_DIR)/$@ $(LD_FLAGS)
 
 deleteTestObjs:
 	rm -rf $(objToDelete)

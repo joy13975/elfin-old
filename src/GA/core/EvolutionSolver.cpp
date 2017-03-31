@@ -401,7 +401,7 @@ EvolutionSolver::printStartMsg()
 	#pragma omp parallel
 	{
 		if (omp_get_thread_num() == 0)
-			msg("Running with %d threads\n", omp_get_num_threads());
+			msg("Running with %d threads\n", omp_get_max_threads());
 	}
 }
 

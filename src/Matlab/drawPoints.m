@@ -4,6 +4,8 @@ xyrange = [0,400,0,400];
 axis(xyrange); 
 hold off;
 
+grid on
+box on
 [x,y]=getpts();
 
 plot(x,y,'-bx'); 
