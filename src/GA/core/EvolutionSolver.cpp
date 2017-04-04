@@ -73,6 +73,9 @@ EvolutionSolver::run()
 	char * genMsgFmt;
 	asprintf(&genMsgFmt,
 	         "Generation #%%%dd: best=%%.2f (%%.2f/module), worst=%%.2f, time taken=%%dms\n", genDispDigits);
+	char * avgTimeMsgFmt;
+	asprintf(&avgTimeMsgFmt,
+		"Avg Times: Evolve=%%.0f,Score=%%.0f,Rank=%%.0f,Select=%%.0f,Gen=%%.0f\n");
 	for (int i = 0; i < myOptions.gaIters; i++)
 	{
 		const double genStartTime = get_timestamp_us();
@@ -92,11 +95,20 @@ EvolutionSolver::run()
 		const float genBestScore = myCurrPop->front().getScore();
 		const ulong genBestChromoLen = myCurrPop->front().genes().size();
 		const float genWorstScore = myCurrPop->back().getScore();
+		const double genTime = (long) ((get_timestamp_us() - genStartTime) / 1e3);
 		msg(genMsgFmt, i,
 		    genBestScore,
 		    genBestScore / genBestChromoLen,
 		    genWorstScore,
-		    (long) std::round((get_timestamp_us() - genStartTime) / 1e3));
+		    genTime);
+		msg(avgTimeMsgFmt,
+		    (float) myTotEvolveTime / (i+1),
+                    (float) myTotScoreTime / (i+1),
+                    (float) myTotRankTime / (i+1),
+                    (float) myTotSelectTime / (i+1),
+                    (float) myTotGenTime / (i+1));
+
+		myTotGenTime += genTime;
 
 		// Can stop loop if best score is low enough
 		if (genBestScore < myOptions.scoreStopThreshold)
@@ -109,8 +121,6 @@ EvolutionSolver::run()
 			for (int i = 0; i < nBestSoFar; i++)
 				myBestSoFar.at(i) = myCurrPop->at(i);
 
-			if (genBestScore > lastGenBestScore)
-				die("WTF!!!\n");
 			if (float_approximates(genBestScore, lastGenBestScore))
 			{
 				stagnantCount++;
@@ -138,13 +148,20 @@ EvolutionSolver::run()
 }
 
 // Private methods
+#ifdef _VTUNE
+#include <ittnotify.h>
+#endif
 
 void
 EvolutionSolver::evolvePopulation()
 {
+#ifdef _VTUNE
+	__itt_resume();  // start VTune, again use 2 underscores
+#endif
+
 	CrossingVector possibleCrossings;
 
-	TIMING_START(startTimeMutation);
+	TIMING_START(startTimeEvolving);
 	{
 		// Probabilistic evolution
 		msg("Evolution: %.2f%% Done", (float) 0.0f);
@@ -236,7 +253,11 @@ EvolutionSolver::evolvePopulation()
 		    (float) randCount / myNonSurviverCount,
 		    mySurviverCutoff);
 	}
-	TIMING_END("mutation", startTimeMutation);
+	myTotEvolveTime += TIMING_END("evolving", startTimeEvolving);
+
+#ifdef _VTUNE
+	__itt_pause(); // stop VTune
+#endif
 }
 
 void
@@ -261,7 +282,7 @@ EvolutionSolver::scorePopulation()
 		ERASE_LINE();
 		msg("Scoring: 100%% Done\n");
 	}
-	TIMING_END("scoring", startTimeScoring);
+	myTotScoreTime += TIMING_END("scoring", startTimeScoring);
 }
 
 void
@@ -274,7 +295,7 @@ EvolutionSolver::rankPopulation()
 		std::sort(myBuffPop->begin(),
 		          myBuffPop->end());
 	}
-	TIMING_END("ranking", startTimeRanking);
+	myTotRankTime += TIMING_END("ranking", startTimeRanking);
 }
 
 void
@@ -313,7 +334,7 @@ EvolutionSolver::selectParents()
 		std::sort(myBuffPop->begin(),
 		          myBuffPop->begin() + uniqueCount);
 	}
-	TIMING_END("selecting", startTimeSelectParents);
+	myTotSelectTime += TIMING_END("selecting", startTimeSelectParents);
 }
 
 void
