@@ -22,8 +22,8 @@ inline int omp_get_num_devices() { return 0; }
 	const double varName = get_timestamp_us();
 
 inline long TIMING_END(const char * sectionName, const double startTime) { 
-	const double diff = (long) ((get_timestamp_us() - startTime) / 1e3);
-	msg("Section (%s) time: %dms\n", sectionName, diff);
+	const long diff = (long) ((get_timestamp_us() - startTime) / 1e3);
+	msg("Section (%s) time: %.dms\n", sectionName, diff);
 	return diff;
 }
 
