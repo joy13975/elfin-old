@@ -41,6 +41,12 @@ private:
 	Population *myBuffPop;
 	Population myBestSoFar; // Currently used for emergency output
 
+	double myTotEvolveTime = 0.0f;
+	double myTotScoreTime = 0.0f;
+	double myTotRankTime = 0.0f;
+	double myTotSelectTime = 0.0f;
+	double myTotGenTime = 0.0f;
+
 	void initPopulation();
 	void evolvePopulation();
 	void scorePopulation();

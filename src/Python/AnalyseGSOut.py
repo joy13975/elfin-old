@@ -89,6 +89,8 @@ def main():
 							gsParams.gaCrossRates,
 							gsParams.pmRatios)
 
+	utils.pauseCode()
+
 def estimateBestMedoid(confIdRange,
 					   scores,
 					   averaged,

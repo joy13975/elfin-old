@@ -64,12 +64,13 @@ ifeq ($(CXX), clang++)
 	LD_FLAGS 	+= -Wl,-rpath,-L/usr/local/Cellar/gcc/6.1.0/lib/gcc/6 -lgomp
 
 	ERR_FLAGS 	:=
+	CPP_FLAGS 	+= -stdlib=libstdc++ 
 else ifeq ($(CXX), g++)
 	ERR_FLAGS	:= -fdiagnostics-color=always -fmax-errors=1
 endif
 
 OPT_FLAGS 		+= -O3
-CPP_FLAGS 		+= -MMD -std=c++11 -stdlib=libstdc++ \
+CPP_FLAGS 		+= -MMD -std=c++11 \
 					$(OPT_FLAGS) $(DEBUG_FLAGS) $(OMP_FLAGS) $(TIMING_FLAGS) $(DEFS) $(INCS) $(EXTRA_FLAGS)
 
 COMPILE 		:= $(CXX) $(CPP_FLAGS) $(ERR_FLAGS)
@@ -82,7 +83,7 @@ COMPILE 		:= $(CXX) $(CPP_FLAGS) $(ERR_FLAGS)
 EXTS=c cpp
 define make_rule
 $(OBJ_DIR)/%.o: %.$1
-	$$(COMPILE) $(DEFS) -o $$@ -c $$<
+	$$(COMPILE) -o $$@ -c $$< $(EXTRA_FLAGS)
 endef
 $(foreach EXT,$(EXTS),$(eval $(call make_rule,$(EXT))))
 

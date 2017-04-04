@@ -20,8 +20,12 @@ inline int omp_get_num_devices() { return 0; }
 #include "util.h"
 #define TIMING_START(varName) \
 	const double varName = get_timestamp_us();
-#define TIMING_END(sectionName, varName) \
-	msg("Section (%s) time: %dms\n", sectionName, (long) ((get_timestamp_us() - varName) / 1e3));
+
+inline long TIMING_END(const char * sectionName, const double startTime) { 
+	const double diff = (long) ((get_timestamp_us() - startTime) / 1e3);
+	msg("Section (%s) time: %dms\n", sectionName, diff);
+	return diff;
+}
 
 #else //ifdef _DO_TIMING
 
