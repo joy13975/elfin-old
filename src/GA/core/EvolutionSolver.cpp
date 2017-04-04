@@ -95,7 +95,7 @@ EvolutionSolver::run()
 		const float genBestScore = myCurrPop->front().getScore();
 		const ulong genBestChromoLen = myCurrPop->front().genes().size();
 		const float genWorstScore = myCurrPop->back().getScore();
-		const double genTime = (long) ((get_timestamp_us() - genStartTime) / 1e3);
+		const double genTime = ((get_timestamp_us() - genStartTime) / 1e3);
 		msg(genMsgFmt, i,
 		    genBestScore,
 		    genBestScore / genBestChromoLen,
