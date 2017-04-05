@@ -72,7 +72,7 @@ EvolutionSolver::run()
 	const int genDispDigits = std::ceil(std::log(myOptions.gaIters) / std::log(10));
 	char * genMsgFmt;
 	asprintf(&genMsgFmt,
-	         "Generation #%%%dd: best=%%.2f (%%.2f/module), worst=%%.2f, time taken=%%dms\n", genDispDigits);
+	         "Generation #%%%dd: best=%%.2f (%%.2f/module), worst=%%.2f, time taken=%%.0fms\n", genDispDigits);
 	char * avgTimeMsgFmt;
 	asprintf(&avgTimeMsgFmt,
 		"Avg Times: Evolve=%%.0f,Score=%%.0f,Rank=%%.0f,Select=%%.0f,Gen=%%.0f\n");
