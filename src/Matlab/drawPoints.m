@@ -24,3 +24,21 @@ P=[P, zeros(size(P,1), 1)]
 cd('/Users/joy/src/elfin/bm/fun')
 
 % save using dlmwrite('R3.csv', P*3, ' ')
+
+% output figure styles
+% linewidth 2, markersize 15
+% manually set ranges
+
+% view([45, 45, 120])
+% axis equal
+% view([90,0,0])
+% axis equal
+% view([0,90,0])
+% axis equal
+
+% To plot modified CSV points:
+% figure; hold all;
+% plot3(X(:,1), X(:,2), X(:,3), '-b', 'linewidth', 2, 'markersize', 15)
+% plot3(X(:,1), X(:,2), X(:,3), 'xr', 'linewidth', 2, 'markersize', 15)
+% grid on; box on
+% axis equal
