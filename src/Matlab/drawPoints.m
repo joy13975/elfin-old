@@ -29,12 +29,17 @@ cd('/Users/joy/src/elfin/bm/fun')
 % linewidth 2, markersize 15
 % manually set ranges
 
-% view([45, 45, 120])
-% axis equal
-% view([90,0,0])
-% axis equal
-% view([0,90,0])
-% axis equal
+% xlabel('X'); ylabel('Y'); zlabel('Z')
+% xticklabels([]); yticklabels([]); zticklabels([])
+% set(gca, 'fontsize', 32)
+% xticks(-400:25:400); yticks(-400:25:400); zticks(-400:25:400)
+% lims = [(floor(min(X(:,1))/25)-1)*25 (ceil(max(X(:,1))/25)+1)*25
+%     (floor(min(X(:,2))/25)-1)*25 (ceil(max(X(:,2))/25)+1)*25
+% (floor(min(X(:,3))/25)-1)*25 (ceil(max(X(:,3))/25)+1)*25]';
+% axis(lims(:))
+% view([45, 45, 120]); axis equal; axis(lims(:))
+% view([90,0,0]); axis equal; axis(lims(:))
+% view([0,90,0]); axis equal; axis(lims(:))
 
 % To plot modified CSV points:
 % figure; hold all;
