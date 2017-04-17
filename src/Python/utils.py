@@ -175,21 +175,16 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
     motherChain = motherPdb.child_list[0].child_dict['A']
     baseRId = motherChain.child_list[-1].id[1]
 
-    # Only for mother pdb, keep both chains
-    motherChainB = motherPdb.child_list[0].child_dict['B']
+    chainIDString = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    maxChainIdx = len(chainIDString)
+    chainIdx = 0
     if movieMode:
         moviePdbs = []
     else:
         motherModel = motherPdb.child_list[0]
         motherModel.detach_child('B')
-        nResi = len(motherChainB.child_list)
-        for j in xrange(0, nResi):
-            r = motherChainB.child_list[j]
-            r.id = (r.id[0], 
-                    (baseRId + 1 + j),
-                    r.id[2]) 
-            motherChain.add(r)
-        baseRId += nResi
+        motherModel.child_dict['A'].id = chainIDString[chainIdx]
+        chainIdx = chainIdx + 1
 
     comShape = np.asarray([[0,0,0]])
 
@@ -206,29 +201,31 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
         pdbFile = pairsDir + '/' + pairName + '.pdb'
         pdbPair = readPdb(pairName, pdbFile)
         
-        childChain = pdbPair.child_list[0].child_dict['B']
-        nResi = len(childChain.child_list)
         if movieMode:
-            # childChain.id = movieChainChars[movieChainID]
-            # motherModel.add(childChain)
-
-            # movieChainID = movieChainID + 1
             moviePdbs.append(pdbPair)
             for pdb in moviePdbs:
-                pdb.transform(np.asarray(rel['rot']), rel['tran'])
+            	pdb.transform(np.asarray(rel['rot']), rel['tran'])
         else:
-            for j in xrange(0, nResi):
-                r = childChain.child_list[j]
-                r.id = (r.id[0], 
-                        (baseRId + 1 + j),
-                        r.id[2]) 
-                motherChain.add(r)
+            childChain = pdbPair.child_list[0].child_dict['B']
+            # nResi = len(childChain.child_list)
+            # for j in xrange(0, nResi):
+            #     r = childChain.child_list[j]
+            #     r.id = (r.id[0], 
+            #             (baseRId + 1 + j),
+            #             r.id[2]) 
+            #     motherChain.add(r)
+            childChain.id = chainIDString[chainIdx]
+            motherModel.add(childChain)
+            chainIdx = chainIdx + 1
             motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
+
+            die(chainIdx > maxChainIdx, 'Not enough alphabets to accommodate the large number of chains!')
+
 
         comShape = np.append(comShape, [rel['comB']], axis=0)
         comShape = np.dot(comShape, np.asarray(rel['rot'])) + rel['tran']
 
-        baseRId += nResi
+        # baseRId += nResi
         startingPoint = np.dot(startingPoint, np.asarray(rel['rot'])) + rel['tran']
         print 'Pair[{}]:   {}---{}'.format(str(i).ljust(chainLenDigits),
             lastNode.ljust(16), currNode.rjust(16))
