@@ -170,14 +170,14 @@ EvolutionSolver::evolvePopulation()
 		const ulong gaPopBlock = myOptions.gaPopSize / 10;
 		ulong crossFailCount = 0;
 
-		//OMP_PAR_FOR
 		Chromosome * myBuffPopData = myBuffPop->data();
 		size_t myBuffPopSize = myBuffPop->size();
 		const Chromosome * myCurrPopData = myCurrPop->data();
 		size_t myCurrPopSize = myCurrPop->size();
 		Chromosome & (Chromosome::*assign)(Chromosome const&) = &Chromosome::operator=;
 
-		#pragma omp target teams distribute parallel for simd schedule(runtime) map(myBuffPopData[0:myBuffPopSize], myCurrPopData[0:myCurrPopSize])
+//		#pragma omp target teams distribute parallel for simd schedule(runtime) map(myBuffPopData[0:myBuffPopSize], myCurrPopData[0:myCurrPopSize])
+		OMP_PAR_FOR
 		for (int i = 0; i < mySurviverCutoff; i++)
 			(myBuffPopData[i].*assign)(myCurrPopData[i]);
 
