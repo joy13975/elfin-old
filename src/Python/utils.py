@@ -175,7 +175,7 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
     motherChain = motherPdb.child_list[0].child_dict['A']
     baseRId = motherChain.child_list[-1].id[1]
 
-    chainIDString = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    chainIDString = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]\;\',./{}|:"<>?`~'
     maxChainIdx = len(chainIDString)
     chainIdx = 0
     if movieMode:
@@ -184,6 +184,8 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
         motherModel = motherPdb.child_list[0]
         motherModel.detach_child('B')
         motherModel.child_dict['A'].id = chainIDString[chainIdx]
+        motherModel.child_dict[chainIDString[chainIdx]] = motherModel.child_dict['A']
+	del motherModel.child_dict['A']
         chainIdx = chainIdx + 1
 
     comShape = np.asarray([[0,0,0]])
@@ -219,7 +221,7 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
             chainIdx = chainIdx + 1
             motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
 
-            die(chainIdx > maxChainIdx, 'Not enough alphabets to accommodate the large number of chains!')
+            die(chainIdx >= maxChainIdx, 'Not enough characters ({}) to accommodate the large number of chains!'.format(maxChainIdx))
 
 
         comShape = np.append(comShape, [rel['comB']], axis=0)
