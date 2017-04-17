@@ -17,11 +17,12 @@ CPP_SRC 		:= $(shell find . -name '*.cpp')
 OBJS 			:= $(C_SRC:%.c=$(OBJ_DIR)/%.o) $(CPP_SRC:%.cpp=$(OBJ_DIR)/%.o)
 DEPS 			:= $(C_SRC:%.c=$(OBJ_DIR)/%.d) $(CPP_SRC:%.cpp=$(OBJ_DIR)/%.d)
 
+$(info Sources to be compiled: [${C_SRC}] [${CPP_SRC}])
 $(info Objects to be compiled: [${OBJS}])
-#:
 
 DEBUG=no
 OMP=yes
+TARGET=cpu
 TIMING=yes
 
 ifeq ($(DEBUG), yes)
@@ -30,9 +31,18 @@ else
 	DEBUG_FLAGS=
 endif
 
+ifeq ($(TARGET), gpu)
+$(info Using clang++ for GPU target)
+	CXX=clang++
+	OMP_FLAGS=-fopenmp=libomp -fopenmp-targets=nvptx64-nvidia-cuda --cuda-path=/nfs/modules/cuda/8.0.44/
+endif
+
 ifeq ($(OMP), yes)
 	ifeq ($(CXX), clang++)
-		OMP_FLAGS=-openmp
+		# clang has no GLIBCXX_PARALLEL until c++17
+		ifeq ($(TARGET), cpu)
+			OMP_FLAGS=-openmp
+		endif
 	else
 		OMP_FLAGS=-fopenmp -D_GLIBCXX_PARALLEL
 	endif
@@ -50,7 +60,7 @@ INCS 			:= -I./jutil/src/ -I.
 
 ifeq ($(CXX), clang++)
 	# For clang, these include directories vary from system to system
-	# Find the one your gcc/g++ use
+	# Find the ones your gcc/g++ use
 	INCS	 	+= -I/usr/local/Cellar/gcc/6.1.0/include/c++/6.1.0 \
 				   -I/usr/local/Cellar/gcc/6.1.0/include/c++/6.1.0/x86_64-apple-darwin15.5.0 \
 				   -I/usr/local/Cellar/gcc/6.1.0/include/c++/6.1.0/backward \
@@ -58,7 +68,7 @@ ifeq ($(CXX), clang++)
 				   -I/usr/local/include \
 				   -I/usr/local/Cellar/gcc/6.1.0/include \
 				   -I/usr/local/Cellar/gcc/6.1.0/lib/gcc/6/gcc/x86_64-apple-darwin15.5.0/6.1.0/include-fixed
-	# You also need libiomp (I got this from homebrew; your version may differ)
+	# You also need libiomp (I got this from homebrew; your version, and hence include directory, may differ)
 	INCS 		+= -I/usr/local/Cellar/libiomp/20150701/include/libiomp
 
 	LD_FLAGS 	+= -Wl,-rpath,-L/usr/local/Cellar/gcc/6.1.0/lib/gcc/6 -lgomp
@@ -74,7 +84,6 @@ CPP_FLAGS 		+= -MMD -std=c++11 \
 					$(OPT_FLAGS) $(DEBUG_FLAGS) $(OMP_FLAGS) $(TIMING_FLAGS) $(DEFS) $(INCS) $(EXTRA_FLAGS)
 
 COMPILE 		:= $(CXX) $(CPP_FLAGS) $(ERR_FLAGS)
-
 
 #
 # start of rules

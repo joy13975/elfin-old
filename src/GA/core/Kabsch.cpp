@@ -6,7 +6,7 @@
 #include "Kabsch.hpp"
 #include "util.h"
 #include "MathUtils.hpp"
-#include "input/JSONParser.hpp"
+#include "../input/JSONParser.hpp"
 
 namespace elfin
 {
