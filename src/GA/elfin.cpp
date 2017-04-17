@@ -455,7 +455,8 @@ int main(int argc, const char ** argv)
 
     mkdir_ifn_exists(options.outputDir.c_str());
 
-    msg("There are %d devices\n", omp_get_num_devices());
+    const int nOmpDevices = omp_get_num_devices();
+    msg("There are %d devices\n", nOmpDevices);
 
     msg("Using master seed: %d\n", options.randSeed);
 
