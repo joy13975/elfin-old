@@ -166,30 +166,22 @@ def checkCollision(xdb, collisionMeasure, nodes, newNode, shape):
 
     return False
 
-def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=False):    
-    # Load first "mother" pdb to host all subsequent chains
+def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=False):
+
+    # Load first PDB and clear its chains to host all other residues
     pairName = nodes[0] + '-' + nodes[1]
     pdbFile = pairsDir + '/' + pairName + '.pdb'
     motherPdb = readPdb(pairName, pdbFile)
+    motherModel = motherPdb.child_list[0]
+    motherModel.detach_child('A')
+    motherModel.detach_child('B')
+    motherChain = Bio.PDB.Chain.Chain('A')
+    motherModel.add(motherChain)
 
-    motherChain = motherPdb.child_list[0].child_dict['A']
-    baseRId = motherChain.child_list[-1].id[1]
+    moviePdbs = []
+    baseRId = 1
 
-    chainIDString = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]\;\',./{}|:"<>?`~'
-    maxChainIdx = len(chainIDString)
-    chainIdx = 0
-    if movieMode:
-        moviePdbs = []
-    else:
-        motherModel = motherPdb.child_list[0]
-        motherModel.detach_child('B')
-        motherModel.child_dict['A'].id = chainIDString[chainIdx]
-        motherModel.child_dict[chainIDString[chainIdx]] = motherModel.child_dict['A']
-	del motherModel.child_dict['A']
-        chainIdx = chainIdx + 1
-
-    comShape = np.asarray([[0,0,0]])
-
+    comShape = np.empty([1, 3])
     startingPoint = np.zeros(3)
 
     chainLenDigits = len(str(len(nodes)))
@@ -203,31 +195,38 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
         pdbFile = pairsDir + '/' + pairName + '.pdb'
         pdbPair = readPdb(pairName, pdbFile)
         
+        comShape = np.append(comShape, [[0,0,0]], axis=0)
+        if i == len(nodes) - 1:
+            comShape = np.append(comShape, [rel['comB']], axis=0)
+        
         if movieMode:
             moviePdbs.append(pdbPair)
             for pdb in moviePdbs:
             	pdb.transform(np.asarray(rel['rot']), rel['tran'])
         else:
-            childChain = pdbPair.child_list[0].child_dict['B']
-            # nResi = len(childChain.child_list)
-            # for j in xrange(0, nResi):
-            #     r = childChain.child_list[j]
-            #     r.id = (r.id[0], 
-            #             (baseRId + 1 + j),
-            #             r.id[2]) 
-            #     motherChain.add(r)
-            childChain.id = chainIDString[chainIdx]
-            motherModel.add(childChain)
-            chainIdx = chainIdx + 1
+            childChain = pdbPair.child_list[0].child_dict['A']
+            nResi = len(childChain.child_list)
+            for j in xrange(0, nResi):
+                r = childChain.child_list[j]
+                nextId = baseRId + j
+                r.id = (r.id[0], nextId, r.id[2]) 
+                motherChain.add(r)
+            baseRId += nResi + 1
+            
+            if i == len(nodes) - 1:
+                childChain = pdbPair.child_list[0].child_dict['B']
+                nResi = len(childChain.child_list)
+                for j in xrange(0, nResi):
+                    r = childChain.child_list[j]
+                    nextId = baseRId + j
+                    r.id = (r.id[0], nextId, r.id[2]) 
+                    motherChain.add(r)
+                baseRId += nResi + 1
             motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
 
-            die(chainIdx >= maxChainIdx, 'Not enough characters ({}) to accommodate the large number of chains!'.format(maxChainIdx))
 
-
-        comShape = np.append(comShape, [rel['comB']], axis=0)
         comShape = np.dot(comShape, np.asarray(rel['rot'])) + rel['tran']
 
-        # baseRId += nResi
         startingPoint = np.dot(startingPoint, np.asarray(rel['rot'])) + rel['tran']
         print 'Pair[{}]:   {}---{}'.format(str(i).ljust(chainLenDigits),
             lastNode.ljust(16), currNode.rjust(16))
