@@ -8,11 +8,11 @@ import codecs, json
 from collections import OrderedDict
 
 def main():
-    pairDir     = 'res/pair/'
-    singleDir   = 'res/single/'
-    newLibDir   = 'res/centered_pdb/'
-    outFile     = 'res/xDB.json'
-    xdbg = XDBGenrator(pairDir, singleDir, newLibDir, outFile)
+    pairDir         = 'res/mergedAndCleansed/pair/'
+    singleDir       = 'res/mergedAndCleansed/single/'
+    alignedLibDir   = 'res/aligned/'
+    outFile         = 'res/xDB.json'
+    xdbg = XDBGenrator(pairDir, singleDir, alignedLibDir, outFile)
     utils.safeExec(xdbg.run)
 
 class XDBGenrator:
@@ -20,78 +20,88 @@ class XDBGenrator:
     def __init__(self,
                 pairDir,
                 singleDir,
-                newLibDir,
+                alignedLibDir,
                 outFile,
                 permissive=0):
         self.pairDir        = pairDir
         self.singleDir      = singleDir
-        utils.mkdir(newLibDir)
-        utils.mkdir(newLibDir     + '/pair/')
-        utils.mkdir(newLibDir     + '/single/')
-        self.newLibDir      = newLibDir
+        utils.mkdir(alignedLibDir)
+        utils.mkdir(alignedLibDir     + '/pair/')
+        utils.mkdir(alignedLibDir     + '/single/')
+        self.alignedLibDir  = alignedLibDir
         self.outFile        = outFile
         self.si             = Bio.PDB.Superimposer()
         self.pairsData      = {}
         self.singlesData    = {}
 
-    def getCOM(self, struct):
-        CAs = [];
-
-        for a in struct.get_atoms():
+    def getCOM(self, child, mother=None, childAtomOffset=0, motherAtomOffset=0):
+        CAs = []
+        for a in child.get_atoms():
             if(a.name == 'CA'):
-                # I noticed some floating point error with float32, so use double
                 CAs.append(a.get_coord().astype('float64'))
+        com = np.mean(CAs, axis=0)
 
-        return np.mean(CAs, axis=0)
+        if mother is not None:
+            # This is for finding COM of a single inside a pair
+            _, tran = self.getRotTrans(child, mother, 
+                movingAtomOffset=childAtomOffset, fixedAtomOffset=motherAtomOffset)
 
-    def moveToOrigin(self, struct, com=[]):
-        if(len(com) == 0):
-            com = self.getCOM(struct)
+            com += tran
+
+        return com
+
+    def moveToOrigin(self, pdb):
+        com = self.getCOM(pdb)
 
         # No rotation - just move to centre
-        struct.transform([[1,0,0],[0,1,0],[0,0,1]], -com)
+        pdb.transform([[1,0,0],[0,1,0],[0,0,1]], -com)
 
-    def alignToSingle(self, pStruct, sStructs, which=0):
-        pSingles = utils.getPdbSingles(pStruct)
+    def align(self, moving, fixed,movingAtomOffset=0, fixedAtomOffset=0):
+        rot, tran = self.getRotTrans(moving, fixed,
+            movingAtomOffset=movingAtomOffset, fixedAtomOffset=fixedAtomOffset)
+        moving.transform(rot, tran)
 
-        nSingles = len(pSingles)
-        nSStructs = len(sStructs)
-        if(nSingles != len(sStructs)):
-            raise ValueError('nSingles(' +
-                str(nSingles) + ') != nSStructs(' +
-                str(nSStructs) + ')')
+    def getRotTrans(self, moving, fixed, movingAtomOffset=0, fixedAtomOffset=0):
+        # First push the generators to desired locations
+        maGen = moving.get_atoms()
+        for i in xrange(0, movingAtomOffset):
+            try:
+                maGen.next()
+            except StopIteration:
+                die(True, 'Moving PDB Atom Offset too large')    
 
-        if(which > nSingles - 1 or which < 0):
-            raise ValueError('Argument \'which\'=' +
-                str(which) + ' is out of bound (0-' +
-                str(nSingles) + ')')
+        faGen = fixed.get_atoms()
+        for i in xrange(0, fixedAtomOffset):
+            try:
+                faGen.next()
+            except StopIteration:
+                die(True, 'Fixed PDB Atom Offset too large')    
 
+        # Then fill in the arrays until either of the generators run out
         ma = []
-        for a in pSingles[which].get_atoms(): ma.append(a)
         fa = []
-        for a in sStructs[which].get_atoms(): fa.append(a)
+        while True:
+            try:
+                maNext = maGen.next()
+                faNext = faGen.next()
+            except StopIteration:
+                break
 
-        self.si.set_atoms(fa, ma)
-        rot, tran = self.si.rotran
-        pStruct.transform(rot, tran)
-
-    def getRotTrans(self, moving, fixed):
-        ma = []
-        for a in moving.get_atoms(): ma.append(a)
-        fa = []
-        for a in fixed.get_atoms(): fa.append(a)
+            ma.append(maNext)
+            fa.append(faNext)
 
         self.si.set_atoms(fa, ma)
 
         # Import note:
-        # The rotation from BioPython seems to be one
-        # that is meant as the second dot operand.
+        # The rotation from BioPython seems be the
+        # second dot operand instead of the 
+        # conventional first dot operand!
         #
         # This means instead of R*v + T, the actual
         # transform is done with v'*R + T
         #
-        # This has important influence on the C++ algorithm
-        # maths!
+        # This has important to understand why I did
+        # the rotation maths this way in the C++ GA
         return self.si.rotran
 
     def getRadii(self, pose):
@@ -125,56 +135,66 @@ class XDBGenrator:
             ('maxHeavy', maxHeavy)
         ]);
 
+    def getAtomCount(self, pdb):
+        i = 0
+        for a in pdb.get_atoms():
+            i += 1
+        return i
+
     def processPDB(self, filename):
         # Step 0: Load pair and single structures
-        pairName = filename.split('/')[-1].split('.')[0]
-        pair = utils.readPdb(pairName, filename)
-        singlesInPair = utils.getPdbSingles(pair)
+        pairName = filename.split('/')[-1].split('.')[0].replace('_mc_0001', '')
+        pairPdb = utils.readPdb(pairName, filename)
 
         singleNames = pairName.split('-')
-        psFilenames = [singleNames[0] + '.pdb', singleNames[1] + '.pdb']
-        singles = [utils.readPdb(singleNames[0], self.singleDir + psFilenames[0]),
+        psFilenames = [
+            singleNames[0] + '_mc_0001.pdb', 
+            singleNames[1] + '_mc_0001.pdb'
+        ]
+        singlePdbs = [utils.readPdb(singleNames[0], self.singleDir + psFilenames[0]),
                     utils.readPdb(singleNames[1], self.singleDir + psFilenames[1])]
 
         # Step 1: Center the corresponding singles
-        self.moveToOrigin(singles[0])
-        self.moveToOrigin(singles[1])
+        self.moveToOrigin(singlePdbs[0])
+        self.moveToOrigin(singlePdbs[1])
 
         # Step 2: Move pair to align with first single
-        # Note: this aligns pair by superimposing pair[0] with singles[0]
-        self.alignToSingle(pair, singles)
+        # Note: this aligns pair by superimposing pair[0] with singlePdbs[0]
+        self.align(pairPdb, singlePdbs[0])
 
-        # Step 3: Get COM of the 2 singles inside the pair
-        sComs = [self.getCOM(singlesInPair[0]), self.getCOM(singlesInPair[1])]
+        # Step 3: Get COM of the second single inside the pair
+        singlePdbAtomCounts = [
+            self.getAtomCount(singlePdbs[0]), 
+            self.getAtomCount(singlePdbs[1])
+        ]
+        com2 = self.getCOM(singlePdbs[1], pairPdb, motherAtomOffset=singlePdbAtomCounts[0])
 
         # Step 4: Get measures for collision:
         #           1. Avg dist to com (gyradius aka RG)
         #           2. Max dist from CA to com
         #           3. Max dist from any heavy stom (not H) to COM
-        sRads = [self.getRadii(singles[0]),
-                    self.getRadii(singles[1])]
+        sRads = [self.getRadii(singlePdbs[0]),
+                    self.getRadii(singlePdbs[1])]
 
         # Step 5: Get transformation of pair to the second single
         # Note: pair is already aligned to first single so
         #       there is no need for the first transformation
         #       You can check this is true by varifying that
-        #           self.getRotTrans(singlesInPair[0], singles[0])
+        #           self.getRotTrans(pairPdb, singlePdbs[0])
         #       has identity rotation and zero translation. Also,
-        #       sComs[0] should be at the origin.
-        # Note: singles are also centered, so effectively, this 
-        #       tries to get the transformation of pair if the
-        #       second chain were to be centered instead
-        rot, tran = self.getRotTrans(singlesInPair[1], singles[1])
+        #       com2 should be at the origin.
+        rot, tran = self.getRotTrans(pairPdb, singlePdbs[1], 
+            movingAtomOffset=singlePdbAtomCounts[0])
 
-        # Step 6: Save the centred molecules once
+        # Step 6: Save the aligned molecules once
         # Note: here the PDB format adds some slight floating point error
-        utils.savePdb(singles[0], self.newLibDir + '/single/' + psFilenames[0])
-        utils.savePdb(singles[1], self.newLibDir + '/single/' + psFilenames[1])
-        utils.savePdb(pair, self.newLibDir + '/pair/' + pairName + '.pdb')
+        utils.savePdb(singlePdbs[0], self.alignedLibDir + '/single/' + singleNames[0])
+        utils.savePdb(singlePdbs[1], self.alignedLibDir + '/single/' + singleNames[1])
+        utils.savePdb(pairPdb, self.alignedLibDir + '/pair/' + pairName + '.pdb')
 
-        # comA is aligned to centered singles[0] so should be at origin
+        # comA is aligned to centered singlePdbs[0] so should be at origin
         data = OrderedDict([
-            ('comB',  sComs[1].tolist()),
+            ('comB',  com2.tolist()),
             ('rot',   rot.tolist()),
             ('tran',  tran.tolist())
             ])
@@ -218,7 +238,9 @@ class XDBGenrator:
             indent=4)
 
     def run(self):
-        files = glob.glob(self.pairDir + '/*.pdb')
+        # _mc stands for (chain) Merged and Cleansed
+        # _0001 means it is minimized by Rosetta
+        files = glob.glob(self.pairDir + '/*_mc_0001.pdb')
         nFiles = len(files)
         for i in range(0, nFiles):
             print '[XDBG] Processing file #{}/{}: {}'.format(i+1, nFiles, files[i])
