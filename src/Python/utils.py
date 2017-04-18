@@ -211,7 +211,7 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
                 nextId = baseRId + j
                 r.id = (r.id[0], nextId, r.id[2]) 
                 motherChain.add(r)
-            baseRId += nResi + 1
+            baseRId += nResi
             
             if i == len(nodes) - 1:
                 childChain = pdbPair.child_list[0].child_dict['B']
@@ -221,7 +221,7 @@ def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=F
                     nextId = baseRId + j
                     r.id = (r.id[0], nextId, r.id[2]) 
                     motherChain.add(r)
-                baseRId += nResi + 1
+                baseRId += nResi
             motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
 
 
