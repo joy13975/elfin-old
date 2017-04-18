@@ -283,16 +283,6 @@ def savePdb(struct, saveFile):
     io.set_structure(struct)
     io.save(saveFile)
 
-def getPdbSingles(pStruct):
-    pSingles = []
-    for pSingle in pStruct.get_chains():
-        pSingles.append(pSingle)
-
-    nPs = len(pSingles)
-    assert nPs == 2
-
-    return pSingles
-
 def interact(globalVars=None, localsVars=None):
     print "Entering interactive mode"
     print

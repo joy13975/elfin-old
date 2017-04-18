@@ -14,8 +14,11 @@ scOutput="${input/\.pdb/_min.sc}"
 
 maxCycles=${maxCycles:-200}
 local=${local:-"no"}
+variant=${variant:-"default"}
+release=${release:-"linuxgccrelease"}
+wrapper=${wrapper:-""}
 
-cmd="minimize.default.linuxgccrelease -overwrite -s $input -out:path:score $outDir -out:file:scorefile $scOutput -out:path:pdb $outDir -default_max_cycles $maxCycles"
+cmd="minimize.$variant.$release -overwrite -s $input -out:path:score $outDir -out:file:scorefile $scOutput -out:path:pdb $outDir -default_max_cycles $maxCycles"
 
 if [[ "$local" == "yes" ]]; then
 	$cmd
