@@ -6,12 +6,19 @@ if [ $# -lt 1 ]; then
 fi
 
 input="$1"
+maxCycles="$2"
+local="$3"
+
 outDir=`dirname $input`
 scOutput="${input/\.pdb/_min.sc}"
-maxCycles="$2"
 
 maxCycles=${maxCycles:-200}
+local=${local:-"no"}
 
 cmd="minimize.default.linuxgccrelease -overwrite -s $input -out:path:score $outDir -out:file:scorefile $scOutput -out:path:pdb $outDir -default_max_cycles $maxCycles"
-#$cmd
-sbatch -A other -p cpu -N 1 --ntasks-per-node=1 --wrap="$cmd"
+
+if [[ "$local" == "yes" ]]; then
+	$cmd
+else
+	sbatch -A other -p cpu -N 1 --ntasks-per-node=1 --wrap="$cmd"
+fi
