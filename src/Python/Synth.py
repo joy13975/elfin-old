@@ -5,9 +5,6 @@ import argparse
 from utils import *
 
 def main():
-    if len(sys.argv) < 2:
-        print './Synth.py <nodes.json> <optional: outFile>'
-        exit()
     ap = argparse.ArgumentParser(description='Generate Grid Search configurations');
     ap.add_argument('--specFile')
     ap.add_argument('--outFile', default='')

@@ -5,6 +5,7 @@ import Bio.PDB
 import numpy as np
 import csv
 import re
+import argparse
 
 RadiiTypes = ['avgAll', 'maxCA', 'maxHeavy']
 INF = float('inf')
