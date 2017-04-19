@@ -1,0 +1,60 @@
+core.init: Rosetta version unknown:exported  from http://www.rosettacommons.org
+core.init: command: score.default.linuxgccrelease -overwrite -in:file:native bm/l10/5k53.pdb -s bm/l10/5k53_0001.pdb -out:file:scorefile bm/l10/5k53_comp.sc
+core.init: 'RNG device' seed mode, using '/dev/urandom', seed=628263625 seed_offset=0 real_seed=628263625
+core.init.random: RandomGenerator:init: Normal mode, seed=628263625 RG_type=mt19937
+core.init: Resolved executable path: /projects/f2/fp16628/rosetta_3.7/main/source/build/src/release/linux/2.6/64/x86/gcc/4.8/default/score.default.linuxgccrelease
+core.init: Looking for database based on location of executable: /projects/f2/fp16628/rosetta_3.7/main/database/
+
+
+
+ Rosetta Tool:   score   -  rescores PDBs and silent files, extracts PDBs from silent files, assembles PDBs into silent files. 
+ Usage:                                                                  
+   PDB input:      -in:file:s *.pdb   or  
+                   -in:file:l  list_of_pdbs  
+                   -no_optH                                    Dont change positions of Hydrogen atoms! (default true, specify false if you want optH)
+   Silent input:   -in:file:silent silent.out                  silent input filesname 
+                   -in:file:tags                               specify specific tags to be extracted, if left out all will be taken 
+                   -in:file:fullatom                           for full atom structures 
+                   -in:file:binary_silentfile                  for non-ideal structures (such as from looprelax) 
+                   -in:file:silent_optH                        Call optH when reading silent files (useful for HisD/HisE determination)
+                   -score_app:linmin                           Run a quick linmin before scoring
+   Native:         -in:file:native                             native PDB (rms, maxsub and gdtm scores will be calculated)
+   Scorefunction:  -score:weights  weights                     weight set or weights file 
+                   -score:patch  patch                         patch set 
+                   -score:optH_weights                         Weights file for optH (default standard.wts w/ sc12 patch)
+                   -score:optH_patch                           Weights patch file for optH
+                   -rescore:verbose                            display score breakdown 
+   Output:         -out:nooutput                               don't print PDB structures (default now) 
+                   -out:output                                 force printing of PDB structures 
+                   -out:file:silent                            write silent-out file 
+                   -out:file:scorefile name                    write scorefile (default default.sc)
+                   -out:prefix  myprefix                       prefix the output structures with a string 
+  Examples: 
+   score  -database ~/minirosetta_database -in:file:silent silent.out -in::file::binary_silentfile -in::file::fullatom -native 1a19.pdb 
+   Will rescore all structures in silent.out, in full atom mode and accounting for nonideal structure if present. Additionally 
+   it will print a PDB for every structure with -out:output flag 
+
+
+
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: talaris2014
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_pp
+core.chemical.ResidueTypeSet: Finished initializing fa_standard residue type set.  Created 414 residue types
+core.chemical.ResidueTypeSet: Total time to initialize 0.41 seconds.
+protocols.jobdist.main: PDB Output Mode 
+protocols.jobdist.JobDistributors: Looking for an available job: 1 1 bm/l10/5k53_0001.pdb 1
+protocols.jobdist.main: Starting 5k53_0001_0001 ...
+core.pack.dunbrack.RotamerLibrary: Using Dunbrack library binary file '/projects/f2/fp16628/rosetta_3.7/main/database/rotamer/ExtendedOpt1-5/Dunbrack10.lib.bin'.
+core.pack.dunbrack.RotamerLibrary: Dunbrack 2010 library took 0.16 seconds to load from binary
+protocols.jobdist.main: Finished 5k53_0001_0001 in 6 seconds.
+protocols.jobdist.main: Finished all 1 structures in 10 seconds.
