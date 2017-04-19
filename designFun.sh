@@ -23,7 +23,7 @@ do
   		$cmd
 	else
 		echo remote
-        	# sbatch -A other -p cpu -N 1 --ntasks-per-node=1 --wrap="$cmd"
+        	sbatch -A other -p cpu -N 1 --ntasks-per-node=16 --wrap="$cmd"
 	fi
 done
 
