@@ -2,32 +2,6 @@
 import glob, sys
 from utils import *
 
-### Rosetta overall score based... deprecated
-# if(len(sys.argv) < 2):
-#     print './RMSDStat.py <scoreDir>'
-#     exit()
-
-# scoreDir = sys.argv[1]
-
-# files = glob.glob(scoreDir + '/*.comp.sc')
-# nFiles = len(files)
-# rmsds = []
-
-# for i in range(0, nFiles):
-#     with open(files[i], 'r') as file:
-# 		line = file.read().split('\n')[1]
-# 		rmsdStr = line.split(' ')[-2]
-# 		print '{} RMSD: {}'.format(files[i], rmsdStr)
-# 		rmsds.append(float(rmsdStr))
-
-# maxRmsd = max(rmsds)
-# print 'Average: {}, Min: {}, Max: {}'.format(sum(rmsds)/nFiles, min(rmsds), maxRmsd)
-
-# if(maxRmsd > 5.0):
-# 	print 'WARNING: One or more molecules exceed 5A RMSD!'
-
-
-
 ### Sliding window based
 if len(sys.argv) < 3:
     print './RMSDStat.py <solutionDir> <minimisedDir> <windowLen=300> <overlapRatio=0.50> <warnThreshold=5.0>'
