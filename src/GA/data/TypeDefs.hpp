@@ -62,7 +62,7 @@ struct OptionPack
 
 	enum InputType { Unknown, CSV, JSON };
 	InputType inputType = Unknown;
-	std::string settingsFile = "config.json";
+	std::string configFile = "config.json";
 	std::string outputDir = "output";
 
 	float chromoLenDev = 0.2;

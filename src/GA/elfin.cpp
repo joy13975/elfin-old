@@ -21,7 +21,7 @@ namespace elfin
 static OptionPack options;
 
 DECL_ARG_CALLBACK(helpAndExit); // defined later due to need of bundle size
-DECL_ARG_CALLBACK(setSettingsFile) { options.settingsFile = arg_in; }
+DECL_ARG_CALLBACK(setConfigFile) { options.configFile = arg_in; }
 DECL_ARG_CALLBACK(setInputFile) { options.inputFile = arg_in; }
 DECL_ARG_CALLBACK(setXDB) { options.xDBFile = arg_in; }
 DECL_ARG_CALLBACK(setOutputDir) { options.outputDir = arg_in; }
@@ -44,7 +44,7 @@ DECL_ARG_CALLBACK(setRunUnitTests) { options.runUnitTests = true; }
 
 const argument_bundle argb[] = {
     {"-h", "--help", "Print this help text and exit", false, helpAndExit},
-    {"-s", "--settingsFile", "Set settings file (default ./settings.json)", true, setSettingsFile},
+    {"-c", "--setConfigFile", "Set config file (default ./config.json)", true, setConfigFile},
     {"-i", "--inputFile", "Set input file", true, setInputFile},
     {"-x", "--xDBFile", "Set xDB file (default ./xDB.json)", true, setXDB},
     {"-o", "--outputDir", "Set output directory (default ./out/)", true, setOutputDir},
@@ -86,11 +86,11 @@ DECL_ARG_IN_FAIL_CALLBACK(argParseFail)
 
 void parseSettings()
 {
-    panic_if(!file_exists(options.settingsFile.c_str()),
+    panic_if(!file_exists(options.configFile.c_str()),
              "Settings file does not exist: \"%s\"\n",
-             options.settingsFile.c_str());
+             options.configFile.c_str());
 
-    JSON j = JSONParser().parse(options.settingsFile);
+    JSON j = JSONParser().parse(options.configFile);
 
     // Perhaps there's a better way to parse these
     // setting-variable names so it never gets out
@@ -171,12 +171,12 @@ void checkOptions()
     panic_if(!file_exists(options.inputFile.c_str()),
              "Input file could not be found\n");
 
-    panic_if(options.settingsFile == "",
+    panic_if(options.configFile == "",
              "No settings file file given. Check help using -h\n");
 
-    panic_if(!file_exists(options.settingsFile.c_str()),
+    panic_if(!file_exists(options.configFile.c_str()),
              "Settings file \"%s\" could not be found\n",
-             options.settingsFile.c_str());
+             options.configFile.c_str());
 
     panic_if(options.outputDir == "",
              "No output directory given. Check help using -h\n");
