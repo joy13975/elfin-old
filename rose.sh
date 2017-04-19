@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -lt 1 ]; then
-	echo "Usage: min.sh <input_pdb> <max_cycles=200>"
+	echo "Usage: rose.sh <input_pdb> <max_cycles=200>"
 	exit
 fi
 
@@ -17,8 +17,9 @@ local=${local:-"no"}
 variant=${variant:-"default"}
 release=${release:-"linuxgccrelease"}
 wrapper=${wrapper:-""}
+prot=${prot:-"minimize"}
 
-cmd="minimize.$variant.$release -overwrite -s $input -out:path:score $outDir -out:file:scorefile $scOutput -out:path:pdb $outDir -default_max_cycles $maxCycles"
+cmd="$prot.$variant.$release -overwrite -s $input -out:path:score $outDir -out:file:scorefile $scOutput -out:path:pdb $outDir -default_max_cycles $maxCycles"
 
 if [[ "$local" == "yes" ]]; then
 	$cmd

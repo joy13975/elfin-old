@@ -10,8 +10,15 @@ def main():
     ap.add_argument('--outFile', default='')
     ap.add_argument('--movieMode', dest='movieMode', action='store_true')
     ap.add_argument('--no-movieMode', dest='movieMode', action='store_false')
-    ap.set_defaults(movieMode=True)
+    ap.add_argument('--singlesDir', default='res/aligned/single/')
+    ap.add_argument('--pairsDir', default='res/aligned/pair/')
+    ap.add_argument('--xdbPath', default='res/xDB.json')
+    ap.set_defaults(movieMode=False)
 
+    if len(sys.argv) == 1:
+        ap.print_help()
+        sys.exit(1)
+        
     args = ap.parse_args()
 
     specExt = args.specFile[args.specFile.rfind('.'):]
@@ -43,9 +50,15 @@ def main():
 		        scale, 
 		        targetLen))
 
-    xDB = readJSON('res/xDB.json')
-    _, comShape = makePdbFromNodes(xDB, spec['nodes'], 'res/centered_pdb/pair',
-        args.outFile, movieMode=args.movieMode)
+    xDB = readJSON(args.xdbPath)
+    _, comShape = makePdbFromNodes(
+        xDB, 
+        spec['nodes'], 
+        args.pairsDir,
+        args.singlesDir,
+        args.outFile, 
+        movieMode=args.movieMode
+    )
     
     csvOutFile = args.outFile.replace('.pdb', '.csv')
     saveCSV(comShape, csvOutFile)

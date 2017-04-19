@@ -34,7 +34,14 @@ class XDBGenrator:
         self.pairsData      = {}
         self.singlesData    = {}
 
-    def getCOM(self, child, mother=None, childAtomOffset=0, motherAtomOffset=0):
+    def getCOM(
+            self, 
+            child, 
+            mother=None, 
+            childAtomOffset=0, 
+            motherAtomOffset=0,
+            matchRange=-1
+        ):
         CAs = []
         for a in child.get_atoms():
             if(a.name == 'CA'):
@@ -43,8 +50,13 @@ class XDBGenrator:
 
         if mother is not None:
             # This is for finding COM of a single inside a pair
-            _, tran = self.getRotTrans(child, mother, 
-                movingAtomOffset=childAtomOffset, fixedAtomOffset=motherAtomOffset)
+            _, tran = self.getRotTrans(
+                child, 
+                mother, 
+                movingAtomOffset=childAtomOffset, 
+                fixedAtomOffset=motherAtomOffset,
+                matchRange=matchRange
+            )
 
             com += tran
 
@@ -56,12 +68,31 @@ class XDBGenrator:
         # No rotation - just move to centre
         pdb.transform([[1,0,0],[0,1,0],[0,0,1]], -com)
 
-    def align(self, moving, fixed,movingAtomOffset=0, fixedAtomOffset=0):
-        rot, tran = self.getRotTrans(moving, fixed,
-            movingAtomOffset=movingAtomOffset, fixedAtomOffset=fixedAtomOffset)
+    def align(
+            self, 
+            moving, 
+            fixed, 
+            movingAtomOffset=0, 
+            fixedAtomOffset=0,
+            matchRange=-1
+        ):
+        rot, tran = self.getRotTrans(
+            moving, 
+            fixed,
+            movingAtomOffset=movingAtomOffset,
+            fixedAtomOffset=fixedAtomOffset,
+            matchRange=matchRange
+        )
         moving.transform(rot, tran)
 
-    def getRotTrans(self, moving, fixed, movingAtomOffset=0, fixedAtomOffset=0):
+    def getRotTrans(
+            self, 
+            moving, 
+            fixed, 
+            movingAtomOffset=0, 
+            fixedAtomOffset=0,
+            matchRange=-1
+        ):
         # First push the generators to desired locations
         maGen = moving.get_atoms()
         for i in xrange(0, movingAtomOffset):
@@ -77,7 +108,8 @@ class XDBGenrator:
             except StopIteration:
                 die(True, 'Fixed PDB Atom Offset too large')    
 
-        # Then fill in the arrays until either of the generators run out
+        # Then fill in the arrays until either 
+        # of the generators run out
         ma = []
         fa = []
         while True:
@@ -87,8 +119,9 @@ class XDBGenrator:
             except StopIteration:
                 break
 
-            ma.append(maNext)
-            fa.append(faNext)
+            if matchRange == -1 or len(ma) < matchRange:
+                ma.append(maNext)
+                fa.append(faNext)
 
         self.si.set_atoms(fa, ma)
 
@@ -135,92 +168,117 @@ class XDBGenrator:
             ('maxHeavy', maxHeavy)
         ]);
 
-    def getAtomCount(self, pdb):
-        i = 0
-        for a in pdb.get_atoms():
-            i += 1
-        return i
-
     def processPDB(self, filename):
         # Step 0: Load pair and single structures
-        pairName = filename.split('/')[-1].split('.')[0].replace('_mc_0001', '')
-        pairPdb = utils.readPdb(pairName, filename)
+        pairName = filename.split('/')[-1].split('.')[0] \
+            .replace('_mc_0001', '')
+        pair = utils.readPdb(pairName, filename)
 
-        singleNames = pairName.split('-')
-        psFilenames = [
-            singleNames[0] + '_mc_0001.pdb', 
-            singleNames[1] + '_mc_0001.pdb'
-        ]
-        singlePdbs = [utils.readPdb(singleNames[0], self.singleDir + psFilenames[0]),
-                    utils.readPdb(singleNames[1], self.singleDir + psFilenames[1])]
+        singleNameA, singleNameB = pairName.split('-')
+        singleA = utils.readPdb(
+            singleNameA, 
+            self.singleDir + singleNameA + '_mc_0001.pdb'
+        )
+        singleB = utils.readPdb(
+            singleNameB, 
+            self.singleDir + singleNameB + '_mc_0001.pdb'
+        )
+
+        atomCountA = utils.getAtomCount(singleA)
+        atomCountB = utils.getAtomCount(singleB)
 
         # Step 1: Center the corresponding singles
-        self.moveToOrigin(singlePdbs[0])
-        self.moveToOrigin(singlePdbs[1])
+        self.moveToOrigin(singleA)
+        self.moveToOrigin(singleB)
 
         # Step 2: Move pair to align with first single
-        # Note: this aligns pair by superimposing pair[0] with singlePdbs[0]
-        self.align(pairPdb, singlePdbs[0])
+        # Note: this aligns pair by superimposing pair[0] 
+        #       with singleA
+        # Note: we only want to align the first half of 
+        #       singleA's atoms, because the second half
+        #       take part in interfacing with singleB, 
+        #       and could be distorted differently in 
+        #       different pairs
+        self.align(pair, singleA, matchRange=utils.intFloor(atomCountA/2))
 
-        # Step 3: Get COM of the second single inside the pair
-        singlePdbAtomCounts = [
-            self.getAtomCount(singlePdbs[0]), 
-            self.getAtomCount(singlePdbs[1])
-        ]
-        com2 = self.getCOM(singlePdbs[1], pairPdb, motherAtomOffset=singlePdbAtomCounts[0])
+        # Step 3: Get COM of the singleB as seen in the pair
+        # Note: only align the second half of singleB's atoms
+        #       for the same reason as Step 2
+        comB = self.getCOM(
+            singleB, 
+            pair, 
+            childAtomOffset=utils.intFloor(atomCountB/2),
+            motherAtomOffset=atomCountA + utils.intFloor(atomCountB/2)
+        )
 
-        # Step 4: Get measures for collision:
+        # Step 4: Get radius for collision checks later:
         #           1. Avg dist to com (gyradius aka RG)
         #           2. Max dist from CA to com
         #           3. Max dist from any heavy stom (not H) to COM
-        sRads = [self.getRadii(singlePdbs[0]),
-                    self.getRadii(singlePdbs[1])]
+        radA = self.getRadii(singleA)
 
         # Step 5: Get transformation of pair to the second single
         # Note: pair is already aligned to first single so
         #       there is no need for the first transformation
         #       You can check this is true by varifying that
-        #           self.getRotTrans(pairPdb, singlePdbs[0])
+        #           self.getRotTrans(pair, singleA)
         #       has identity rotation and zero translation. Also,
-        #       com2 should be at the origin.
-        rot, tran = self.getRotTrans(pairPdb, singlePdbs[1], 
-            movingAtomOffset=singlePdbAtomCounts[0])
+        #       comB should be at the origin.
+        # Note: again, only match second half of singleB's atoms
+        rot, tran = self.getRotTrans(
+            pair, 
+            singleB, 
+            movingAtomOffset=atomCountA + utils.intFloor(atomCountB/2),
+            fixedAtomOffset=utils.intFloor(atomCountB/2),
+        )
 
-        # Step 6: Save the aligned molecules once
-        # Note: here the PDB format adds some slight floating point error
-        utils.savePdb(singlePdbs[0], self.alignedLibDir + '/single/' + singleNames[0])
-        utils.savePdb(singlePdbs[1], self.alignedLibDir + '/single/' + singleNames[1])
-        utils.savePdb(pairPdb, self.alignedLibDir + '/pair/' + pairName + '.pdb')
+        # Step 6: Save the centred and aligned molecules
+        # Note: here the PDB format adds some slight 
+        #       floating point error. It is really old
+        #       and we should consider using mmCIF
+        utils.savePdb(
+            singleA, 
+            self.alignedLibDir + '/single/' + singleNameA + '.pdb'
+        )
+        utils.savePdb(
+            singleB, 
+            self.alignedLibDir + '/single/' + singleNameB + '.pdb'
+        )
+        utils.savePdb(
+            pair, 
+            self.alignedLibDir + '/pair/' + pairName + '.pdb'
+        )
 
-        # comA is aligned to centered singlePdbs[0] so should be at origin
         data = OrderedDict([
-            ('comB',  com2.tolist()),
+            ('comB',  comB.tolist()),
             ('rot',   rot.tolist()),
             ('tran',  tran.tolist())
-            ])
+        ])
 
-        entry = self.pairsData.get(singleNames[0], None)
-        if(entry == None):
-            self.pairsData[singleNames[0]] = {}
-            entry = self.pairsData.get(singleNames[0], None)
+        entry = self.pairsData.get(singleNameA, None)
+        if entry == None:
+            self.pairsData[singleNameA] = {}
+            entry = self.pairsData.get(singleNameA, None)
 
-        entry[singleNames[1]] = data
+        entry[singleNameB] = data
 
-        singleDataA = self.singlesData.get(singleNames[0],
+        singleDataA = self.singlesData.get(
+            singleNameA,
              OrderedDict([
                 ('linkCount', 0),
-                ('radii', sRads[0])
-                ]));
+                ('radii', radA)
+            ])
+        );
         singleDataA['linkCount'] = singleDataA['linkCount'] + 1;
-        self.singlesData[singleNames[0]] = singleDataA;
+        self.singlesData[singleNameA] = singleDataA;
 
-        if(singleNames[1] != singleNames[0]):
-            singleDataB = self.singlesData.get(singleNames[1],
+        if(singleNameB != singleNameA):
+            singleDataB = self.singlesData.get(singleNameB,
                  OrderedDict([
                     ('linkCount', 0),
-                    ('radii', sRads[0])
+                    ('radii', radA)
                     ]));
-            self.singlesData[singleNames[1]] = singleDataB;
+            self.singlesData[singleNameB] = singleDataB;
 
         # interact(globals(), locals())
 
@@ -243,12 +301,14 @@ class XDBGenrator:
         files = glob.glob(self.pairDir + '/*_mc_0001.pdb')
         nFiles = len(files)
         for i in range(0, nFiles):
-            print '[XDBG] Processing file #{}/{}: {}'.format(i+1, nFiles, files[i])
+            print '[XDBG] Processing file #{}/{}: {}' \
+                .format(i+1, nFiles, files[i])
             self.processPDB(files[i])
 
         self.complexity = 1
         for s in self.singlesData:
-            self.complexity = self.complexity * self.singlesData.get(s)['linkCount']
+            self.complexity = self.complexity * \
+                self.singlesData.get(s)['linkCount']
 
         print '[XDBG] Complexity: {}'.format(self.complexity)
 

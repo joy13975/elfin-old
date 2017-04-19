@@ -10,6 +10,21 @@ import argparse
 RadiiTypes = ['avgAll', 'maxCA', 'maxHeavy']
 INF = float('inf')
 
+def getResidueCount(pdb):
+    return len(pdb.child_list[0].child_list[0].child_list)
+
+def getAtomCount(pdb):
+    i = 0
+    for a in pdb.get_atoms():
+        i += 1
+    return i
+
+def intCeil(f):
+    return int(np.ceil(f))
+
+def intFloor(f):
+    return int(np.floor(f))
+
 def upsample(pts1, pts2):
     # Upsample the shape with fewer points
     pts1IsLonger = len(pts1) > len(pts2)
@@ -167,70 +182,90 @@ def checkCollision(xdb, collisionMeasure, nodes, newNode, shape):
 
     return False
 
-def makePdbFromNodes(xdb, nodes, pairsDir, saveFile=None, fRot=None, movieMode=False):
+def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None, movieMode=False):
+    # Consturct a protein using single modules and xDB relationships
 
-    # Load first PDB and clear its chains to host all other residues
-    pairName = nodes[0] + '-' + nodes[1]
-    pdbFile = pairsDir + '/' + pairName + '.pdb'
-    motherPdb = readPdb(pairName, pdbFile)
+    # Use the first pdb model as an empty host for all single pdb chains
+    motherName = nodes[0]
+    pdbFile = singlesDir + '/' + motherName + '.pdb'
+    motherPdb = readPdb(motherName, pdbFile)
     motherModel = motherPdb.child_list[0]
     motherModel.detach_child('A')
-    motherModel.detach_child('B')
     motherChain = Bio.PDB.Chain.Chain('A')
     motherModel.add(motherChain)
 
     moviePdbs = []
-    baseRId = 1
+    residueUid = 1
 
     comShape = np.empty([1, 3])
     startingPoint = np.zeros(3)
 
     chainLenDigits = len(str(len(nodes)))
-    for i in xrange(1, len(nodes)):
-        lastNode = nodes[i-1]
+    for i in xrange(0, len(nodes) - 1):
         currNode = nodes[i]
-        # pymol load new pair
-        pairName = lastNode + '-' + currNode
-        rel = xdb['pairsData'][lastNode][currNode]
-        # mother pdb append and transform
-        pdbFile = pairsDir + '/' + pairName + '.pdb'
-        pdbPair = readPdb(pairName, pdbFile)
+        nextNode = nodes[i+1]
+        rel = xdb['pairsData'][currNode][nextNode]
+
+        # pauseCode()
         
+        # Append new point at origin
         comShape = np.append(comShape, [[0,0,0]], axis=0)
-        if i == len(nodes) - 1:
-            comShape = np.append(comShape, [rel['comB']], axis=0)
         
         if movieMode:
-            moviePdbs.append(pdbPair)
+            singlePdb = readPdb(
+                currNode, 
+                singlesDir + '/' + currNode + '.pdb'
+            )
+            moviePdbs.append(singlePdb)
             for pdb in moviePdbs:
             	pdb.transform(np.asarray(rel['rot']), rel['tran'])
         else:
-            childChain = pdbPair.child_list[0].child_dict['A']
-            nResi = len(childChain.child_list)
-            for j in xrange(0, nResi):
-                r = childChain.child_list[j]
-                nextId = baseRId + j
+            pairName = currNode + '-' + nextNode
+            singleA = readPdb(
+                currNode,
+                singlesDir + '/' + currNode + '.pdb'
+            )
+            singleB = readPdb(
+                nextNode,
+                singlesDir + '/' + nextNode + '.pdb'
+            )
+            pair = readPdb(
+                pairName,
+                pairsDir + '/' + pairName + '.pdb'
+            )
+
+            resiCountA = getResidueCount(singleA)
+            resiCountB = getResidueCount(singleB)
+            resiCountPair = getResidueCount(pair)
+
+            if i == 0:
+                # First pair: ignore leading trim
+                startResi = 1
+                endResi = resiCountPair - intFloor(resiCountB/2)
+            elif i == len(nodes) - 2:
+                # Last pair: ignore trailing trim
+                startResi = intFloor(resiCountA/2)
+                endResi = resiCountPair
+            else:
+                # Trim half of singleA's residues and extend
+                # to half of singleB's residues
+                startResi = intFloor(resiCountA/2)
+                endResi = resiCountPair - intFloor(resiCountB/2)
+
+            pairChain = pair.child_list[0].child_dict['A']
+            for j in xrange(startResi, endResi):
+                r = pairChain.child_list[j]
+                nextId = residueUid
+                residueUid += 1
                 r.id = (r.id[0], nextId, r.id[2]) 
                 motherChain.add(r)
-            baseRId += nResi
             
-            if i == len(nodes) - 1:
-                childChain = pdbPair.child_list[0].child_dict['B']
-                nResi = len(childChain.child_list)
-                for j in xrange(0, nResi):
-                    r = childChain.child_list[j]
-                    nextId = baseRId + j
-                    r.id = (r.id[0], nextId, r.id[2]) 
-                    motherChain.add(r)
-                baseRId += nResi
             motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
-
 
         comShape = np.dot(comShape, np.asarray(rel['rot'])) + rel['tran']
 
         startingPoint = np.dot(startingPoint, np.asarray(rel['rot'])) + rel['tran']
-        print 'Pair[{}]:   {}---{}'.format(str(i).ljust(chainLenDigits),
-            lastNode.ljust(16), currNode.rjust(16))
+        print 'Node #{}:   {}'.format(str(i).ljust(chainLenDigits), currNode.ljust(16))
 
        
     if fRot is not None:
