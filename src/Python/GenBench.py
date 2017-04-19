@@ -5,6 +5,7 @@ import numpy, random, string, math, codecs
 from collections import OrderedDict
 from time import gmtime, strftime
 import sys
+import argparse
 
 haveCmd = False
 try:
@@ -14,36 +15,40 @@ try:
 except ImportError:
     print 'Could not import pymol cmd. Not running as pymol plugin...'
 
-# Not sure how to just figure out where elfin is located
-# So we need to load our library this way
-elfinPyLibDir = '/Users/joy/src/elfin/src/python/'
+# Python only accepts dynamic loading with absolute path
+# Need a better way of doing this
+elfinDir = '/Users/joy/src/elfin/'
+elfinPyLibDir = elfinDir + '/src/Python/'
 import imp
 utils = imp.load_source('utils', elfinPyLibDir + '/utils.py')
 
 def main():
-    dbFile              = elfinDir + 'res/xDB.json'
-    outDir              = elfinDir + './bm/'
-    pdbPairsDir         = 'res/centered_pdb/pair/'
-    bg                  = BenchmarkGenerator(dbFile, pdbPairsDir, outDir, 'maxHeavy')
-    nBmarks             = 1
-    if(len(sys.argv) > 1):
-        try:
-            nBmarks = int(sys.argv[1])
-        except Exception as e:
-            print e
-            print 'Failed to convert argument {} to integer (number of shapes to generate)'.format(sys.argv[1])
-            exit(1)
+    ap = argparse.ArgumentParser(description='Generate Grid Search configurations');
+    ap.add_argument('--outdir', default='bm/')
+    ap.add_argument('--length', type=int, default=10)
+    ap.add_argument('--maxRetries', type=int, default=-1)
+    ap.add_argument('--num', type=int, default=10)
+    ap.add_argument('--dbFile', default=elfinDir + 'res/xDB.json')
+    ap.add_argument('--singlesDir', default='res/aligned/single/')
+    ap.add_argument('--pairsDir', default='res/aligned/pair/')
+    ap.add_argument('--radiusType', default='maxHeavy')
 
-    chainLen            = 20
-    maxRetries          = -1
-    # bg.run(nBmarks, chainLen)
-    utils.safeExec(bg.run, nBmarks, chainLen, maxRetries)
+    args = ap.parse_args()
+
+    bg = BenchmarkGenerator(args.dbFile, 
+                            args.pairsDir, 
+                            args.singlesDir, 
+                            args.outdir, 
+                            args.radiusType)
+
+    utils.safeExec(bg.run, args.num, args.length, args.maxRetries)
 
 class BenchmarkGenerator:
     
     def __init__(self,
                 dbFile,
-                pdbPairsDir,
+                pairsDir,
+                singlesDir,
                 outDir,
                 collisionMeasure):
         def makeSelf():
@@ -60,7 +65,8 @@ class BenchmarkGenerator:
 
             print('DB has {} non-terminal nodes'.format(len(self.nonTerms)))
 
-            self.pdbPairsDir = pdbPairsDir
+            self.pairsDir = pairsDir
+            self.singlesDir = singlesDir
             self.outDir = outDir
             self.bmarks = []
 
@@ -100,12 +106,11 @@ class BenchmarkGenerator:
 
         # Shape (array of CoMs) starts from origin
         coms = numpy.zeros(shape=(1,3), dtype='float64')
-        pairs = []
 
         # Main structure generation loop
         # Keep adding a next node from any node until either
         #   specified length is reached
-        for i in xrange(0, chainLen):
+        for i in xrange(0, chainLen - 1):
             lastNode = nodes[i]
             newNode = self.chooseNextNode(nodes, coms)
 
@@ -118,7 +123,12 @@ class BenchmarkGenerator:
         # Move display/print/postprocess to after construction succeeded
         # Makes generation faster
 
-        motherPdb = utils.makePdbFromNodes(self.xDB, nodes, elfinDir + self.pdbPairsDir)
+        motherPdb, _ = utils.makePdbFromNodes(
+            self.xDB, 
+            nodes, 
+            elfinDir + self.pairsDir,
+            elfinDir + self.singlesDir
+        )
 
         if haveCmd:
             tmpFile = './elfin.tmp'
@@ -134,8 +144,7 @@ class BenchmarkGenerator:
             'pdb': motherPdb,
             'data': OrderedDict([
             ('nodes', nodes),
-            ('coms', coms.tolist()),
-            ('pairs', pairs)
+            ('coms', coms.tolist())
             ])
         })
 
@@ -165,7 +174,8 @@ class BenchmarkGenerator:
                     retries = retries + 1
 
         # When done trying, dump metadata and PDB
-        bmNameLen = 7
+        print 'Dumping output to {}'.format(self.outDir)
+        bmNameLen = 4
         for bm in self.bmarks:
             bmName = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(bmNameLen))
             outFile = self.outDir + '/' + bmName
