@@ -220,6 +220,14 @@ def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None,
             moviePdbs.append(singlePdb)
             for pdb in moviePdbs:
             	pdb.transform(np.asarray(rel['rot']), rel['tran'])
+
+            # Don't forget to add the last node
+            if i == len(nodes) - 2:
+                singlePdb = readPdb(
+                    nextNode, 
+                    singlesDir + '/' + nextNode + '.pdb'
+                )
+                moviePdbs.append(singlePdb)
         else:
             singleA = readPdb(
                 currNode,
