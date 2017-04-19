@@ -204,6 +204,7 @@ def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None,
     for i in xrange(0, len(nodes) - 1):
         currNode = nodes[i]
         nextNode = nodes[i+1]
+        pairName = currNode + '-' + nextNode
         rel = xdb['pairsData'][currNode][nextNode]
 
         # pauseCode()
@@ -220,7 +221,6 @@ def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None,
             for pdb in moviePdbs:
             	pdb.transform(np.asarray(rel['rot']), rel['tran'])
         else:
-            pairName = currNode + '-' + nextNode
             singleA = readPdb(
                 currNode,
                 singlesDir + '/' + currNode + '.pdb'
@@ -265,7 +265,7 @@ def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None,
         comShape = np.dot(comShape, np.asarray(rel['rot'])) + rel['tran']
 
         startingPoint = np.dot(startingPoint, np.asarray(rel['rot'])) + rel['tran']
-        print 'Node #{}:   {}'.format(str(i).ljust(chainLenDigits), currNode.ljust(16))
+        print 'Pair #{}:   {}'.format(str(i+1).ljust(chainLenDigits), pairName.ljust(16))
 
        
     if fRot is not None:
