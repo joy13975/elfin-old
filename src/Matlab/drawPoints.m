@@ -14,7 +14,7 @@ axis(xyrange)
 P=[x,y];
 
 D = (P-circshift(P, 1));
-normaliseFactor = 50; % this should be set around mean pair-CoM distance
+normaliseFactor = 45; % this should be set around mean pair-CoM distance
 m = mean(sqrt(sum(D.^2, 2))) / normaliseFactor;
 
 format long g
