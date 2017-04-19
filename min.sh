@@ -7,7 +7,6 @@ fi
 
 input="$1"
 maxCycles="$2"
-local="$3"
 
 outDir=`dirname $input`
 scOutput="${input/\.pdb/_min.sc}"
