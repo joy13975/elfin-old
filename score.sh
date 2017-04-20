@@ -7,7 +7,6 @@ fi
 
 min="$1"
 native="$2"
-local="$3"
 
 scOutput="${native/\.pdb/_comp.sc}"
 
