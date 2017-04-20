@@ -29,7 +29,7 @@ def main():
 
 	# Add all residues to a new chain with correct ascending IDs
 	rid = 1
-	chainBreakRid = -1
+	chainBreakRId = -1
 	for oc in oldChains:
 		for r in oc:
 			# Cleanse unwanted atoms
@@ -45,9 +45,8 @@ def main():
 			r.id = (r.id[0], rid, r.id[2])
 			newChain.add(r)
 			rid += 1
-		chainBreakRid = rid
-
-	assert(chainBreakRid != -1)
+		if chainBreakRId == -1:
+			chainBreakRId = rid
 
 	# Remove old chains from model
 	ocIds = []
@@ -65,7 +64,10 @@ def main():
 		args.output = args.input
 
 	# Append marker and chain break residue ID to output file name
-	args.output = args.output.replace('.pdb', '_mc_b{}.pdb'.format(chainBreakRid))
+	if chainBreakRId != -1:
+		args.output = args.output.replace('.pdb', '_mc_b{}.pdb'.format(chainBreakRId))
+	else:
+		args.output = args.output.replace('.pdb', '_mc.pdb')
 
 	savePdb(pdb, args.output)
 	print 'Done and saved to {}'.format(args.output)

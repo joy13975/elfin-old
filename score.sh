@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap "exit" INT
+
 if [ $# -lt 1 ]; then
 	echo "Usage: score.sh <min_pdb> <native_pdb>"
 	exit
