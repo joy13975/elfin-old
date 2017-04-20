@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import glob, sys
 from utils import *
+import Bio.PDB
 
 ### Sliding window based
 if len(sys.argv) < 3:
@@ -39,9 +40,24 @@ for i in range(0, len(mFiles)):
 	mPdb = readPdb('minimised', mFile)
 	sPdb = readPdb('solution', sFile)
 
+	mAtoms = []
+	sAtoms = []
+	for a in mPdb.get_atoms():
+		if a.id == 'CA':
+			mAtoms.append(a)
+	for a in sPdb.get_atoms():
+		if a.id == 'CA':
+			sAtoms.append(a)
+
+	# Superimpose the two structures before comparing
+	si = Bio.PDB.Superimposer()
+	si.set_atoms(mAtoms, sAtoms)
+	rot, tran = si.rotran
+
+	sPdb.transform(rot, tran)
+
 	mCAs = []
 	sCAs = []
-
 	for a in mPdb.get_atoms():
 		if a.id == 'CA':
 			mCAs.append(a.coord)
