@@ -8,8 +8,8 @@ import codecs, json
 from collections import OrderedDict
 
 def main():
-    pairDir         = 'res/mergedAndCleansed/pair/'
-    singleDir       = 'res/mergedAndCleansed/single/'
+    pairDir         = 'res/preprocessed/pair/'
+    singleDir       = 'res/preprocessed/single/'
     alignedLibDir   = 'res/aligned/'
     outFile         = 'res/xDB.json'
     xdbg = XDBGenrator(pairDir, singleDir, alignedLibDir, outFile)
@@ -297,8 +297,10 @@ class XDBGenrator:
 
     def run(self):
         # _mc stands for (chain) Merged and Cleansed
-        # _0001 means it is minimized by Rosetta
-        files = glob.glob(self.pairDir + '/*_mc_0001.pdb')
+        # _b* is the chain break residue marker
+        # First _0001 means loop closed
+        # Second _0001 means minimized
+        files = glob.glob(self.pairDir + '/*_mc_b*_0001_0001.pdb')
         nFiles = len(files)
         for i in range(0, nFiles):
             print '[XDBG] Processing file #{}/{}: {}' \

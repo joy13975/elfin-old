@@ -36,6 +36,19 @@ points3fToVectors(Points3f const & pts)
 	return out;
 }
 
+/* 
+ * IMPORTANT TODO:
+ * Instead of upsampling whichever shpe is shorter, we should
+ * always resample the shape that is not the specification. 
+ *
+ * The reason for this is that it only makes sense to sample
+ * the testing shape according to proportions defined by the
+ * specification, but not the other way round. We can say that
+ * it is reasonble to expect a candidate shape to be at point X
+ * at Y% into its starting point, where X and Y are both from
+ * the design spec.
+ *
+ */
 void
 upsample(
     Points3f & pts1,

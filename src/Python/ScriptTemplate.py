@@ -5,16 +5,12 @@ import argparse, sys
 
 def main():
 	ap = argparse.ArgumentParser(description='Template Python script');
-	# ap.add_argument('--input')
-
-	# Exit if no argument given
+	ap.add_argument('input') # No dash means mandatory
+	args = ap.parse_args()
+	
 	if len(sys.argv) == 1:
 		ap.print_help()
 		sys.exit(1)
-
-	args = ap.parse_args()
-
-	# Do stuff...
 
 if __name__ == '__main__':
 	main()

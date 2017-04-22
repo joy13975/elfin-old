@@ -11,7 +11,7 @@ RadiiTypes = ['avgAll', 'maxCA', 'maxHeavy']
 INF = float('inf')
 
 def getResidueCount(pdb):
-    return len(pdb.child_list[0].child_list[0].child_list)
+    return sum([len(c.child_list) for c in pdb.child_list[0].child_list])
 
 def getAtomCount(pdb):
     i = 0
