@@ -171,17 +171,17 @@ class XDBGenrator:
     def processPDB(self, filename):
         # Step 0: Load pair and single structures
         pairName = filename.split('/')[-1].split('.')[0] \
-            .replace('_mc_0001', '')
+            .replace('_0001', '')
         pair = utils.readPdb(pairName, filename)
 
         singleNameA, singleNameB = pairName.split('-')
         singleA = utils.readPdb(
             singleNameA, 
-            self.singleDir + singleNameA + '_mc_0001.pdb'
+            self.singleDir + singleNameA + '_0001.pdb'
         )
         singleB = utils.readPdb(
             singleNameB, 
-            self.singleDir + singleNameB + '_mc_0001.pdb'
+            self.singleDir + singleNameB + '_0001.pdb'
         )
 
         atomCountA = utils.getAtomCount(singleA)
@@ -296,11 +296,8 @@ class XDBGenrator:
             indent=4)
 
     def run(self):
-        # _mc stands for (chain) Merged and Cleansed
-        # _b* is the chain break residue marker
-        # First _0001 means loop closed
-        # Second _0001 means minimized
-        files = glob.glob(self.pairDir + '/*_mc_b*_0001_0001.pdb')
+        # _0001 stands for relaxed PDBs
+        files = glob.glob(self.pairDir + '/*_0001.pdb')
         nFiles = len(files)
         for i in range(0, nFiles):
             print '[XDBG] Processing file #{}/{}: {}' \
