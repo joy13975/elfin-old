@@ -29,6 +29,8 @@ private:
 	const OptionPack & myOptions;
 
 	uint myExpectedTargetLen;
+	uint myMinTargetLen;
+	uint myMaxTargetLen;
 	ulong myNonSurviverCount;
 	ulong mySurviverCutoff;
 	ulong myCrossCutoff;

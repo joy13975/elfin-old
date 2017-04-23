@@ -17,8 +17,8 @@ CPP_SRC 		:= $(shell find . -name '*.cpp')
 OBJS 			:= $(C_SRC:%.c=$(OBJ_DIR)/%.o) $(CPP_SRC:%.cpp=$(OBJ_DIR)/%.o)
 DEPS 			:= $(C_SRC:%.c=$(OBJ_DIR)/%.d) $(CPP_SRC:%.cpp=$(OBJ_DIR)/%.d)
 
-$(info Sources to be compiled: [${C_SRC}] [${CPP_SRC}])
-$(info Objects to be compiled: [${OBJS}])
+# $(info Sources to be compiled: [${C_SRC}] [${CPP_SRC}])
+# $(info Objects to be compiled: [${OBJS}])
 
 DEBUG=no
 OMP=yes
@@ -34,7 +34,7 @@ endif
 ifeq ($(TARGET), gpu)
 $(info Using clang++ for GPU target)
 	CXX=clang++
-	OMP_FLAGS=-fopenmp=libomp -fopenmp-targets=nvptx64-nvidia-cuda --cuda-path=/nfs/modules/cuda/8.0.44/
+	OMP_FLAGS=-fopenmp=libomp -fopenmp-targets=nvptx64-nvidia-cuda --cuda-path=/nfs/modules/cuda/8.0.44/ -D_TARGET_GPU
 endif
 
 ifeq ($(OMP), yes)
