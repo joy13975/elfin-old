@@ -4,7 +4,7 @@ import Bio.PDB, json
 import numpy, random, string, math, codecs
 from collections import OrderedDict
 from time import gmtime, strftime
-import sys
+import sys, os
 import argparse
 
 haveCmd = False
@@ -17,17 +17,17 @@ except ImportError:
 
 # Python only accepts dynamic loading with absolute path
 # Need a better way of doing this
-elfinDir = '/Users/joy/src/elfin/'
+elfinDir = '{}/src/elfin/'.format(os.getenv("HOME"))
 elfinPyLibDir = elfinDir + '/src/Python/'
 import imp
 utils = imp.load_source('utils', elfinPyLibDir + '/utils.py')
 
 def main():
     ap = argparse.ArgumentParser(description='Generate Grid Search configurations');
-    ap.add_argument('--outdir', default='bm/')
+    ap.add_argument('outdir', default='bm/')
+    ap.add_argument('num', type=int)
     ap.add_argument('--length', type=int, default=10)
     ap.add_argument('--maxRetries', type=int, default=-1)
-    ap.add_argument('--num', type=int, default=10)
     ap.add_argument('--dbFile', default=elfinDir + 'res/xDB.json')
     ap.add_argument('--singlesDir', default='res/aligned/single/')
     ap.add_argument('--pairsDir', default='res/aligned/pair/')
