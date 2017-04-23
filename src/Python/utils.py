@@ -202,14 +202,14 @@ def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None,
     comShape = np.empty([1, 3])
     startingPoint = np.zeros(3)
 
+    si = Bio.PDB.Superimposer()
+
     chainLenDigits = len(str(len(nodes)))
     for i in xrange(0, len(nodes) - 1):
         currNode = nodes[i]
         nextNode = nodes[i+1]
         pairName = currNode + '-' + nextNode
         rel = xdb['pairsData'][currNode][nextNode]
-
-        # pauseCode()
         
         # Append new point at origin
         comShape = np.append(comShape, [[0,0,0]], axis=0)
@@ -251,24 +251,38 @@ def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None,
             if i == 0:
                 # First pair: ignore leading trim
                 startResi = 1
-                endResi = resiCountPair - intFloor(resiCountB/2)
+                endResi = resiCountPair - intCeil(float(resiCountB)/2)
             elif i == len(nodes) - 2:
                 # Last pair: ignore trailing trim
-                startResi = intFloor(resiCountA/2)
+                startResi = intFloor(float(resiCountA)/2)
                 endResi = resiCountPair
             else:
                 # Trim half of singleA's residues and extend
                 # to half of singleB's residues
-                startResi = intFloor(resiCountA/2)
-                endResi = resiCountPair - intFloor(resiCountB/2)
+                startResi = intFloor(float(resiCountA)/2)
+                endResi = resiCountPair - intCeil(float(resiCountB)/2)
 
             pairChain = pair.child_list[0].child_dict['A']
-            pairRKeys = [k for k in pairChain.child_dict]
-            pairResidues = [r for r in pairChain]
-            [pairChain.detach_child(k) for k in pairRKeys]
+            pairMidKeys = [r.id for r in pairChain.child_list[startResi:endResi]]
+            pairMidRes = [r for r in pairChain.child_list[startResi:endResi]]
 
-            for j in xrange(startResi, endResi):
-                r = pairResidues[j]
+            if i > 0:
+                # Extract atoms from last pair end
+                prevCAs = [a for r in motherChain.child_list[-startResi:] for a in r if a.name == 'CA']
+                currCAs = [a for r in pairChain.child_list[:startResi] for a in r if a.name == 'CA']
+
+                # print '{}\n{}'.format([r.get_resname() for r in motherChain.child_list[-startResi:]], \
+                #     [r.get_resname() for r in pairChain.child_list[:startResi]])
+                # pauseCode()
+
+                # Move mother slightly to align with current pair CAs
+                si.set_atoms(currCAs, prevCAs)
+                rot, tran = si.rotran
+                motherPdb.transform(rot, tran)
+
+            [pairChain.detach_child(k) for k in pairMidKeys]
+
+            for r in pairMidRes:
                 r.id = (r.id[0], residueUid, r.id[2]) 
                 motherChain.add(r)
                 residueUid += 1

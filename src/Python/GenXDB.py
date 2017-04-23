@@ -177,11 +177,11 @@ class XDBGenrator:
         singleNameA, singleNameB = pairName.split('-')
         singleA = utils.readPdb(
             singleNameA, 
-            self.singleDir + singleNameA + '_0001.pdb'
+            self.singleDir + singleNameA + '.pdb'
         )
         singleB = utils.readPdb(
             singleNameB, 
-            self.singleDir + singleNameB + '_0001.pdb'
+            self.singleDir + singleNameB + '.pdb'
         )
 
         atomCountA = utils.getAtomCount(singleA)
@@ -297,7 +297,7 @@ class XDBGenrator:
 
     def run(self):
         # _0001 stands for relaxed PDBs
-        files = glob.glob(self.pairDir + '/*_0001.pdb')
+        files = glob.glob(self.pairDir + '/*.pdb')
         nFiles = len(files)
         for i in range(0, nFiles):
             print '[XDBG] Processing file #{}/{}: {}' \
