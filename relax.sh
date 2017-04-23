@@ -23,7 +23,7 @@ if [[ "$variant" == "mpi" ]]; then
 	wrapper=$wrapper" mpirun"
 fi
 
-cmd="$wrapper minimize.$variant.$release -overwrite -s $input -out:path:score $outDir -out:file:scorefile $scOutput -out:path:pdb $outDir -default_max_cycles $maxCycles"
+cmd="$wrapper relax.$variant.$release -overwrite -s $input -out:path:score $outDir -out:file:scorefile $scOutput -out:path:pdb $outDir -default_max_cycles $maxCycles"
 
 if [[ "$local" == "yes" ]]; then
 	$cmd
