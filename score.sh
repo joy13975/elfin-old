@@ -13,7 +13,7 @@ native="$2"
 scOutput="${native/\.pdb/_comp.sc}"
 
 local=${local:-"no"}
-variant=${variant:-"mpi"}
+variant=${variant:-"default"}
 release=${release:-"linuxgccrelease"}
 wrapper=${wrapper:-""}
 
