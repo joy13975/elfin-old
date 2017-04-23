@@ -36,10 +36,10 @@ points3fToVectors(Points3f const & pts)
 	return out;
 }
 
-/* 
+/*
  * IMPORTANT TODO:
- * Instead of upsampling whichever shpe is shorter, we should
- * always resample the shape that is not the specification. 
+ * Instead of upsampling whichever shape is shorter, we should
+ * always resample the shape that is not the specification.
  *
  * The reason for this is that it only makes sense to sample
  * the testing shape according to proportions defined by the
@@ -50,73 +50,132 @@ points3fToVectors(Points3f const & pts)
  *
  */
 void
-upsample(
-    Points3f & pts1,
-    Points3f & pts2)
+resample(
+    Points3f & ref,
+    Points3f & pts)
 {
-	// Upsample the shape with fewer points
-	const bool pts1IsLonger = pts1.size() > pts2.size();
-	const size_t N = pts1IsLonger ? pts1.size() : pts2.size();
+	const uint N = ref.size();
 
-	// Use a proportion based algorithm because
-	// we want to assume both shapes are roughly
-	// the same length, but not exactly
-	const Points3f & morePoints = pts1IsLonger ? pts1 : pts2;
-	const Points3f & fewerPoints = pts1IsLonger ? pts2 : pts1;
-
-	// N === morePoints.size()
-
-	// Compute longer shape total length
-	float mpTotalLength = 0.0f;
+	// Compute  shape total lengths
+	float refTotLen = 0.0f;
 	for (int i = 1; i < N; i++)
-		mpTotalLength += morePoints.at(i).distTo(morePoints.at(i - 1));
+		refTotLen += ref.at(i).distTo(ref.at(i - 1));
 
-	float fpTotalLength = 0.0f;
-	for (int i = 1; i < fewerPoints.size(); i++)
-		fpTotalLength += fewerPoints.at(i).distTo(fewerPoints.at(i - 1));
+	float ptsTotLen = 0.0f;
+	for (int i = 1; i < pts.size(); i++)
+		ptsTotLen += pts.at(i).distTo(pts.at(i - 1));
 
-	// Upsample fewerPoints
-	Points3f upsampled;
+	// Upsample pts
+	Points3f resampled;
 
 	// First and last points are the same
-	upsampled.push_back(fewerPoints.at(0));
+	resampled.push_back(pts.at(0));
 
-	float mpProportion = 0.0f, fpProportion = 0.0f;
+	float refProp = 0.0f, ptsProp = 0.0f;
 	int mpi = 1;
-	for (int i = 1; i < fewerPoints.size(); i++)
+	for (int i = 1; i < pts.size(); i++)
 	{
-		const Point3f & baseFpPoint = fewerPoints.at(i - 1);
-		const Point3f & nextFpPoint = fewerPoints.at(i);
-		const float baseFpProportion = fpProportion;
+		const Point3f & baseFpPoint = pts.at(i - 1);
+		const Point3f & nextFpPoint = pts.at(i);
+		const float baseFpProportion = ptsProp;
 		const float fpSegment = nextFpPoint.distTo(baseFpPoint)
-		                        / fpTotalLength;
+		                        / ptsTotLen;
 		const Vector3f vec = nextFpPoint - baseFpPoint;
 
-		fpProportion += fpSegment;
-		while (mpProportion <= fpProportion && mpi < N)
+		ptsProp += fpSegment;
+		while (refProp <= ptsProp && mpi < N)
 		{
 			const float mpSegment =
-			    morePoints.at(mpi).distTo(morePoints.at(mpi - 1))
-			    / mpTotalLength;
+			    ref.at(mpi).distTo(ref.at(mpi - 1))
+			    / refTotLen;
 
-			if (mpProportion + mpSegment > fpProportion)
+			if (refProp + mpSegment > ptsProp)
 				break;
-			mpProportion += mpSegment;
+			refProp += mpSegment;
 
-			const float s = (mpProportion - baseFpProportion)
+			const float s = (refProp - baseFpProportion)
 			                / fpSegment;
-			upsampled.push_back(baseFpPoint + (vec * s));
+			resampled.push_back(baseFpPoint + (vec * s));
 
 			mpi++;
 		}
 	}
 
 	// Sometimes the last node is automatically added
-	if (upsampled.size() < N)
-		upsampled.push_back(fewerPoints.back());
+	if (resampled.size() < N)
+		resampled.push_back(pts.back());
 
-	pts1IsLonger ? (pts2 = upsampled) : (pts1 = upsampled);
+	pts = resampled;
 }
+
+// void
+// upsample(
+//     Points3f & ref,
+//     Points3f & pts)
+// {
+// 	// Upsample the shape with fewer points
+// 	const bool refIsLonger = ref.size() > pts.size();
+// 	const size_t N = refIsLonger ? ref.size() : pts.size();
+
+// 	// Use a proportion based algorithm because
+// 	// we want to assume both shapes are roughly
+// 	// the same length, but not exactly
+// 	const Points3f & morePoints = refIsLonger ? ref : pts;
+// 	const Points3f & fewerPoints = refIsLonger ? pts : ref;
+
+// 	// N === ref.size()
+
+// 	// Compute longer shape total length
+// 	float mpTotalLength = 0.0f;
+// 	for (int i = 1; i < N; i++)
+// 		mpTotalLength += morePoints.at(i).distTo(morePoints.at(i - 1));
+
+// 	float fpTotalLength = 0.0f;
+// 	for (int i = 1; i < fewerPoints.size(); i++)
+// 		fpTotalLength += fewerPoints.at(i).distTo(fewerPoints.at(i - 1));
+
+// 	// Upsample fewerPoints
+// 	Points3f upsampled;
+
+// 	// First and last points are the same
+// 	upsampled.push_back(fewerPoints.at(0));
+
+// 	float mpProportion = 0.0f, fpProportion = 0.0f;
+// 	int mpi = 1;
+// 	for (int i = 1; i < fewerPoints.size(); i++)
+// 	{
+// 		const Point3f & baseFpPoint = fewerPoints.at(i - 1);
+// 		const Point3f & nextFpPoint = fewerPoints.at(i);
+// 		const float baseFpProportion = fpProportion;
+// 		const float fpSegment = nextFpPoint.distTo(baseFpPoint)
+// 		                        / fpTotalLength;
+// 		const Vector3f vec = nextFpPoint - baseFpPoint;
+
+// 		fpProportion += fpSegment;
+// 		while (mpProportion <= fpProportion && mpi < N)
+// 		{
+// 			const float mpSegment =
+// 			    morePoints.at(mpi).distTo(morePoints.at(mpi - 1))
+// 			    / mpTotalLength;
+
+// 			if (mpProportion + mpSegment > fpProportion)
+// 				break;
+// 			mpProportion += mpSegment;
+
+// 			const float s = (mpProportion - baseFpProportion)
+// 			                / fpSegment;
+// 			upsampled.push_back(baseFpPoint + (vec * s));
+
+// 			mpi++;
+// 		}
+// 	}
+
+// 	// Sometimes the last node is automatically added
+// 	if (upsampled.size() < N)
+// 		upsampled.push_back(fewerPoints.back());
+
+// 	refIsLonger ? (pts = upsampled) : (ref = upsampled);
+// }
 
 // Implemetation of Kabsch algoritm for finding the best rotation matrix
 // ---------------------------------------------------------------------------
@@ -449,33 +508,28 @@ bool Kabsch(
 float
 kabschScore(
     const Genes & genes,
-    Points3f ref,
-    Crc32 & checksum)
+    Points3f ref)
 {
 	// First make a copy of genes into points
 	Points3f mobile;
 	mobile.resize(genes.size());
 
-	// Also compute crc
-	checksum = 0xffff;
 	for (int i = 0; i < genes.size(); i++)
 	{
 		const Point3f & pt = genes.at(i).com();
-		checksumCascade(&checksum, &pt, sizeof(pt));
 		mobile.at(i) = pt;
 	}
 
-	return kabschScore(mobile, ref, checksum);
+	return kabschScore(mobile, ref);
 }
 
 float
 kabschScore(
     Points3f mobile,
-    Points3f ref,
-    Crc32 & checksum)
+    Points3f ref)
 {
 	if (ref.size() != mobile.size())
-		upsample(ref, mobile);
+		resample(ref, mobile);
 
 	// Run Kabsch to get RMS
 	Matrix<double> rot;
@@ -574,7 +628,7 @@ int _testKabsch()
 	if (Afewer.size() == B.size())
 		die("Afewer and B sizes have not been made different!\n");
 
-	upsample(Afewer, B);
+	resample(Afewer, B);
 
 	if (Afewer.size() != B.size())
 	{
@@ -599,10 +653,9 @@ int _testKabsch()
 
 	Point3f B0Copy = B.at(0);
 
-	Crc32 crc;
-	float score = kabschScore(G, B, crc);
+	float score = kabschScore(G, B);
 	msg("A-B Score: %.10f\n", score);
-	if (!float_approximates(score, 19195.6699218750))
+	if (!float_approximates(score, 7796.9331054688))
 	{
 		failCount++;
 		err("A-B Score test failed\n");
@@ -620,7 +673,7 @@ int _testKabsch()
 	for (int i = 0; i < B.size(); i++)
 		G.push_back(Gene(i, B.at(i)));
 
-	score = kabschScore(G, B, crc);
+	score = kabschScore(G, B);
 
 	msg("B-B Score: %.10f\n", score);
 	if (!float_approximates(score, 0.0))
@@ -629,6 +682,18 @@ int _testKabsch()
 		err("B-B self score failed\n");
 	}
 
+	// Test shifted shapes
+	for (Gene & g : G)
+		g.com() += Vector3f(-10, 20, 30);
+
+	score = kabschScore(G, B);
+
+	msg("B-B Shifted Score: %.10f\n", score);
+	if (!float_approximates(score, 0.0))
+	{
+		failCount++;
+		err("B-B shifted self score failed\n");
+	}
 
 	// Test scoring different sized (sub)shapes
 	G.clear();
@@ -639,18 +704,13 @@ int _testKabsch()
 		G.push_back(Gene(i, B.at(i)));
 	}
 
-	score = kabschScore(G, B, crc);
+	score = kabschScore(G, B);
 
 	msg("B[1:]-B score: %.10f\n", score);
-
-	if (score >= 4362.3974609375)
+	
+	if (!float_approximates(score, 650.2928466797))
 	{
-		err("Upsampling not working - score worse than no upsampling\n");
-		failCount++;
-	}
-	else if (!float_approximates(score, 3070.5651855469))
-	{
-		err("Upsampled score differs\n");
+		err("Resampled score differs\n");
 		failCount++;
 	}
 

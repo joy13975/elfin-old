@@ -33,13 +33,13 @@ Chromosome::Chromosome(const Chromosome & rhs)
 {
 	myGenes = rhs.myGenes;
 	myScore = rhs.myScore;
-	myChecksum = rhs.myChecksum;
 }
 
 
 Chromosome::Chromosome(const Genes & genes)
 {
 	myGenes = genes;
+	setOrigin(Origin::GeneCopy);
 }
 
 bool
@@ -55,58 +55,11 @@ Chromosome::operator<(const Chromosome & rhs) const
 }
 
 // Public methods
-void
-Chromosome::setup(const uint minLen,
-                  const uint maxLen,
-                  const RelaMat & relaMat,
-                  const RadiiList & radiiList)
-{
-	if (setupDone)
-		die("Chromosome::setup() called second time!\n");
-
-	myMinLen = minLen;
-	myMaxLen = maxLen;
-	myRelaMat = &relaMat;
-	myRadiiList = &radiiList;
-
-	// Compute neighbour counts
-	const uint dim = myRelaMat->size();
-	myNeighbourCounts.resize(dim, IdPair());
-	for (int i = 0; i < dim; i++)
-	{
-		uint lhs = 0, rhs = 0;
-		for (int j = 0; j < dim; j++)
-		{
-			if (myRelaMat->at(j).at(i) != NULL)
-				lhs++;
-			if (myRelaMat->at(i).at(j) != NULL)
-				rhs++;
-		}
-
-		myNeighbourCounts.at(i) = IdPair(lhs, rhs);
-	}
-
-	// Compute global roulette as rhs neighbour count
-	myGlobalRoulette.clear();
-	for (int i = 0; i < dim; i++)
-		for (int j = 0; j < myNeighbourCounts.at(i).y; j++)
-			myGlobalRoulette.push_back(i);
-
-	setupDone = true;
-}
 
 void
 Chromosome::score(const Points3f & ref)
 {
-	myScore = kabschScore(myGenes, ref, myChecksum);
-	// Use Kabsch to move genes
-	// superimpose(ref);
-
-	// Use sum of distances - not different effect from RMSD
-	// myScore = 0.0f;
-
-	// for (auto & g : myGenes)
-	// 	myScore += minDistFromLine(g.com(), ref);
+	myScore = kabschScore(myGenes, ref);
 }
 
 float
@@ -130,7 +83,16 @@ Chromosome::genes() const
 Crc32
 Chromosome::checksum() const
 {
-	return myChecksum;
+	// Calculate lazily because it's only used once per
+	// generation
+	Crc32 crc = 0xffff;
+	for (int i = 0; i < myGenes.size(); i++)
+	{
+		const Point3f & pt = myGenes.at(i).com();
+		checksumCascade(&crc, &pt, sizeof(pt));
+	}
+
+	return crc;
 }
 
 std::vector<std::string>
@@ -144,6 +106,16 @@ Chromosome::getNodeNames() const
 	return out;
 }
 
+std::string
+Chromosome::toString() const
+{
+	std::stringstream ss;
+
+	ss << "Chromosome " << this << ":\n";
+	ss << genesToString(myGenes);
+
+	return ss.str();
+}
 
 bool
 Chromosome::cross(const Chromosome & father, Chromosome & out) const
@@ -219,6 +191,7 @@ Chromosome::cross(const Chromosome & father, Chromosome & out) const
 			if (synthesise(newGenes))
 			{
 				out = Chromosome(newGenes);
+				out.setOrigin(Origin::Cross);
 				return true;
 			}
 		}
@@ -232,6 +205,7 @@ Chromosome::mutateChild() const
 {
 	Chromosome out = *this;
 	out.autoMutate();
+	out.setOrigin(Origin::AutoMutate);
 
 	return out;
 }
@@ -254,50 +228,17 @@ Chromosome::autoMutate()
 	}
 }
 
-std::string
-Chromosome::toString() const
-{
-	std::stringstream ss;
-
-	ss << "Chromosome " << this << ":\n";
-	ss << genesToString(myGenes);
-
-	return ss.str();
-}
-
-/*
- * Calculate expected length as total point
- * displacements over avg pair module distance
- *
- * Note: another possible heuristic is to insert
- * 	an extra point count only between pairs of
- * 	points that are too far apart, i.e. 2x avg dist
- */
-uint
-Chromosome::calcExpectedLength(const Points3f & lenRef,
-                               const float avgPairDist)
-{
-	float sumDist = 0.0f;
-
-	for (std::vector<Point3f>::const_iterator i = lenRef.begin() + 1; // !!
-	        i != lenRef.end();
-	        ++i)
-		sumDist += (i - 1)->distTo(*i);
-
-	return (uint) round(sumDist / avgPairDist);
-}
-
 void
 Chromosome::randomise()
 {
 	do
 	{
-		myGenes = genRandomGenes(); // Auto synth'd
+		myGenes = genRandomGenes();
 	}
-	while (myGenes.size() < myMinLen);
+	while (myGenes.size() < myMinLen || myGenes.size() > myMaxLen);
+	setOrigin(Origin::Random);
 }
 
-// Private methods
 
 enum PointMutateMode {
 	SwapMode,
@@ -383,6 +324,7 @@ Chromosome::pointMutate()
 				myGenes.at(ids.x).nodeId() = ids.y;
 
 				synthesise(myGenes); // This is guaranteed to succeed
+				setOrigin(Origin::PointMutate);
 				return true;
 			}
 		}
@@ -537,9 +479,203 @@ Chromosome::limbMutate()
 		return false;
 
 	myGenes = newGenes;
+	setOrigin(Origin::LimbMutate);
+	return true;
+}
+
+void
+Chromosome::setOrigin(Origin o)
+{
+	myOrigin = o;
+}
+
+Origin
+Chromosome::getOrigin() const
+{
+	return myOrigin;
+}
+
+Chromosome
+Chromosome::copy() const
+{
+	Chromosome c = *this;
+	c.setOrigin(Origin::Copy);
+	return c;
+}
+
+void
+Chromosome::setup(const uint minLen,
+                  const uint maxLen,
+                  const RelaMat & relaMat,
+                  const RadiiList & radiiList)
+{
+	if (setupDone)
+		die("Chromosome::setup() called second time!\n");
+
+	myMinLen = minLen;
+	myMaxLen = maxLen;
+	myRelaMat = &relaMat;
+	myRadiiList = &radiiList;
+
+	// Compute neighbour counts
+	const uint dim = myRelaMat->size();
+	myNeighbourCounts.resize(dim, IdPair());
+	for (int i = 0; i < dim; i++)
+	{
+		uint lhs = 0, rhs = 0;
+		for (int j = 0; j < dim; j++)
+		{
+			if (myRelaMat->at(j).at(i) != NULL)
+				lhs++;
+			if (myRelaMat->at(i).at(j) != NULL)
+				rhs++;
+		}
+
+		myNeighbourCounts.at(i) = IdPair(lhs, rhs);
+	}
+
+	// Compute global roulette as rhs neighbour count
+	myGlobalRoulette.clear();
+	for (int i = 0; i < dim; i++)
+		for (int j = 0; j < myNeighbourCounts.at(i).y; j++)
+			myGlobalRoulette.push_back(i);
+
+	setupDone = true;
+}
+
+/*
+ * Calculate expected length as total point
+ * displacements over avg pair module distance
+ *
+ * Note: another possible heuristic is to insert
+ * 	an extra point count only between pairs of
+ * 	points that are too far apart, i.e. 2x avg dist
+ */
+uint
+Chromosome::calcExpectedLength(const Points3f & lenRef,
+                               const float avgPairDist)
+{
+	float sumDist = 0.0f;
+
+	for (std::vector<Point3f>::const_iterator i = lenRef.begin() + 1; // !!
+	        i != lenRef.end();
+	        ++i)
+		sumDist += (i - 1)->distTo(*i);
+
+	return (uint) round(sumDist / avgPairDist) + 1; // Add one because start and end
+}
+
+bool
+Chromosome::synthesiseReverse(Genes & genes)
+{
+	const uint N = genes.size();
+	if (N == 0)
+		return true;
+
+	// Zero all coords so they don't interfere with
+	// collision check before being synth'd
+	for (auto & g : genes)
+		g.com().x = (g.com().y = (g.com().z = 0));
+
+	for (int i = N - 1; i > 0; i--)
+	{
+		const auto & lhsGene = genes.at(i - 1);
+		const auto & rhsGene = genes.at(i);
+
+		// Check collision
+		const PairRelationship * newNodePr =
+		    myRelaMat->at(lhsGene.nodeId()).at(rhsGene.nodeId());
+
+		if (newNodePr == NULL)
+		{
+			// Fatal failure; diagnose!
+			err("Synthesise(): impossible pair! %d(%s) <-x-> %d(%s)\n",
+			    lhsGene.nodeId(),
+			    Gene::inm->at(lhsGene.nodeId()).c_str(),
+			    rhsGene.nodeId(),
+			    Gene::inm->at(rhsGene.nodeId()).c_str());
+
+			err("Erroneous genes:\n%s\n", genesToString(genes).c_str());
+
+
+			die("Fatal error in synthesiseReverse(): should never use impossible pair\n");
+		}
+
+		const Point3f checkpoint = newNodePr->tran;
+
+		if (collides(lhsGene.nodeId(),
+		             checkpoint,
+		             genes.begin() + i + 2,
+		             genes.end(),
+		             *myRadiiList))
+			return false;
+
+		// Grow shape
+		for (int j = N - 1; j > i - 1; j--)
+		{
+			auto & g = genes.at(j);
+			g.com() -= newNodePr->tran;
+			g.com() = g.com().dot(newNodePr->rotInv);
+		}
+	}
 
 	return true;
 }
+
+bool
+Chromosome::synthesise(Genes & genes)
+{
+	if (genes.size() == 0)
+		return true;
+
+	// Zero all coords so they don't interfere with
+	// collision check before being synth'd
+	for (auto & g : genes)
+		g.com().x = (g.com().y = (g.com().z = 0));
+
+	for (int i = 1; i < genes.size(); i++)
+	{
+		const auto & lhsGene = genes.at(i - 1);
+		const auto & rhsGene = genes.at(i);
+
+		// Check collision
+		const PairRelationship * newNodePr =
+		    myRelaMat->at(lhsGene.nodeId()).at(rhsGene.nodeId());
+
+		if (newNodePr == NULL)
+		{
+			// Fatal failure; diagnose!
+			err("Synthesise(): impossible pair! %d(%s) <-x-> %d(%s)\n",
+			    lhsGene.nodeId(),
+			    Gene::inm->at(lhsGene.nodeId()).c_str(),
+			    rhsGene.nodeId(),
+			    Gene::inm->at(rhsGene.nodeId()).c_str());
+
+			err("Erroneous genes:\n%s\n", genesToString(genes).c_str());
+
+			die("Fatal error in synthesise(): should never use impossible pair\n");
+		}
+
+		if (collides(rhsGene.nodeId(),
+		             newNodePr->comB,
+		             genes.begin(),
+		             genes.begin() + i - 2,
+		             *myRadiiList))
+			return false;
+
+		// Grow shape
+		for (int j = 0; j < i; j++)
+		{
+			auto & g = genes.at(j);
+			g.com() = g.com().dot(newNodePr->rot);
+			g.com() += newNodePr->tran;
+		}
+	}
+
+	return true;
+}
+
+// Private methods
 
 Genes
 Chromosome::genRandomGenesReverse(
@@ -562,7 +698,7 @@ Chromosome::genRandomGenesReverse(
 	// Reverse order so growth tip is at back
 	std::reverse(genes.begin(), genes.end());
 
-	while (genes.size() < genMaxLen)
+	while (genes.size() <= genMaxLen)
 	{
 		std::vector<uint> rouletteWheel;
 		const Gene & currGene = genes.back();
@@ -570,9 +706,6 @@ Chromosome::genRandomGenesReverse(
 		// Compute whether each neighbour is colliding
 		for (int i = 0; i < dim; i++)
 		{
-			if (i == currGene.nodeId())
-				continue;
-
 			const PairRelationship * prPtr = myRelaMat->at(i).at(currGene.nodeId());
 			if (prPtr == NULL)
 				continue;
@@ -653,7 +786,7 @@ Chromosome::genRandomGenes(
 		synthesise(genes);
 	}
 
-	while (genes.size() < genMaxLen)
+	while (genes.size() <= genMaxLen)
 	{
 		std::vector<uint> rouletteWheel;
 		const Gene & currGene = genes.back();
@@ -662,8 +795,6 @@ Chromosome::genRandomGenes(
 		const std::vector<PairRelationship *> rr = myRelaMat->at(currGene.nodeId());
 		for (int i = 0; i < dim; i++)
 		{
-			if (i == currGene.nodeId())
-				continue;
 			const PairRelationship * prPtr = rr.at(i);
 
 			// Create roulette based on number of RHS neighbours
@@ -673,8 +804,10 @@ Chromosome::genRandomGenes(
 			                       genes.begin(),
 			                       genes.end() - 2,
 			                       *myRadiiList))
+			{
 				for (int j = 0; j < myNeighbourCounts.at(i).y; j++)
 					rouletteWheel.push_back(i);
+			}
 		}
 
 		if (rouletteWheel.size() == 0)
@@ -698,117 +831,6 @@ Chromosome::genRandomGenes(
 	return genes;
 }
 
-bool
-Chromosome::synthesiseReverse(Genes & genes)
-{
-	const uint N = genes.size();
-	if (N == 0)
-		return true;
-
-	// Zero all coords so they don't interfere with
-	// collision check before being synth'd
-	for (auto & g : genes)
-		g.com().x = (g.com().y = (g.com().z = 0));
-
-	for (int i = N - 1; i > 0; i--)
-	{
-		const auto & lhsGene = genes.at(i - 1);
-		const auto & rhsGene = genes.at(i);
-
-		// Check collision
-		const PairRelationship * newNodePr =
-		    myRelaMat->at(lhsGene.nodeId()).at(rhsGene.nodeId());
-
-		if (newNodePr == NULL)
-		{
-			// Fatal failure; diagnose!
-			err("Synthesise(): impossible pair! %d(%s) <-x-> %d(%s)\n",
-			    lhsGene.nodeId(),
-			    Gene::inm->at(lhsGene.nodeId()).c_str(),
-			    rhsGene.nodeId(),
-			    Gene::inm->at(rhsGene.nodeId()).c_str());
-
-			err("Erroneous genes:\n%s\n", genesToString(genes).c_str());
-
-
-			die("Fatal error in synthesiseReverse(): should never use impossible pair\n");
-		}
-
-		const Point3f checkpoint = newNodePr->tran;
-
-		if (collides(lhsGene.nodeId(),
-		             checkpoint,
-		             genes.begin() + i + 2,
-		             genes.end(),
-		             *myRadiiList))
-			return false;
-
-		// Grow shape
-		for (int j = N - 1; j > i - 1; j--)
-		{
-			auto & g = genes.at(j);
-			g.com() -= newNodePr->tran;
-			g.com() = g.com().dot(newNodePr->rotInv);
-		}
-	}
-
-	return true;
-}
-
-
-bool
-Chromosome::synthesise(Genes & genes)
-{
-	if (genes.size() == 0)
-		return true;
-
-	// Zero all coords so they don't interfere with
-	// collision check before being synth'd
-	for (auto & g : genes)
-		g.com().x = (g.com().y = (g.com().z = 0));
-
-	for (int i = 1; i < genes.size(); i++)
-	{
-		const auto & lhsGene = genes.at(i - 1);
-		const auto & rhsGene = genes.at(i);
-
-		// Check collision
-		const PairRelationship * newNodePr =
-		    myRelaMat->at(lhsGene.nodeId()).at(rhsGene.nodeId());
-
-		if (newNodePr == NULL)
-		{
-			// Fatal failure; diagnose!
-			err("Synthesise(): impossible pair! %d(%s) <-x-> %d(%s)\n",
-			    lhsGene.nodeId(),
-			    Gene::inm->at(lhsGene.nodeId()).c_str(),
-			    rhsGene.nodeId(),
-			    Gene::inm->at(rhsGene.nodeId()).c_str());
-
-			err("Erroneous genes:\n%s\n", genesToString(genes).c_str());
-
-			die("Fatal error in synthesise(): should never use impossible pair\n");
-		}
-
-		if (collides(rhsGene.nodeId(),
-		             newNodePr->comB,
-		             genes.begin(),
-		             genes.begin() + i - 2,
-		             *myRadiiList))
-			return false;
-
-		// Grow shape
-		for (int j = 0; j < i; j++)
-		{
-			auto & g = genes.at(j);
-			g.com() = g.com().dot(newNodePr->rot);
-			g.com() += newNodePr->tran;
-		}
-	}
-
-	return true;
-}
-
 
 int _testChromosome()
 {
@@ -825,52 +847,30 @@ int _testChromosome()
 	Chromosome::setup(0, 100, relaMat, radiiList);
 
 	std::string l10Test1NameArr[] = {
-		"D54",
-		"D54_j1_D79",
+		"D53_j1_D79",
+		"D79",
 		"D79_j2_D14",
-		"D14_j1_D79",
-		"D79_j1_D54",
-		"D54_j1_D79",
-		"D79_j1_D54",
-		"D54",
-		"D54",
-		"D54_j1_D79",
-		"D79",
-		"D79",
-		"D79_j1_D54",
-		"D54_j1_D79",
-		"D79",
-		"D79",
-		"D79_j1_D54",
-		"D54_j1_D79",
-		"D79",
-		"D79_j1_D54",
-		"D54"
+		"D14_j4_D79",
+		"D79_j2_D14",
+		"D14_j1_D14",
+		"D14_j1_D76",
+		"D76",
+		"D76",
+		"D76"
 	};
 
 	const Point3f l10Solution1Arr[]
 	{
-		Point3f(-5.328838348, -102.4714661, -141.4473877),
-		Point3f(-3.610388756, -131.6208344, -156.3851471),
-		Point3f(-0.08456516266, -162.524353, -180.9295959),
-		Point3f(-43.3194313, -181.9328766, -195.2945099),
-		Point3f(-83.6757431, -184.3944855, -196.3811035),
-		Point3f(-98.81578827, -214.2256165, -167.1357422),
-		Point3f(-113.0508194, -239.6369324, -140.295639),
-		Point3f(-98.62628937, -233.7519531, -114.0887299),
-		Point3f(-87.21094513, -224.6260529, -101.7331085),
-		Point3f(-65.63604736, -209.1479645, -82.47885895),
-		Point3f(-50.25890732, -195.6275482, -55.12817383),
-		Point3f(-29.9008255, -189.4302826, -47.3944397),
-		Point3f(-9.871655464, -172.0654907, -57.61371613),
-		Point3f(-24.33072662, -130.3964539, -63.00215149),
-		Point3f(-30.3760376, -98.14616394, -72.52536011),
-		Point3f(-46.71737671, -82.48023987, -72.98136902),
-		Point3f(-63.45676422, -71.50189972, -52.82184601),
-		Point3f(-40.53733063, -51.61549759, -20.36203384),
-		Point3f(-28.71621323, -38.23616409, 8.768226624),
-		Point3f(-4.185769081, -25.74235153, 15.7895956),
-		Point3f(0, 0, 0)
+		Point3f(-132.1799368237854, -11.758442410323251, 73.41593483747943),
+		Point3f(-110.15464128830092, 4.565059666630834, 51.92111132157052),
+		Point3f(-84.77590754782352, 2.3679567735589373, 39.76437098735211),
+		Point3f(-88.95862282053145, -23.52256077165127, -0.12055267967065397),
+		Point3f(-97.12222431377928, -28.7990977698778, -39.02404596920094),
+		Point3f(-64.75930792558799, -52.82568110030985, -55.29969279123898),
+		Point3f(-30.701980845104362, -54.888621275466434, -30.998188063514938),
+		Point3f(-9.685900018400096, -33.97976110902995, -24.27845097596189),
+		Point3f(-2.585622169994172, -15.662871118782036, -14.897050336082922),
+		Point3f(-3.9968028886505635e-15, -3.552713678800501e-15, -7.105427357601002e-15)
 	};
 
 	const Points3f l10Solution1(l10Solution1Arr,
@@ -923,6 +923,19 @@ int _testChromosome()
 	}
 
 	msg("%s\n", chromo.toString().c_str());
+
+	// Test scoring
+	chromo.score(l10Solution1);
+	const float selfScore = chromo.getScore();
+	if (!float_approximates(selfScore, 0.0f))
+	{
+		failCount++;
+		err("Failed to score 0.0 against self CoMs\n");
+	}
+	else
+	{
+		msg("Self score: %f\n", selfScore);
+	}
 
 	// Test verdict
 	if (failCount == 0)

@@ -65,8 +65,10 @@ struct OptionPack
 	std::string configFile = "config.json";
 	std::string outputDir = "output";
 
-	float chromoLenDev = 0.2;
-	// Average CoM distance found by xDBStat.py as of 28/Feb/2017
+	ulong chromoLenDev = 0.2;
+
+	// Average CoM distance found by xDBStat.py as 
+	// of 23/April/2017 is 37.9
 	float avgPairDist = 38.0f;
 
 	// GA parameters

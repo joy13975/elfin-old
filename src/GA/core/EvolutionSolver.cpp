@@ -9,6 +9,7 @@
 #include "EvolutionSolver.hpp"
 #include "util.h"
 #include "ParallelUtils.hpp"
+#include "../input/JSONParser.hpp"
 
 namespace elfin
 {
@@ -34,10 +35,10 @@ EvolutionSolver::EvolutionSolver(const RelaMat & relaMat,
 	                         (ulong) options.gaPopSize);
 
 	myExpectedTargetLen = Chromosome::calcExpectedLength(spec, options.avgPairDist);
-	const float minTargetLen = myExpectedTargetLen * (1 - myOptions.chromoLenDev);
-	const float maxTargetLen = myExpectedTargetLen * (1 + myOptions.chromoLenDev);
+	myMinTargetLen = myExpectedTargetLen - myOptions.chromoLenDev;
+	myMaxTargetLen = myExpectedTargetLen + myOptions.chromoLenDev;
 
-	Chromosome::setup(minTargetLen, maxTargetLen, myRelaMat, myRadiiList);
+	Chromosome::setup(myMinTargetLen, myMaxTargetLen, myRelaMat, myRadiiList);
 }
 
 const Population *
@@ -75,7 +76,7 @@ EvolutionSolver::run()
 	         "Generation #%%%dd: best=%%.2f (%%.2f/module), worst=%%.2f, time taken=%%.0fms\n", genDispDigits);
 	char * avgTimeMsgFmt;
 	asprintf(&avgTimeMsgFmt,
-		"Avg Times: Evolve=%%.0f,Score=%%.0f,Rank=%%.0f,Select=%%.0f,Gen=%%.0f\n");
+	         "Avg Times: Evolve=%%.0f,Score=%%.0f,Rank=%%.0f,Select=%%.0f,Gen=%%.0f\n");
 	for (int i = 0; i < myOptions.gaIters; i++)
 	{
 		const double genStartTime = get_timestamp_us();
@@ -102,11 +103,11 @@ EvolutionSolver::run()
 		    genWorstScore,
 		    genTime);
 		msg(avgTimeMsgFmt,
-		    (float) myTotEvolveTime / (i+1),
-                    (float) myTotScoreTime / (i+1),
-                    (float) myTotRankTime / (i+1),
-                    (float) myTotSelectTime / (i+1),
-                    (float) myTotGenTime / (i+1));
+		    (float) myTotEvolveTime / (i + 1),
+		    (float) myTotScoreTime / (i + 1),
+		    (float) myTotRankTime / (i + 1),
+		    (float) myTotSelectTime / (i + 1),
+		    (float) myTotGenTime / (i + 1));
 
 		myTotGenTime += genTime;
 
@@ -176,8 +177,11 @@ EvolutionSolver::evolvePopulation()
 		size_t myCurrPopSize = myCurrPop->size();
 		Chromosome & (Chromosome::*assign)(Chromosome const&) = &Chromosome::operator=;
 
-//		#pragma omp target teams distribute parallel for simd schedule(runtime) map(myBuffPopData[0:myBuffPopSize], myCurrPopData[0:myCurrPopSize])
+#ifdef _TARGET_GPU
+		#pragma omp target teams distribute parallel for simd schedule(runtime) map(myBuffPopData[0:myBuffPopSize], myCurrPopData[0:myCurrPopSize])
+#else
 		OMP_PAR_FOR
+#endif
 		for (int i = 0; i < mySurviverCutoff; i++)
 			(myBuffPopData[i].*assign)(myCurrPopData[i]);
 
@@ -205,6 +209,7 @@ EvolutionSolver::evolvePopulation()
 				const Chromosome & mother = myCurrPop->at(motherId);
 				const Chromosome & father = myCurrPop->at(fatherId);
 
+				// Check compatibility
 				if (!mother.cross(father, chromoToEvolve))
 				{
 					// Pick a random parent to inherit from and then mutate
@@ -217,7 +222,7 @@ EvolutionSolver::evolvePopulation()
 			{
 				// Replicate a high ranking parent
 				const ulong parentId = getDice(mySurviverCutoff);
-				chromoToEvolve = myCurrPop->at(parentId);
+				chromoToEvolve = myCurrPop->at(parentId).copy();
 
 				if (evolutionDice < myPointMutateCutoff)
 				{
@@ -393,7 +398,11 @@ EvolutionSolver::printStartMsg()
 	for (auto & p : mySpec)
 		dbg("Spec Point: %s\n", p.toString().c_str());
 
-	msg("Expecting length: %u\n", myExpectedTargetLen);
+	msg("Expecting length: %u (%u~%u), spec has %d points\n",
+	    myExpectedTargetLen,
+	    myMinTargetLen,
+	    myMaxTargetLen,
+	    mySpec.size());
 	msg("Using deviation allowance: %.1f%%\n", myOptions.chromoLenDev * 100);
 
 	// Want auto significant figure detection with streams

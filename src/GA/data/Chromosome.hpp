@@ -15,9 +15,22 @@ namespace elfin
 // to meet algorithm criteria
 #define MAX_STOCHASTIC_FAILS 10
 
+#define FOREACH_ORIGIN(v) \
+		v(New) \
+		v(Copy) \
+		v(GeneCopy) \
+		v(AutoMutate) \
+		v(Cross) \
+		v(PointMutate) \
+		v(LimbMutate) \
+		v(Random)
+
+GEN_ENUM_AND_STRING(Origin, OriginString, FOREACH_ORIGIN);
+
 class Chromosome
 {
 public:
+
 	Chromosome();
 	Chromosome(const Chromosome & rhs);
 	Chromosome(const Genes & genes);
@@ -42,6 +55,16 @@ public:
 	void randomise();
 	bool pointMutate();
 	bool limbMutate();
+	void setOrigin(Origin o);
+	Origin getOrigin() const;
+	Chromosome copy() const;
+
+	static Genes genRandomGenesReverse(
+	    const uint genMaxLen = myMaxLen,
+	    Genes genes = Genes());
+	static Genes genRandomGenes(
+	    const uint genMaxLen = myMaxLen,
+	    Genes genes = Genes());
 
 	static void setup(const uint minLen,
 	                  const uint maxLen,
@@ -51,10 +74,11 @@ public:
 	                               const float avgPairDist);
 	static bool synthesiseReverse(Genes & genes);
 	static bool synthesise(Genes & genes);
+
 private:
 	Genes myGenes;
 	float myScore = NAN;
-	Crc32 myChecksum = 0;
+	Origin myOrigin = Origin::New;
 
 	static bool setupDone;
 	static uint myMinLen;
@@ -63,13 +87,6 @@ private:
 	static const RadiiList * myRadiiList;
 	static IdPairs myNeighbourCounts;
 	static IdRoulette myGlobalRoulette;
-
-	Genes genRandomGenesReverse(
-	    const uint genMaxLen = myMaxLen,
-	    Genes genes = Genes());
-	Genes genRandomGenes(
-	    const uint genMaxLen = myMaxLen,
-	    Genes genes = Genes());
 };
 
 int _testChromosome();

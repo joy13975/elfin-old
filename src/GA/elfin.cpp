@@ -26,7 +26,7 @@ DECL_ARG_CALLBACK(setInputFile) { options.inputFile = arg_in; }
 DECL_ARG_CALLBACK(setXDB) { options.xDBFile = arg_in; }
 DECL_ARG_CALLBACK(setOutputDir) { options.outputDir = arg_in; }
 
-DECL_ARG_CALLBACK(setChromoLenDev) { options.chromoLenDev = parse_float(arg_in); }
+DECL_ARG_CALLBACK(setChromoLenDev) { options.chromoLenDev = parse_long(arg_in); }
 DECL_ARG_CALLBACK(setAvgPairDist) { options.avgPairDist = parse_float(arg_in); }
 DECL_ARG_CALLBACK(setRandSeed) { options.randSeed = parse_long(arg_in); }
 
@@ -48,7 +48,7 @@ const argument_bundle argb[] = {
     {"-i", "--inputFile", "Set input file", true, setInputFile},
     {"-x", "--xDBFile", "Set xDB file (default ./xDB.json)", true, setXDB},
     {"-o", "--outputDir", "Set output directory (default ./out/)", true, setOutputDir},
-    {"-d", "--chromoLenDev", "Set chromosome length deviation allowance (default 0.20)", true, setChromoLenDev},
+    {"-d", "--chromoLenDev", "Set chromosome length deviation allowance (default 3)", true, setChromoLenDev},
     {"-a", "--avgPairDist", "Overwrite default average distance between pairs of CoMs (default 38.0)", true, setAvgPairDist},
     {"-rs", "--randSeed", "Set RNG seed (default 0x1337cafe; setting to 0 uses time as seed)", true, setRandSeed},
     {"-gps", "--gaPopSize", "Set GA population size (default 10000)", true, setGaPopSize},
@@ -209,9 +209,8 @@ void checkOptions()
 
     panic_if(options.gaIters < 0, "Number of iterations cannot be < 0\n");
 
-    panic_if(options.chromoLenDev < 0.0 ||
-             options.chromoLenDev > 1.0,
-             "Gene length deviation must be between 0 and 1 inclusive\n");
+    panic_if(options.chromoLenDev < 0,
+             "Gene length deviation must be an integer > 0\n");
 
     // GA params
     panic_if(options.gaSurviveRate < 0.0 ||
@@ -364,8 +363,7 @@ int runMetaTests(const Points3f & spec)
     }
 
     // Test scoring a transformed version of spec
-    Crc32 crc;
-    const float trxScore = kabschScore(movedSpec, spec, crc);
+    const float trxScore = kabschScore(movedSpec, spec);
     if (!float_approximates(trxScore, 0))
     {
         failCount ++;

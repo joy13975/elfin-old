@@ -5,7 +5,6 @@
 
 #include "../data/TypeDefs.hpp"
 #include "../data/Gene.hpp"
-#include "../core/Checksum.hpp"
 
 namespace elfin
 {
@@ -13,14 +12,12 @@ namespace elfin
 float
 kabschScore(
     const Genes & genes,
-    Points3f ref,
-    Crc32 & checksum);
+    Points3f ref);
 
 float
 kabschScore(
     Points3f mobile,
-    Points3f ref,
-    Crc32 & checksum);
+    Points3f ref);
 
 int _testKabsch();
 } // namespace elfin

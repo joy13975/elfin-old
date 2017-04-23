@@ -6,7 +6,7 @@ from utils import *
 
 def main():
     ap = argparse.ArgumentParser(description='Generate Grid Search configurations');
-    ap.add_argument('--specFile')
+    ap.add_argument('specFile')
     ap.add_argument('--outFile', default='')
     ap.add_argument('--movieMode', dest='movieMode', action='store_true')
     ap.add_argument('--no-movieMode', dest='movieMode', action='store_false')
