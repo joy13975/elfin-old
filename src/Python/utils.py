@@ -191,6 +191,8 @@ def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None,
     motherPdb = readPdb(motherName, pdbFile)
     motherModel = motherPdb.child_list[0]
     motherModel.detach_child('A')
+    assert(len(motherModel.child_list) == 0)
+
     motherChain = Bio.PDB.Chain.Chain('A')
     motherModel.add(motherChain)
 
@@ -261,12 +263,15 @@ def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None,
                 endResi = resiCountPair - intFloor(resiCountB/2)
 
             pairChain = pair.child_list[0].child_dict['A']
+            pairRKeys = [k for k in pairChain.child_dict]
+            pairResidues = [r for r in pairChain]
+            [pairChain.detach_child(k) for k in pairRKeys]
+
             for j in xrange(startResi, endResi):
-                r = pairChain.child_list[j]
-                nextId = residueUid
-                residueUid += 1
-                r.id = (r.id[0], nextId, r.id[2]) 
+                r = pairResidues[j]
+                r.id = (r.id[0], residueUid, r.id[2]) 
                 motherChain.add(r)
+                residueUid += 1
             
             motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
 
