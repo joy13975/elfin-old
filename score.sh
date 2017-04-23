@@ -24,8 +24,8 @@ fi
 cmd="$wrapper score.$variant.$release -overwrite -in:file:native $native -s $min -out:file:scorefile $scOutput"
 
 if [[ "$local" == "yes" ]]; then
-	# $cmd
-	echo $cmd
+	$cmd
+	# echo $cmd
 else
 	sbatch -A other -p cpu -N 1 --ntasks-per-node=1 --wrap="$cmd"
 fi
