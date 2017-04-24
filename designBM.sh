@@ -6,11 +6,12 @@ config=${config:-"src/GA/config.json"}
 xdb=${xdb:-"res/xDB.json"}
 gps=${gps:-524288}
 local=${local:-"no"}
-outdir=${outdir:-"bm/l10/"}
+dir=${dir:-"bm/l10"}
+outdir=${outdir:-$dir}
 
 export OMP_SCHEDULE=dynamic,16
 
-for f in `ls bm/l10/*.json`
+for f in `ls $dir/*.json`
 do	
 	filename=`basename $f`
 	myOutdir=$outdir'/'${filename/\.json/}
@@ -19,10 +20,10 @@ do
 	cmd="./src/GA/bin/elfin -i $f -c $config -gps $gps -x $xdb -o $myOutdir"
 	echo CMD is $cmd
   	if [[ "$local" == "yes" ]]; then
-		echo local
+#		echo local
 		$cmd
 	else
-		echo remote
+#		echo remote
         	sbatch -A other -p cpu -N 1 --ntasks-per-node=16 --wrap="$cmd"
 	fi
 done
