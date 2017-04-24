@@ -49,7 +49,6 @@ for i in range(0, len(mFiles)):
 		if a.id == 'CA':
 			sAtoms.append(a)
 
-	pauseCode()
 	# Superimpose the two structures before comparing
 	si = Bio.PDB.Superimposer()
 	si.set_atoms(mAtoms, sAtoms)
