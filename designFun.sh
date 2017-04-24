@@ -20,10 +20,10 @@ do
 	echo CMD is $cmd
   	if [[ "$local" == "yes" ]]; then
 		echo local
-  		$cmd
+ # 		$cmd
 	else
 		echo remote
-        	sbatch -A other -p cpu -N 1 --ntasks-per-node=16 --wrap="$cmd"
+#        	sbatch -A other -p cpu -N 1 --ntasks-per-node=16 --wrap="$cmd"
 	fi
 done
 
