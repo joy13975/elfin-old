@@ -28,5 +28,5 @@ cmd="$wrapper minimize.$variant.$release -overwrite -s $input -out:path:score $o
 if [[ "$local" == "yes" ]]; then
 	$cmd
 else
-	sbatch -A other -p cpu -N 1 --ntasks-per-node=1 --wrap="$cmd"
+	sbatch -A other -p cpu -N 1 --ntasks-per-node=16 --wrap="$cmd"
 fi
