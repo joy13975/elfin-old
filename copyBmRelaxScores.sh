@@ -1,7 +1,7 @@
 #!/bin/bash
 
 bmDir=${bmDir:-"l10"}
-outDir=$bmDir"_sc"
+outDir=$bmDir"_relax_sc"
 
 mkdir -p bm/$outDir
 for dir in `ls bm/$bmDir`; do 
