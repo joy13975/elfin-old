@@ -38,6 +38,7 @@ from pymol.vfont import plain
 
 import math
 import numpy as np
+import json
 
 class Counter:
     def __init__(self):
@@ -70,7 +71,7 @@ def draw(x=None, y=None, z=None, i=None, j=None, k=None, r=1.0, g=1.0, b=1.0, wi
         w = width
         l = 10
         h = w * 4 # cone hight
-        d = w * 1.618 # cone base diameter
+        d = w * 2.5 # cone base diameter
 
         # cone tip
         vStart = np.asarray([x,y,z])
@@ -80,8 +81,10 @@ def draw(x=None, y=None, z=None, i=None, j=None, k=None, r=1.0, g=1.0, b=1.0, wi
         cEnd = vStart + (1+(h/ldv)) * dv
 
         obj = [
-            CYLINDER,  x,y,z, i,j,k,                        w,      r,g,b,  r,g,b,
-            CONE,      i,j,k, cEnd[0], cEnd[1], cEnd[2],    d, 0.0, r,g,b,  r,g,b, 1.0, 1.0, 
+            COLOR,     r,g,b,
+            SPHERE,    x,y,z, d, 
+            CYLINDER,  x,y,z, i,j,k, w, r,g,b, r,g,b,
+            SPHERE,    i,j,k, d, 
         ]
 
         # # add labels to axes object 
@@ -92,8 +95,8 @@ def draw(x=None, y=None, z=None, i=None, j=None, k=None, r=1.0, g=1.0, b=1.0, wi
         cmd.load_cgo(obj,'axis'+str(counter.state))
         counter.state += 1
 
-def draw_pts(pts, scale=1.0, width=3.0, color=[1,0,0]):
-    pts *= scale
+def draw_pts(pts, scale=1.0, width=3.0, color=[0,0,0]):
+    pts = np.asarray(pts) * scale
     # delta = 1.0 / len(pts)
     r,g,b = color
 
@@ -103,16 +106,35 @@ def draw_pts(pts, scale=1.0, width=3.0, color=[1,0,0]):
         # r -= delta
         # b += delta
 
-def draw_csv(specFile, scale=1.0, width=3.0):
-
+def draw_csv(specFile, scale=1.0, width=2.0, centred=False, shift=None):
     with open(specFile, 'r') as file:
         pts = np.asarray([[float(n) for n in re.split(', *| *', l.strip())] for l in file.read().split('\n') if len(l) > 0])
+        if centred:
+            pts = pts - pts[-1]
+            dists = [np.linalg.norm(p-[0,0,0]) for p in pts]
+            if shift is not None:
+                pts += np.asarray(shift) * np.mean(dists)
+
         draw_pts(pts, scale=scale, width=width)
 
     cmd.reset()
     cmd.set("depth_cue", 0)
 
-def draw_axis(l=250, w = 1):
+def draw_json(specFile, scale=1.0, width=2.0, centred=False, shift=None):
+    with open(specFile, 'r') as file:
+        pts = np.asarray(json.load(file)['coms'])
+        if centred:
+            pts = pts - pts[-1]
+            dists = [np.linalg.norm(p-[0,0,0]) for p in pts]
+            if shift is not None:
+                pts += np.asarray(shift) * np.mean(dists)
+
+        draw_pts(pts, scale=scale, width=width)
+        
+    cmd.reset()
+    cmd.set("depth_cue", 0)
+
+def draw_axis(l=350, w = 1):
     draw(-l,0,0, l,0,0, 1,0,0, w, label='X');
     draw(0,-l,0, 0,l,0, 0,1,0, w, label='Y');
     draw(0,0,-l, 0,0,l, 0,0,1, w, label='Z');
@@ -131,8 +153,6 @@ print 'LineUtils Loaded'
 #             i=-.226639,j=0.708772,k=-.668039,
 #             r=1,         b=1,         g=1,
 #             width=1,    length=1)
-
-
 
 
 # a more complex example

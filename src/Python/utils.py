@@ -25,29 +25,25 @@ def intCeil(f):
 def intFloor(f):
     return int(np.floor(f))
 
-def upsample(pts1, pts2):
-    # Upsample the shape with fewer points
-    pts1IsLonger = len(pts1) > len(pts2)
-    N = max(len(pts1), len(pts2))
+def upsample(spec, pts):
+    N = len(spec)
 
-    # Use a proportion based algorithm because
-    # we want to assume both shapes are roughly
-    # the same length, but not exactly
-    if pts1IsLonger:
-        morePoints, fewerPoints = (np.copy(pts1), np.copy(pts2))
-    else:
-        morePoints, fewerPoints = (np.copy(pts2), np.copy(pts1))
-
-    # N === len(morePoints)
+    morePoints, fewerPoints = (np.copy(spec), np.copy(pts))
 
     # Compute longer shape total length
     mpTotalLength = 0.0
     for i in xrange(1, N):
         mpTotalLength += np.linalg.norm(morePoints[i] - morePoints[i - 1])
 
+    if mpTotalLength == INF:
+        print 'Something fishy... mpTotalLength is inf!'
+
     fpTotalLength = 0.0
     for i in xrange(1, len(fewerPoints)):
         fpTotalLength += np.linalg.norm(fewerPoints[i] - fewerPoints[i - 1])
+
+    if mpTotalLength == INF:
+        print 'Something fishy... fpTotalLength is inf!'
 
     # Upsample fewerPoints
     upsampled = np.empty([0, 3])
@@ -84,12 +80,77 @@ def upsample(pts1, pts2):
     if len(upsampled) < N:
         upsampled = np.append(upsampled, [fewerPoints[-1]], axis=0)
 
-    if pts1IsLonger:
-        pts2 = upsampled 
-    else: 
-        pts1 = upsampled
+    return upsampled
 
-    return pts1, pts2
+# def upsample(pts1, pts2):
+#     # Upsample the shape with fewer points
+#     pts1IsLonger = len(pts1) > len(pts2)
+#     N = max(len(pts1), len(pts2))
+
+#     # Use a proportion based algorithm because
+#     # we want to assume both shapes are roughly
+#     # the same length, but not exactly
+#     if pts1IsLonger:
+#         morePoints, fewerPoints = (np.copy(pts1), np.copy(pts2))
+#     else:
+#         morePoints, fewerPoints = (np.copy(pts2), np.copy(pts1))
+
+#     # Compute longer shape total length
+#     mpTotalLength = 0.0
+#     for i in xrange(1, N):
+#         mpTotalLength += np.linalg.norm(morePoints[i] - morePoints[i - 1])
+
+#     if mpTotalLength == INF:
+#         print 'Something fishy... mpTotalLength is inf!'
+
+#     fpTotalLength = 0.0
+#     for i in xrange(1, len(fewerPoints)):
+#         fpTotalLength += np.linalg.norm(fewerPoints[i] - fewerPoints[i - 1])
+
+#     if mpTotalLength == INF:
+#         print 'Something fishy... fpTotalLength is inf!'
+
+#     # Upsample fewerPoints
+#     upsampled = np.empty([0, 3])
+
+#     # First and last points are the same
+#     upsampled = np.append(upsampled, [fewerPoints[0]], axis=0)
+
+#     mpProportion = 0.0
+#     fpProportion = 0.0
+#     mpi = 1
+#     for i in xrange(1, len(fewerPoints)):
+#         baseFpPoint = fewerPoints[i - 1]
+#         nextFpPoint = fewerPoints[i]
+#         baseFpProportion = fpProportion
+#         fpSegment = np.linalg.norm(nextFpPoint - baseFpPoint) / fpTotalLength
+#         vec = nextFpPoint - baseFpPoint
+
+#         fpProportion += fpSegment
+#         while (mpProportion <= fpProportion and mpi < N):
+#             mpSegment = \
+#                 np.linalg.norm(morePoints[mpi] - morePoints[mpi - 1]) \
+#                 / mpTotalLength
+
+#             if (mpProportion + mpSegment) > fpProportion:
+#                 break
+#             mpProportion += mpSegment
+
+#             s = (mpProportion - baseFpProportion) / fpSegment
+#             upsampled = np.append(upsampled, [baseFpPoint + (vec * s)], axis=0)
+
+#             mpi += 1
+
+#     # Sometimes the last node is automatically added
+#     if len(upsampled) < N:
+#         upsampled = np.append(upsampled, [fewerPoints[-1]], axis=0)
+
+#     if pts1IsLonger:
+#         pts2 = upsampled 
+#     else: 
+#         pts1 = upsampled
+
+#     return pts1, pts2
 
 def readCSVPoints(csvFile):
     pts = []
@@ -289,6 +350,8 @@ def makePdbFromNodes(xdb, nodes, pairsDir, singlesDir, saveFile=None, fRot=None,
             
             motherPdb.transform(np.asarray(rel['rot']), rel['tran'])
 
+        # It seems sometimes np.empty() gives weirdly large values..
+        # print comShape
         comShape = np.dot(comShape, np.asarray(rel['rot'])) + rel['tran']
 
         startingPoint = np.dot(startingPoint, np.asarray(rel['rot'])) + rel['tran']
