@@ -11,10 +11,15 @@ import imp
 utils = imp.load_source('utils', elfinPyLibDir + '/utils.py')
 Kabsch = imp.load_source('Kabsch', elfinPyLibDir + '/Kabsch.py')
 
-cmd.run('/Users/joy/src/elfin/src/PyMolUtils/LineUtils.py');
+def compare_sol(specFile, solCSV):
+    if specFile.rfind('.csv') != -1:
+        specPts = utils.readCSVPoints(specFile)
+    elif specFile.rfind('.json') != -1:
+        with open(specFile, 'r') as file:
+            specPts = np.asarray(json.load(file)['coms'])
+    else:
+        print 'Unknown spec file format'
 
-def compare_csv(specCSV, solCSV):
-    specPts = utils.readCSVPoints(specCSV)
     solPts = utils.readCSVPoints(solCSV)
 
     # Centre both pts
@@ -25,19 +30,19 @@ def compare_csv(specCSV, solCSV):
     draw_pts(centredSpec, color=[0.7,0,0])
 
     # Equalise sample points
-    specEs, solEs = utils.upsample(centredSpec, centredSol)
+    specUpPts = utils.upsample(centredSpec, centredSol)
 
-    draw_pts(specEs, color=[0.5,0.5,0])
+    draw_pts(specUpPts, color=[0.5,0.5,0])
 
     # Find Kabsch rotation for solution -> spec
-    R = Kabsch.kabsch(solEs, specEs)
+    R = Kabsch.kabsch(centredSpec, specUpPts)
 
-    solEsR = np.dot(solEs, R)
+    centredSpecR = np.dot(centredSpec, R)
 
-    draw_pts(solEsR, color=[0,0.5,0.7])
+    draw_pts(centredSpecR, color=[0,0.5,0.7])
 
     cmd.reset()
     cmd.set("depth_cue", 0)
 
 
-cmd.extend("compare_csv", compare_csv)
+cmd.extend("compare_sol", compare_sol)

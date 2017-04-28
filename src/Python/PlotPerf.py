@@ -88,11 +88,11 @@ def main():
 
 	N = len(speedUpsPerCore)
 	ind = np.arange(N)
-	width = 0.8
+	width = 0.7
 	hOffsetPerc = 0.01
-	fontSize = 17
+	fontSize = 16
 	axesArea = [0.1, 0.15, .8, .8]
-	figSize = (12, 9)
+	figSize = (24, 9)
 	transparent = True
 
 	fig1 = plt.figure(figsize=figSize)
@@ -121,6 +121,37 @@ def main():
 	fig1.show()
 	plt.savefig('OpenMP.png', transparent=transparent)
 
+	# Hijack
+
+	machines = [
+		'Intel i7\n3720\nMacbookPro\n4-core\n2.6Ghz',
+		'Intel i7\n4790\nZoostorm\n4-core\n2.6Ghz',
+		'Intel Xeon\nE5-2697 v2\n(Zoo)\n24-core\n2.7Ghz',
+		'Intel Xeon\nPhi 7210\n(Zoo)\n64-core\n1.3Ghz',
+		'Intel Xeon\nE5-2670\n(BC3)\n16-core\n2.6Ghz',
+		'Intel Xeon\nE5-2670\n(Swan)\n8-core\n2.6Ghz',
+		'Intel Xeon\nE5-2640\n(Bluegem)\n16-core\n2.6Ghz',
+		'Nvidia Tesla\nK40m\n(Zoo)\n4.3TFlops',
+		'Nvidia GTX\n980 Ti\n(Zoo)\n5.6TFlops',
+		'Nvidia GTX\n1080 Ti\n(Zoo)\n10.6TFlops'
+	]
+
+	times = [
+		1110.3,
+		779.2,
+		209.9,
+		269.7,
+		261.5,
+		448.2,
+		293.8,
+		234.8,
+		227.1,
+		167.7
+	]
+
+	N = len(times)
+	ind = np.arange(N)
+
 	# Plot time
 	fig2 = plt.figure(figsize=figSize)
 	ax2 = plt.axes(axesArea, frameon=True)
@@ -146,7 +177,7 @@ def main():
 	fig2.show()
 	plt.savefig('TimeToSol.png', transparent=transparent)
 
-	# input()
+	input()
 
 if __name__ == '__main__':
 	utils.safeExec(main)

@@ -6,13 +6,9 @@ from utils import *
 
 def main():
 	ap = argparse.ArgumentParser(description='Generate Grid Search configurations');
-	ap.add_argument('--pairName')
+	ap.add_argument('pairName')
 	ap.add_argument('--xdbPath', default='res/xDB.json')
 	ap.add_argument('--pairDir', default='/Users/joy/src/elfin/res/aligned/pair/')
-
-	if len(sys.argv) == 1:
-		ap.print_help()
-		sys.exit(1)
 
 	args = ap.parse_args()
 

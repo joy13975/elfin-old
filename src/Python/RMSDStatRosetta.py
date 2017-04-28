@@ -15,7 +15,7 @@ rmsds = []
 
 for i in range(0, nFiles):
     with open(files[i], 'r') as file:
-		line = file.read().split('\n')[1]
+		line = file.read().split('\n')[-2]
 		rmsdStr = line.split(' ')[-2]
 		print '{} RMSD: {}'.format(files[i], rmsdStr)
 		rmsds.append(float(rmsdStr))
