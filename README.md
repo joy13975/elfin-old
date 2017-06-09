@@ -3,6 +3,10 @@ A computational protein design tool based on repeat unit construction (RUC). Thi
 
 The idea of Elfin is to use repeatable protein parts as if they are rigid construction blocks (think Lego) and build a shape towards the user's desire. A poster I presented for my final year project can be found [here](res/pdf/poster.pdf).
 
+```diff
+- Database PDBs in ./res/ can be acquired by asking permission from fabio.parmeggiani@bristol.ac.uk or contact cy13308@my.bristol.ac.uk. If no reply, try joyyeh.tw@gmail.com
+```
+
 ![alt tag](res/png/ProteinBristol.png)
 Figure: actual output of the Elfin GA with "Bristol" written by hand as input. The visuals were created using PyMol.
 
