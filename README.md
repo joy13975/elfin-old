@@ -9,7 +9,7 @@ The main idea of Elfin is to use repeat proteins as rigid construction modules (
 * UoB: University of Bristol
 * UoW: University of Washington
 
-**Important**: Elfin requires a repeat protein database called "elfin-db", which is a submodule that contains PDB files of the protein modules. This can be acquired by asking repository access from fabio.parmeggiani@bristol.ac.uk (Fabio). The reason for the restricted access is that these files are unpublished laboratory results (from the Baker lab of the University of Washington).
+**Important**: Elfin requires a repeat protein database called "elfin-db", which contains PDB files of the protein modules. This can be acquired from the joy13975/elfin-db repository. Access should be asked from fabio.parmeggiani@bristol.ac.uk (Fabio). The reason for restricted access is that these files are unpublished laboratory results (from the Baker lab of the University of Washington).
 
 ### Content:
 1. [Repository Setup](#repo-setup)
@@ -36,6 +36,8 @@ git clone https://github.com/joy13975/elfin.git
 cd elfin                         #you should now be at repository root
 git submodule init
 git submodule update
+cd res
+unzip elfin-db/db.zip
 ```
 
 ## Python Setup [](#python-setup) 
