@@ -5,6 +5,6 @@ echo 'Note: Make sure to run with ". ./activate" to effectively set environment 
 source ./venv/bin/activate
 
 # Add elfin library path
-PYTHONPATH="$PWD/src/Python/:$PYTHONPATH"
+PYTHONPATH="$PWD/scripts/Python/:$PYTHONPATH"
 
 export PYTHONPATH
