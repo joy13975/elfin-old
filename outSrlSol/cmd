@@ -1,1 +1,0 @@
-qsub -N elfin -q batch -joe -o outSrl/log -l nodes=1:ppn=256:knl,walltime=00:30:00 -v execFile=src/GA/bin/elfinSrl,configFile=elfinConfig.json,outputDir=outSrl ./runElfin.sh
