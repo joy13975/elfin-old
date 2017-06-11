@@ -1,5 +1,7 @@
+**ATTENTION**: New repository for elfin has been moved to [here](https://github.com/joy13975/elfin).
+
 # Elfin
-Elfin is a computational protein design tool based on repeat protein module construction. A journal paper (Structural Biology) describing this work has been submitted for review. A more detailed explanation of how Elfin works can be found [here](https://github.com/joy13975/elfin_thesis).
+Elfin is a computational protein design tool based on repeat protein module construction. A journal paper (Structural Biology) describing this work has been submitted for review. A more detailed explanation of how Elfin works can be found [here](https://github.com/joy13975/elfin-thesis).
 
 ![alt tag](res/png/ProteinBristol.png)
 Figure 1: the handwritten word "Bristol" drawn using protein modules, assembled by Elfin's GA. The visualisation was created using PyMol.
